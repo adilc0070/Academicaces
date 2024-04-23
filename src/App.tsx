@@ -1,11 +1,13 @@
-import {  } from 'react'
+import { } from 'react'
 
 function App() {
 
 
   return (
     <>
-      <div>hellow</div>
+      <h1 className="text-3xl font-bold underline">
+        Hello world!
+      </h1>
     </>
   )
 }
