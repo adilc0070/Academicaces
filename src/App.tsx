@@ -1,13 +1,13 @@
 import { } from 'react'
+import NavBar from './componants/LandingNavBar'
 
 function App() {
 
 
   return (
     <>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
+      <NavBar/>
+
     </>
   )
 }
