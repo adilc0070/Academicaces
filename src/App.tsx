@@ -1,7 +1,7 @@
 import { } from 'react'
 
-import Test from './pages/test'
 import LandingPage from './pages/LandingPage'
+import IconCard from './componants/IconCard'
 
 function App() {
 
@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <LandingPage/>
-      <Test/>
+      <IconCard/>
     </>
   )
 }

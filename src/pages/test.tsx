@@ -13,6 +13,7 @@ function Test() {
 
     return (
         <div className="w-screen h-screen flex justify-center items-center bg-cover bg-center">
+            <div>adsasddas</div>
             <div className="grid grid-cols-3 gap-9 items-center w-auto h-auto p-9 ">
                 {features.map((feature, index) => (
                     <div key={index} className="card w-[300px] h-[250px] shadow-2xl border-4 rounded-2xl hover:bg-sky-800 text-black hover:text-white">
