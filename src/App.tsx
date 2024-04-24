@@ -1,13 +1,15 @@
 import { } from 'react'
-import NavBar from './componants/LandingNavBar'
+
+import Test from './pages/test'
+import LandingPage from './pages/LandingPage'
 
 function App() {
 
 
   return (
     <>
-      <NavBar/>
-
+      <LandingPage/>
+      <Test/>
     </>
   )
 }
