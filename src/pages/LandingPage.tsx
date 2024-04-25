@@ -1,9 +1,10 @@
 import Carrosil from "../componants/Carrosil"
+import IconCard from "../componants/IconCard"
 import NavBar from "../componants/LandingNavBar"
 
 function LandingPage() {
   return (
-    <>
+    <div>
       <NavBar />
       <Carrosil items={[{
         heading: 'Item 1',
@@ -26,8 +27,9 @@ function LandingPage() {
         bgColor: 'bg-red-800',
         fontColor:''
       },]} />
+      <IconCard/>
 
-    </>
+    </div>
 
   )
 }

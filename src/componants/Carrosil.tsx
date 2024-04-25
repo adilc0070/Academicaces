@@ -26,7 +26,7 @@ const Carousel: React.FC<CarouselProps> = ({ items }) => {
 
   if (items.length === 0) {
     return (
-      <div className='relative flex justify-center items-center w-full h-[800px]'>
+      <div className='flex justify-center items-center w-full h-[800px]'>
         <div className="flex justify-center items-center w-full h-full">
           <CircularProgress />
           
@@ -37,7 +37,7 @@ const Carousel: React.FC<CarouselProps> = ({ items }) => {
   }
 
   return (
-    <div className="relative flex justify-center w-full h-auto">
+    <div className="flex justify-center w-full h-auto">
       <div className={`flex flex-row w-[92%] ${items[activeIndex].bgColor} ${items[activeIndex].fontColor} `} >
         <div className="flex-1 flex flex-col justify-center items-start">
           <h2 className="text-lg font-bold">{items[activeIndex].heading}</h2>

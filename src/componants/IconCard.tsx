@@ -11,11 +11,10 @@ function IconCard() {
         { icon: BiDollar, title: "Affordable Price", description: "Access high-quality education at affordable prices, making learning accessible to all." },
     ];
     return (
-        <div className='flex justify-center'>
-
-            <div className='w-[92%] h-[815px] bg-gray-100'>
-                <div className="flex justify-left text-left text-2xl  max-lg:text-lg max-sm:w-full w-1/2">
-                    <p className="text-content overflow-hidden break-words font-bold mt-4">{title}</p>
+        <div className='flex justify-center mt-9'>
+            <div className='w-[92%] h-auto bg-gray-100 '>
+                <div className="flex justify-left text-left text-5xl  max-lg:text-lg max-sm:w-full w-4/6 ">
+                    <p className="text-content overflow-hidden break-words font-bold my-4">{title}</p>
                 </div>
                 <div className="w-full h-full flex justify-center  bg-cover bg-center">
                     <div className="grid grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1 gap-5 items-center w-auto h-auto p-9 ">
