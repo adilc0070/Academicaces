@@ -12,7 +12,7 @@ function IconCard() {
     ];
     return (
         <div className='flex justify-center mt-9'>
-            <div className='w-[92%] h-auto bg-gray-100 '>
+            <div className='w-[92%] h-full bg-gray-100 '>
                 <div className="flex justify-left text-left text-5xl  max-lg:text-lg max-sm:w-full w-4/6 ">
                     <p className="text-content overflow-hidden break-words font-bold my-4">{title}</p>
                 </div>

@@ -1,7 +1,6 @@
 import { } from 'react'
-
 import LandingPage from './pages/LandingPage'
-import Test from './pages/test'
+
 
 
 function App() {
@@ -10,8 +9,6 @@ function App() {
   return (
     <>
       <LandingPage/>
-      <Test/>
-      
     </>
   )
 }

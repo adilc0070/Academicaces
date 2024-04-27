@@ -10,3 +10,6 @@
 .card .cardI .cardLogo {
     color: white;
 }
+.courseList::-webkit-scrollbar {
+    width: 6px;
+}

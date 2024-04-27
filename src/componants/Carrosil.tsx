@@ -37,11 +37,11 @@ const Carousel: React.FC<CarouselProps> = ({ items }) => {
   }
 
   return (
-    <div className="flex justify-center w-full h-auto">
-      <div className={`flex flex-row w-[92%] ${items[activeIndex].bgColor} ${items[activeIndex].fontColor} `} >
-        <div className="flex-1 flex flex-col justify-center items-start">
-          <h2 className="text-lg font-bold">{items[activeIndex].heading}</h2>
-          <p className="text-sm">{items[activeIndex].description}</p>
+    <div className="flex justify-center w-full h-auto ">
+      <div className={`flex flex-row w-[92%] rounded-3xl mt-9 ${items[activeIndex].bgColor} ${items[activeIndex].fontColor} `} >
+        <div className="flex-1 flex flex-col justify-center items-start mx-4">
+          <h2 className="text-5xl font-bold">{items[activeIndex].heading}</h2>
+          <p className="text-lg">{items[activeIndex].description}</p>
         </div>
         <div className="flex-1 bg-red-200 rounded-xl">
           <img src={items[activeIndex].imageName} alt={items[activeIndex].heading} className=" h-auto object-cover w-full" style={{ width: '1004px', height: '600px' }} />
