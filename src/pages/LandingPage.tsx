@@ -1,6 +1,7 @@
 import Carrosil from "../componants/Carrosil"
 import CourseList from "../componants/CourseList"
 import IconCard from "../componants/IconCard"
+import InstructorInterFace from "../componants/InstructorInterFace"
 import NavBar from "../componants/LandingNavBar"
 
 
@@ -36,7 +37,7 @@ function LandingPage() {
         { id: 3, title: 'Course 3', description: 'Description 3', price: 30, image: 'https://picsum.photos/300', rating: 4.5, category: 'Category 3', downloads: 300, discountPrice: 24 },
         { id: 4, title: 'Course 4', description: 'Description 4', price: 40, image: 'https://picsum.photos/400', rating: 4.5, category: 'Category 4', downloads: 400, discountPrice: 32 }
       ]} />
-
+      <InstructorInterFace/>
 
     </>
 
