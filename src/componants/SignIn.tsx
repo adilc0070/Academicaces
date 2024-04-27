@@ -1,7 +1,7 @@
 import  { useState } from 'react'
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 
-function Test() {
+function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -59,4 +59,4 @@ function Test() {
     );
 }
 
-export default Test
+export default SignIn
