@@ -19,7 +19,7 @@ function CourseCard({ course }: { course: Course }) {
                 
                 <img
                     src={`${course.image}`}
-                    className="object-cover h-full rounded-xl border-r-4 border-red-900 rounded-r-2xl"
+                    className="object-cover h-full rounded-xl border-r-4 border-red-900 rounded-r-2xl "
                     alt={course.title}
                 />
             </div>

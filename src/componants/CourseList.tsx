@@ -16,7 +16,7 @@ type Course = {
 
 function CourseList({ courses }: { courses: Course[] }) {
     return (
-        <div className="flex justify-center my-9">
+        <div className="flex justify-center h-[800px] my-9 select-none ">
             <div className="flex flex-col  justify-center items-center bg-[#D0D7E1] w-[92%] h-full">
                 <div className="flex flex-col justify-center items-center w-full my-3 h-1/4">
                     <h1 className="text-5xl font-bold">Courses</h1>

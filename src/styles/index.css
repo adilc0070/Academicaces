@@ -3,13 +3,36 @@
 @tailwind components;
 @tailwind utilities;
 
+
 .card:hover .cardI .cardLogo {
     background-color: #f1f5f9;
     color: #075985;
 }
+
 .card .cardI .cardLogo {
     color: white;
 }
+
+
+.courseList {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
 .courseList::-webkit-scrollbar {
     width: 6px;
+}
+
+.courseList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.courseList::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    border: transparent;
+}
+
+.courseList::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.4);
 }
