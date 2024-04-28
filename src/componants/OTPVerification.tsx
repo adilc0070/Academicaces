@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 const OTPVerification = () => {
     const [otp, setOTP] = useState(['', '', '', '']);
     const refs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
-    const handleChange = (index, value) => {
+    const handleChange = (index: number, value: string) => {
         const newOTP = [...otp];
         newOTP[index] = value;
         setOTP(newOTP);
@@ -14,7 +14,7 @@ const OTPVerification = () => {
         }
     };
 
-    const handleKeyPress = (index, e) => {
+    const handleKeyPress = (index: number, e) => {
         if (e.key === 'Backspace' && index > 0 && !otp[index]) {
             refs[index - 1].current.focus();
         }
@@ -39,7 +39,6 @@ const OTPVerification = () => {
                         />
                     ))}
                 </div>
-                {/* Button for OTP submission */}
                 <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">Submit OTP</button>
             </div>
         </div>

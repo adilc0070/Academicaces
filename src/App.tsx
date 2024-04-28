@@ -1,6 +1,5 @@
 import { } from 'react'
-import Test from './pages/Test'
-import Register from './pages/OTPVerification'
+import SignUp from './componants/SignUp'
 
 
 
@@ -10,9 +9,7 @@ function App() {
 
   return (
     <>
-      {/* <LandingPage/> */}
-      <Test/>
-      <Register/>
+     <SignUp/>
     </>
   )
 }
