@@ -1,22 +1,41 @@
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
-const OTPVerification = () => {
-    const [otp, setOTP] = useState(['', '', '', '']);
-    const refs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+const OTPVerification: React.FC = () => {
+    const [otp, setOTP] = useState<string[]>(['', '', '', '']);
+    const [error, setError] = useState<string>('');
+    const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
 
     const handleChange = (index: number, value: string) => {
-        const newOTP = [...otp];
-        newOTP[index] = value;
-        setOTP(newOTP);
+        // Validation: Only accept numbers
+        if (/^\d*$/.test(value) && value.length <= 1) {
+            const newOTP = [...otp];
+            newOTP[index] = value;
+            setOTP(newOTP);
+            setError('');
 
-        if (value && index < 3) {
-            refs[index + 1].current.focus();
+            if (value && index < 3) {
+                refs[index + 1].current?.focus();
+            }
+        } else {
+            setError('Please enter numbers only');
         }
     };
 
-    const handleKeyPress = (index: number, e) => {
+    const handleKeyPress = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Backspace' && index > 0 && !otp[index]) {
-            refs[index - 1].current.focus();
+            refs[index - 1].current?.focus();
+        }
+    };
+
+    const handleSubmit = () => {
+        const otpString = otp.join('');
+        // Validation: Check if OTP is complete (all fields filled)
+        if (otpString.length === 4) {
+            // Handle OTP submission
+            console.log('Submitting OTP:', otpString);
+        } else {
+            // Handle incomplete OTP
+            setError('Please fill all fields');
         }
     };
 
@@ -32,14 +51,17 @@ const OTPVerification = () => {
                             ref={refs[index]}
                             className="w-16 h-16 border-2 border-gray-300 rounded-lg text-center text-2xl"
                             type="text"
-                            maxLength="1"
+                            maxLength={1}
                             value={value}
                             onChange={(e) => handleChange(index, e.target.value)}
                             onKeyPress={(e) => handleKeyPress(index, e)}
                         />
                     ))}
                 </div>
-                <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">Submit OTP</button>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
+                <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600" onClick={handleSubmit}>
+                    Submit OTP
+                </button>
             </div>
         </div>
     );
