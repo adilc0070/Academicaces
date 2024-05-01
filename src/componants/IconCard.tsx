@@ -1,5 +1,6 @@
 import { BiCertification, BiBookOpen, BiTrendingUp, BiHelpCircle, BiDollar } from 'react-icons/bi';
 import { RiLiveLine } from 'react-icons/ri'
+import { toast } from 'sonner';
 function IconCard() {
     const title: string = "We're committed to providing you with a seamless and enriching learning experience. Here's what sets us apart";
     const features = [
@@ -26,7 +27,7 @@ function IconCard() {
                                     </div>
                                 </div>
                                 <div className="flex justify-center">
-                                    <span className='text-lg font-koulen font-medium'>{feature.title}</span>
+                                    <span className='text-lg font-koulen font-medium' onClick={() => {toast.success(feature.title) }}>{feature.title}</span>
                                 </div>
                                 <div className="flex justify-center text-center">
                                     <p className="text-content max-h-20 overflow-hidden break-words text-sm font-semibold mx-2">{feature.description}</p>

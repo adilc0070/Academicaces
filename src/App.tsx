@@ -1,20 +1,21 @@
-import { } from 'react'
-// import SignUp from './componants/SignUp'
-// import OTPVerification from './componants/OTPVerification'
-import SignIn from './componants/SignIn'
-import SignUp from './componants/SignUp'
-
-
-
+import { Route, Routes } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import UserRoute from './Routes/UserRoute';
+import AdminRoute from './Routes/AdminRoute';
+import { Toaster } from 'sonner'
 
 function App() {
-
-
   return (
     <>
-     <SignUp/>
+      <Toaster richColors position='top-right' closeButton />
+      <Routes>
+
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/user/*" element={<UserRoute />} />
+        <Route path="/admin/*" element={<AdminRoute />} />
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

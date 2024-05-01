@@ -4,7 +4,6 @@ import IconCard from "../componants/IconCard"
 import InstructorInterFace from "../componants/InstructorInterFace"
 import NavBar from "../componants/LandingNavBar"
 
-
 function LandingPage() {
   return (
     <>
@@ -30,7 +29,7 @@ function LandingPage() {
         bgColor: 'bg-red-800',
         fontColor: ''
       },]} />
-      <IconCard />
+      <IconCard/>
       <CourseList courses={[
         { id: 1, title: 'Java Script  Basics', description: 'This Course is aim to learn the basics of java script ', price: 9000, image: 'https://picsum.photos/900', rating: 4.5, category: 'Category 1', downloads: 100, discountPrice: 8 },
         { id: 2, title: 'Course 2', description: 'Description 2', price: 20, image: 'https://picsum.photos/200', rating: 4.0, category: 'Category 2', downloads: 200, discountPrice: 16 },

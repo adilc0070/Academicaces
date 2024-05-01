@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
+import { Link } from 'react-router-dom';
+import { signUpApi } from '../services/api'
 
 const SignUp: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
     const [userName, setUserName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
+    const [bio, setBio] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
@@ -59,7 +62,7 @@ const SignUp: React.FC = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         // Validation: Check if all fields are filled
@@ -68,8 +71,17 @@ const SignUp: React.FC = () => {
             return;
         }
 
-        // Your form submission logic here
-        console.log('Form submitted:', { userName, email, password, confirmPassword });
+        let data= new FormData();
+        let Name = data.get('userName');
+        let Email = data.get('email');
+        let Bio = data.get('bio');
+        let Password = data.get('password');
+
+        await signUpApi({ data: { userName: userName, email: email, bio: bio, password: password } }).then((result) => {
+            console.log(result);
+        }).catch((err) => {
+
+        });
     };
 
     const validateEmail = (email: string): boolean => {
@@ -93,6 +105,10 @@ const SignUp: React.FC = () => {
                             <input type="email" id="email" name="email" className="mt-1 p-2 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" value={email} onChange={handleEmailChange} />
                         </div>
                         <div className="mb-4">
+                            <label htmlFor="bio" className="block text-sm font-medium text-gray-700">About Your Self</label>
+                            <input type="text" id="bio" name="bio" className="mt-1 p-2 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" value={bio} onChange={(e) => setBio(e.target.value)} />
+                        </div>
+                        <div className="mb-4">
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
                             <div className="relative">
                                 <input type={showPassword ? "text" : "password"} id="password" name="password" className="mt-1 p-2 pr-10 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" value={password} onChange={handlePasswordChange} />
@@ -112,7 +128,7 @@ const SignUp: React.FC = () => {
                         </div>
                         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                         <button type="submit" className="bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800">Sign Up</button>
-                        <p className='text-center mt-4'>Do you have an account? <a href="#" className="text-blue-500 hover:underline">Sign In</a></p>
+                        <p className='text-center mt-4'>Do you have an account? <Link to="/user/signIn" className="text-blue-500 hover:underline">Sign In</Link></p>
                     </form>
                 </div>
                 <div className="w-[812px] max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')" }}>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Logo from "./Logo";
 import { FaHamburger } from "@react-icons/all-files/fa/FaHamburger";
+import { Link } from 'react-router-dom';
 
 function NavBar() {
     const [isMenuOpen, setMenuOpen] = useState(false);
@@ -20,10 +21,10 @@ function NavBar() {
                     <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                         <button
                             type="button"
-                            onClick={toggleMenu}
+                            
                             className="text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
-                            xcvbnm,
+                            <Link to={"/user/signIn"}>Open an Account</Link>
                         </button>
                         <button
                             data-collapse-toggle="navbar-sticky"

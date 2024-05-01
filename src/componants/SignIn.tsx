@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
+import { Link } from 'react-router-dom';
+import { signInApi } from '../services/api'
 
 const SignIn: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -38,11 +40,16 @@ const SignIn: React.FC = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
+        const datas: FormData = new FormData(e.currentTarget)
+        const em: string | null = datas.get('email')
+        const p: string | null = datas.get('password')
+        const rem = datas.get('rememberMe') === 'on';
 
-        // Your form submission logic here
-        console.log('Form submitted:', { email, password, rememberMe });
+        await signInApi({ data: { email: em, password: p, rememberMe: rem } })
+
+        // console.log('Form submitted:', { em, p, rem  });
     };
 
     return (
@@ -76,14 +83,14 @@ const SignIn: React.FC = () => {
                         </div>
                         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                         <button type="submit" className="bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800">Sign In</button>
-                        <p className='text-center mt-4'>Don’t have an account? <a href="#" className="text-blue-500 hover:underline">Sign Up</a></p>
+                        <p className='text-center mt-4'>Don’t have an account? <Link to={"/user/signUp"} className="text-blue-500 hover:underline">Sign Up</Link></p>
                         <div className="mt-4 flex items-center justify-center">
                             <hr className="w-1/4 border-gray-400" />
                             <p className="mx-2 text-sm text-gray-500 text-center">Or continue with email</p>
                             <hr className="w-1/4 border-gray-400" />
                         </div>
                         <button type="button" className="mt-4 bg-white w-full text-black px-4 py-2 border-2 rounded hover:bg-gray-100 flex items-center justify-center">
-                            <img src="src/assets/google-icon.png" alt="Google Icon" className="h-5 w-5" />
+                            <img src="/src/assets/google-icon.png" alt="Google Icon" className="h-5 w-5" />
                             <span className="mr-2">Sign In with Google</span>
                         </button>
                     </form>
