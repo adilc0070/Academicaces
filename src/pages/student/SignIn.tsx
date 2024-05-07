@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { signInApi } from '../services/api'
+import { signInApi } from '../../services/student/api'
 
 const SignIn: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -14,7 +14,7 @@ const SignIn: React.FC = () => {
     };
 
     const validateEmail = (email: string): boolean => {
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|icloud)\.com$/;
+        const emailRegex = /^[a-zA-Z0-9._]+@(gmail|yahoo|icloud)\.com$/;
         return emailRegex.test(email);
     };
 
@@ -40,14 +40,14 @@ const SignIn: React.FC = () => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): void => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const datas: FormData = new FormData(e.currentTarget)
-        const em: string | null = datas.get('email')
-        const p: string | null = datas.get('password')
-        const rem = datas.get('rememberMe') === 'on';
+        const em: string = datas.get('email')
+        const p: string = datas.get('password')
+        const rem: boolean = datas.get('rememberMe') === 'on';
 
-        await signInApi({ data: { email: em, password: p, rememberMe: rem } })
+        let a:any=await signInApi({ data: { email: em, password: p, rememberMe: rem } })
 
         // console.log('Form submitted:', { em, p, rem  });
     };

@@ -1,13 +1,11 @@
 import { Routes, Route } from 'react-router-dom';
-import SignIn from '../componants/SignIn';
-import SignUp from '../componants/SignUp';
+import AdminSignIn from '../pages/admin/AdminSignIn';
 
 function AdminRoute() {
     return (
         <Routes>
-            {/* <Route path="/admin" element={<AdminPage />} /> */}
-            <Route path="/admin/signIn" element={<SignIn />} />
-            <Route path="/admin/signUp" element={<SignUp />} />
+            <Route path="/admin/signIn" element={<AdminSignIn />} />
+            {/* <Route path="/admin/dash" element={<Dash />} /> */}
         </Routes>
     );
 }

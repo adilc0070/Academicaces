@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { otpSend } from '../services/student/api';
 
 const OTPVerification: React.FC = () => {
     const [otp, setOTP] = useState<string[]>(['', '', '', '']);
@@ -27,12 +28,13 @@ const OTPVerification: React.FC = () => {
         }
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const otpString = otp.join('');
-        // Validation: Check if OTP is complete (all fields filled)
         if (otpString.length === 4) {
-            // Handle OTP submission
             console.log('Submitting OTP:', otpString);
+            let ress=await otpSend({data:{otp:otpString,id:_id}})
+
+            
         } else {
             // Handle incomplete OTP
             setError('Please fill all fields');

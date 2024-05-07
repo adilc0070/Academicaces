@@ -1,66 +1,194 @@
-import { useState } from 'react'
-import { BsEye, BsEyeSlash } from 'react-icons/bs';
+import React, { useState } from 'react';
+import Logo from '../componants/Logo';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 function Test() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+    const toggleProfileDropdown = () => {
+        setIsProfileDropdownOpen(!isProfileDropdownOpen);
     };
 
-    const toggleConfirmPasswordVisibility = () => {
-        setShowConfirmPassword(!showConfirmPassword);
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
     };
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+    let student = useSelector((state: RootState) => state.student);
     return (
+        <>
+            <nav className="bg-blue-900 border-gray-200">
+                <div className="flex flex-wrap items-center justify-between max-w-screen-xl mx-auto p-4">
+                    <>
+                        <Logo />
+                        <button
+                            onClick={toggleSidebar}
+                            aria-controls="cta-button-sidebar"
+                            type="button"
+                            className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                        >
+                            <span className="sr-only">Open sidebar</span>
+                            <svg
+                                className="w-6 h-6"
+                                aria-hidden="true"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    clipRule="evenodd"
+                                    fillRule="evenodd"
+                                    d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
+                                ></path>
+                            </svg>
+                        </button>
+                    </>
+                    <div className="flex items-center md:order-2 space-x-1 md:space-x-2 rtl:space-x-reverse">
+                        <button
+                            onClick={toggleMenu}
+                            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                            aria-label="Toggle menu"
+                        >
+                            <span className="sr-only">Open main menu</span>
+                            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M1 1h15M1 7h15M1 13h15" />
+                            </svg>
+                        </button>
+                        {student &&
+                            <>
 
-        <div className="gradient-bg h-screen flex items-center justify-center">
-            <div className="w-[1008px]  bg-white md:border-2 md: border-black border-2 rounded-lg flex justify-center">
-                <div className="w-[500px] p-8  border-black border-2 rounded-lg">
-                    <h2 className="text-5xl text-center font-bold mb-4">Welcome</h2>
-                    <p className="text-gray-600 text-center text-md font-medium mb-8">Enter your email and password to access your account.</p>
-                    <form>
-                        <div className="mb-4">
-                            <label htmlFor="UserName" className="block text-sm font-medium text-gray-700">User Name</label>
-                            <input type="text" id="UserName" name="UserName" className="mt-1 p-2 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="email" name="email" className="mt-1 p-2 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                            <div className="relative">
-                                <input type={showPassword ? "text" : "password"} id="password" name="password" className="mt-1 p-2 pr-10 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" />
-                                <button type="button" className="absolute inset-y-0 right-0 px-3 py-2 bg-blue-500 text-white border-2 rounded-r focus:outline-none" onClick={togglePasswordVisibility}>
-                                    {showPassword ? <BsEyeSlash /> : <BsEye />}
-                                </button>
-                            </div>
-                        </div>
+                                <a href="/user/signIn" className="text-gray-200 hover:text-white focus:text-white dark:text-gray-400">Login</a>
+                                <a href="#" className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 md:px-5 md:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Sign up</a>
+                            </>
+                        }
+                    </div>
+                    <div className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${isMenuOpen ? 'block' : 'hidden'}`}>
+                        <ul className="flex flex-col mt-4 font-medium md:flex-row md:mt-0 md:space-x-8 rtl:space-x-reverse">
+                            <li>
+                                <a href="#" className="block py-2 px-3 text-gray-300 border-b border-gray-200 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-600 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700" aria-current="page">Home</a>
+                            </li>
 
-                        <div className="mb-4">
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
-                            <div className="relative">
-                                <input type={showConfirmPassword ? "text" : "password"} id="confirmPassword" name="confirmPassword" className="mt-1 p-2 pr-10 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" />
-                                <button type="button" className="absolute inset-y-0 right-0 px-3 py-2 bg-blue-500 text-white border-2 rounded-r focus:outline-none" onClick={toggleConfirmPasswordVisibility}>
-                                    {showConfirmPassword ? <BsEyeSlash /> : <BsEye />}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="mb-4 flex-col">
-                            <button type="submit" className="bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800">Sign Up</button>
-                            <p className='text-center mt-4'>Do you have an account? <a href="#" className="text-blue-500 hover:underline">Sign In</a></p>
-                        </div>
-                        
-
-                    </form>
+                            <li>
+                                <div className="relative">
+                                    <button
+                                        onClick={toggleProfileDropdown}
+                                        className="flex items-center justify-between w-full py-2 px-3 font-medium text-gray-300 border-b border-gray-200 md:w-auto hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-600 md:p-0 dark:text-white md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                                        aria-expanded={isProfileDropdownOpen ? "true" : "false"}
+                                        aria-controls="profile-dropdown"
+                                    >
+                                        <div className="flex items-center">
+                                            <img src="/path/to/profile-image.jpg" alt="Profile" className="w-8 h-8 rounded-full" />
+                                            <span className="ml-2">{student?.userName || 'Profile'}</span>
+                                        </div>
+                                        <svg className={`w-2.5 h-2.5 ms-3 transform ${isProfileDropdownOpen ? 'rotate-180' : 'rotate-0'}`} aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m1 1 4 4 4-4" />
+                                        </svg>
+                                    </button>
+                                    <div
+                                        id="profile-dropdown"
+                                        className={`absolute z-10 grid ${isProfileDropdownOpen ? 'grid' : 'hidden'} w-auto text-sm bg-[#1C84EE] border border-gray-200 rounded-lg shadow-md`}
+                                    >
+                                        <a href="#" className="block py-2 px-4 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">Profile</a>
+                                        <a href="" className="block py-2 px-4 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">Logout</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <div className="w-[812px] max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')" }}>
+            </nav>
+            <div className='flex justify-center items-center w-full h-[800px]'>
+
+
+                <aside
+                    id="cta-button-sidebar"
+                    className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${isSidebarOpen ? '' : '-translate-x-full sm:translate-x-0'}`}
+                    aria-label="Sidebar"
+                >
+                    <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+                        <ul className="space-y-2 font-medium">
+                            <li>
+                                <a
+                                    href="#"
+                                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                >
+                                    <svg
+                                        className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor"
+                                        viewBox="0 0 22 21"
+                                    >
+                                        <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"></path>
+                                        <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"></path>
+                                    </svg>
+                                    <span className="ms-3">Dashboard</span>
+                                </a>
+                            </li>
+                            {/* Other list items go here */}
+                        </ul>
+                        <div
+                            id="dropdown-cta"
+                            className="p-4 mt-6 rounded-lg bg-blue-50 dark:bg-blue-900"
+                            role="alert"
+                        >
+                            <div className="flex items-center mb-3">
+                                <span className="bg-orange-100 text-orange-800 text-sm font-semibold me-2 px-2.5 py-0.5 rounded dark:bg-orange-200 dark:text-orange-900">
+                                    Beta
+                                </span>
+                                <button
+                                    type="button"
+                                    className="ms-auto -mx-1.5 -my-1.5 bg-blue-50 inline-flex justify-center items-center w-6 h-6 text-blue-900 rounded-lg focus:ring-2 focus:ring-blue-400 p-1 hover:bg-blue-200 h-6 w-6 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800"
+                                    data-dismiss-target="#dropdown-cta"
+                                    aria-label="Close"
+                                >
+                                    <span className="sr-only">Close</span>
+                                    <svg
+                                        className="w-2.5 h-2.5"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 14 14"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                                        ></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p className="mb-3 text-sm text-blue-800 dark:text-blue-400">
+
+                            </p>
+                            <a
+                                className="text-sm text-blue-800 underline font-medium hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                                href="#"
+                            >
+
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+
+                <div className='font-bold text-3xl'>
+                    Welcome to Dashboard
+                    <div className='text-2xl flex flex-col'>
+                        <span>{student?.userName}</span>
+                        <span>{student?.email}</span>
+
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
-export default Test
+export default Test;

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { signUpApi } from '../services/api'
+import { signUpApi } from '../../services/student/api'
 
-const SignUp: React.FC = () => {
+const InstructorSignUp: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
     const [userName, setUserName] = useState<string>('');
@@ -66,21 +66,22 @@ const SignUp: React.FC = () => {
         e.preventDefault();
 
         // Validation: Check if all fields are filled
-        if (!userName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-            setError('Please fill out all fields.');
-            return;
-        }
-
-        let data= new FormData();
+        
+        let data = new FormData();
         let Name = data.get('userName');
         let Email = data.get('email');
         let Bio = data.get('bio');
         let Password = data.get('password');
-
+        
+        if (!userName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+            setError('Please fill out all fields.');
+            return;
+        }
         await signUpApi({ data: { userName: userName, email: email, bio: bio, password: password } }).then((result) => {
             console.log(result);
         }).catch((err) => {
-
+            console.log(err);
+            
         });
     };
 
@@ -138,4 +139,4 @@ const SignUp: React.FC = () => {
     );
 }
 
-export default SignUp;
+export default InstructorSignUp;
