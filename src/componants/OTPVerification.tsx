@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { otpSend } from '../services/student/api';
 
-const OTPVerification: React.FC = ({ id }) => {
+const OTPVerification: React.FC = ({ emailOTP }) => {
     const [otp, setOTP] = useState<string[]>(['', '', '', '']);
     const [error, setError] = useState<string>('');
     const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
@@ -31,7 +31,7 @@ const OTPVerification: React.FC = ({ id }) => {
         const otpString = otp.join('');
         if (otpString.length === 4) {
             console.log('Submitting OTP:', otpString);
-            let ress = await otpSend({ data: { otp: otpString, id:  id } })
+            let ress = await otpSend({ data: { otp: otpString, email:  emailOTP } })
         } else {
             setError('Please fill all fields');
         }

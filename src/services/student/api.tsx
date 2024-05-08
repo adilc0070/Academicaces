@@ -22,7 +22,7 @@ export const signUpApi = async ({ data }: { data: data }) => {
 }
 export const otpSend = async ({ data }: { data: data }) => {
     console.log(data, "otp send");
-    const response = await api.post("auth/user/verifieOtp/", data);
+    const response = await api.post(`auth/user/verifyOtp/`, data)
     return response.data;
 }
 

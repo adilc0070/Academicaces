@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { signUpApi } from '../../services/student/api'
 import OTPVerification from '../../componants/OTPVerification'; 
-import { useDispatch } from 'react-redux';
-import { setStudentDetails } from '../../store/slice/studentSlice';
+// import { useDispatch } from 'react-redux';
+// import { setStudentDetails } from '../../store/slice/studentSlice';
 
 const SignUp: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -16,9 +16,8 @@ const SignUp: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [page, setPage] = useState(0)
-    const [id, set_Id] = useState('')
-    const [user, setUser] = useState({})
-    let dispatch = useDispatch();
+    const [emailOTP, setEmailOTP] = useState('')
+    // let dispatch = useDispatch();
 
 
     const togglePasswordVisibility = () => {
@@ -77,11 +76,8 @@ const SignUp: React.FC = () => {
         }
         
         await signUpApi({ data: { userName: userName, email: email, bio: bio, password: password } }).then((result) => {
-
-            setUser(result.user)
-            set_Id(result.user?._id)
+            setEmailOTP(result.user?.email)
             setPage(1)
-            
         }).catch((err) => {
             console.log(err);
         });
@@ -148,7 +144,7 @@ const SignUp: React.FC = () => {
                 <div className="w-[812px] max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')" }}>
                 </div>
             </div>) :
-                <OTPVerification id={id} />
+                <OTPVerification emailOTP={emailOTP} />
             }
         </div>
     );
