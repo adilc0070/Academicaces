@@ -11,8 +11,7 @@ function UserRoute() {
             <Route path='' element={<StudentIsLoggedOut/>} >
                 <Route path="/signIn" element={<SignIn />} />
                 <Route path="/signUp" element={<SignUp />} />
-                {/* <Route path="/otp/:_id" element={<OTPVerification />} /> */}
-                {/* <Route path="/helloworld" element={<Test />} /> */}
+
             </Route>
             <Route path="/" element={<StudentIsLoggedIn/>} >
                 <Route path="/home" element={<Test />} />

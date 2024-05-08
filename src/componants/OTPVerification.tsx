@@ -1,11 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { otpSend } from '../services/student/api';
 
-const OTPVerification: React.FC = () => {
+const OTPVerification: React.FC = ({ id }) => {
     const [otp, setOTP] = useState<string[]>(['', '', '', '']);
     const [error, setError] = useState<string>('');
     const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
-
     const handleChange = (index: number, value: string) => {
         // Validation: Only accept numbers
         if (/^\d*$/.test(value) && value.length <= 1) {
@@ -32,11 +31,8 @@ const OTPVerification: React.FC = () => {
         const otpString = otp.join('');
         if (otpString.length === 4) {
             console.log('Submitting OTP:', otpString);
-            let ress=await otpSend({data:{otp:otpString,id:_id}})
-
-            
+            let ress = await otpSend({ data: { otp: otpString, id:  id } })
         } else {
-            // Handle incomplete OTP
             setError('Please fill all fields');
         }
     };
@@ -60,7 +56,18 @@ const OTPVerification: React.FC = () => {
                         />
                     ))}
                 </div>
-                {error && <p className="text-red-500 text-sm">{error}</p>}
+                {
+                    error &&
+                    <div className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400 dark:border-red-800" role="alert">
+                        <svg className="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                        </svg>
+                        <span className="sr-only">Info</span>
+                        <div>
+                            <span className="font-medium"></span>{error}
+                        </div>
+                    </div>
+                }
                 <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600" onClick={handleSubmit}>
                     Submit OTP
                 </button>

@@ -9,11 +9,11 @@ const adminSlice = createSlice({
     name: "admin",
     initialState,
     reducers: {
-        setUserDetails: (state, action) => {
+        setAdminDetails: (state, action) => {
             state.email = action.payload.email;
             state.password = action.payload.password;
         },
-        setLogOut: (state) => {
+        setAdminLogOut: (state) => {
             state.email = '';
             state.password = '';
         },
@@ -22,5 +22,5 @@ const adminSlice = createSlice({
 
 
 
-export const { setUserDetails, setLogOut } = adminSlice.actions;
+export const { setAdminDetails, setAdminLogOut } = adminSlice.actions;
 export default adminSlice.reducer

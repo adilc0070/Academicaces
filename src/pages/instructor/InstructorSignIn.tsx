@@ -47,8 +47,7 @@ const InstructorSignIn: React.FC = () => {
         const p: string | null = datas.get('password')
         const rem: boolean = datas.get('rememberMe') === 'on';
 
-        await signInApi({ data: { email: em, password: p, rememberMe: rem } })
-
+        
         // console.log('Form submitted:', { em, p, rem  });
     };
 

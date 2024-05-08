@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { signUpApi } from '../../services/student/api'
-import OTPVerification from '../../componants/OTPVerification';
+import OTPVerification from '../../componants/OTPVerification'; 
 import { useDispatch } from 'react-redux';
-import { setUserDetails } from '../../store/slice/studentSlice';
+import { setStudentDetails } from '../../store/slice/studentSlice';
 
 const SignUp: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -38,7 +38,6 @@ const SignUp: React.FC = () => {
         const { value } = e.target;
         setEmail(value);
 
-        // Validation: Check if email is valid
         if (!validateEmail(value)) {
             setError('Please enter a valid email address.');
         } else {
@@ -72,24 +71,19 @@ const SignUp: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // Validation: Check if all fields are filled
-
-        let data = new FormData();
-        let Name = data.get('userName');
-        let Email = data.get('email');
-        let Bio = data.get('bio');
-        let Password = data.get('password');
-
         if (!userName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
             setError('Please fill out all fields.');
             return;
         }
+        
         await signUpApi({ data: { userName: userName, email: email, bio: bio, password: password } }).then((result) => {
-            console.log(result.user._id);
+
             setUser(result.user)
+            set_Id(result.user?._id)
+            setPage(1)
+            
         }).catch((err) => {
             console.log(err);
-
         });
     };
 
@@ -97,14 +91,6 @@ const SignUp: React.FC = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
-    useEffect(() => {
-        set_Id(user._id)
-
-        return () => {
-        }
-    }, [user])
-    // console.log(user.,"user from signup");
-
 
     return (
         <div className="gradient-bg h-screen flex items-center justify-center">
@@ -113,6 +99,18 @@ const SignUp: React.FC = () => {
                     <h2 className="text-5xl text-center font-bold mb-4">Welcome</h2>
                     <p className="text-gray-600 text-center text-md font-medium mb-8">Enter your details to create an account.</p>
                     <form onSubmit={handleSubmit}>
+                        {
+                            error &&
+                            <div className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400 dark:border-red-800" role="alert">
+                                <svg className="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                                </svg>
+                                <span className="sr-only">Info</span>
+                                <div>
+                                    <span className="font-medium"></span>{error}
+                                </div>
+                            </div>
+                        }
                         <div className="mb-4">
                             <label htmlFor="userName" className="block text-sm font-medium text-gray-700">User Name</label>
                             <input type="text" id="userName" name="userName" className="mt-1 p-2 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" value={userName} onChange={handleUserNameChange} />
@@ -143,7 +141,6 @@ const SignUp: React.FC = () => {
                                 </button>
                             </div>
                         </div>
-                        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                         <button type="submit" className="bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800">Sign Up</button>
                         <p className='text-center mt-4'>Do you have an account? <Link to="/user/signIn" className="text-blue-500 hover:underline">Sign In</Link></p>
                     </form>
@@ -151,7 +148,7 @@ const SignUp: React.FC = () => {
                 <div className="w-[812px] max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')" }}>
                 </div>
             </div>) :
-                <OTPVerification />
+                <OTPVerification id={id} />
             }
         </div>
     );

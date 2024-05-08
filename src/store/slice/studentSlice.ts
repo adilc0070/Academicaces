@@ -12,12 +12,12 @@ const studentSlice = createSlice({
     name: "student",
     initialState,
     reducers: {
-        setUserDetails: (state, action) => {
+        setStudentDetails: (state, action) => {
             state.userName = action.payload.userName;
             state.email = action.payload.email;
             state.password = action.payload.password;
         },
-        setLogOut: (state) => {
+        setStudentLogOut: (state) => {
             state.userName = "";
             state.email = "";
             state.password = "";
@@ -26,5 +26,5 @@ const studentSlice = createSlice({
     }
 });
 
-export const { setUserDetails, setLogOut } = studentSlice.actions;
+export const { setStudentLogOut, setStudentDetails } = studentSlice.actions;
 export default studentSlice.reducer
