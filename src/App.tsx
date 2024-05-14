@@ -3,6 +3,8 @@ import LandingPage from './pages/LandingPage';
 import UserRoute from './Routes/UserRoute';
 import AdminRoute from './Routes/AdminRoute';
 import { Toaster } from 'sonner'
+import dotenv from "dotenv"
+
 
 function App() {
   return (

@@ -1,12 +1,16 @@
 import { Routes, Route } from 'react-router-dom';
 import AdminSignIn from '../pages/admin/AdminSignIn';
-import { AdminIsLoggedOut } from '../componants/Protuctor';
+import { AdminIsLoggedIn, AdminIsLoggedOut } from '../componants/Protuctor';
+import AdminDashboard from '../pages/admin/AdminDashboard';
 
 function AdminRoute() {
     return (
         <Routes>
-            <Route path="/" element={<AdminIsLoggedOut />} >
-                <Route path="/admin/signIn" element={<AdminSignIn />} />
+            <Route path="" element={<AdminIsLoggedOut />} >
+                <Route path="/signIn" element={<AdminSignIn />} />
+            </Route>
+            <Route path='/' element={<AdminIsLoggedIn />} >
+                <Route path='/dashboard' element={<AdminDashboard/>} />
             </Route>
 
         </Routes>

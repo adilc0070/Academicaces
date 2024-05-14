@@ -1,10 +1,15 @@
 import React, { useRef, useState } from 'react';
 import { otpSend } from '../services/student/api';
-
-const OTPVerification: React.FC = ({ emailOTP }) => {
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { useDispatch } from "react-redux"
+import { setStudentDetails } from "../store/slice/studentSlice"
+const OTPVerification: React.FC = ({ emailOTP }: any) => {
     const [otp, setOTP] = useState<string[]>(['', '', '', '']);
     const [error, setError] = useState<string>('');
     const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+    const navigate= useNavigate();
+    const dispatch = useDispatch();
     const handleChange = (index: number, value: string) => {
         // Validation: Only accept numbers
         if (/^\d*$/.test(value) && value.length <= 1) {
@@ -31,7 +36,16 @@ const OTPVerification: React.FC = ({ emailOTP }) => {
         const otpString = otp.join('');
         if (otpString.length === 4) {
             console.log('Submitting OTP:', otpString);
-            let ress = await otpSend({ data: { otp: otpString, email:  emailOTP } })
+            let ress = await otpSend({ data: { otp: otpString, email:  emailOTP } }).then((result) => {
+                console.log(result.user.userData);
+                toast.success(result?.user?.message);
+                dispatch(setStudentDetails(result.user.userData))
+                navigate('/user/home')
+
+            }).catch((err) => {
+                toast.error(err?.response?.data?.message);
+                console.log(err);
+            })
         } else {
             setError('Please fill all fields');
         }

@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { signInApi } from '../../services/student/api'
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
+import { setStudentDetails } from '../../store/slice/studentSlice';
+import { toast } from 'sonner';
+
 
 const SignIn: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -9,6 +14,9 @@ const SignIn: React.FC = () => {
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [rememberMe, setRememberMe] = useState<boolean>(false);
+    const student=useSelector((state:RootState)=>state.student)
+    const dispatch=useDispatch()
+    const naviagate=useNavigate()
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -47,9 +55,27 @@ const SignIn: React.FC = () => {
         const p: string = datas.get('password')
         const rem: boolean = datas.get('rememberMe') === 'on';
 
-        let a:any=await signInApi({ data: { email: em, password: p, rememberMe: rem } })
+        if (!em || !p) {
+            toast.error('Please fill out all fields')
+            return
+        }
 
-        // console.log('Form submitted:', { em, p, rem  });
+        if (!p.trim()) {
+            toast.error('Password cannot be empty')
+            return
+        }
+
+        if(!validateEmail(em)){
+            toast.error('Please enter a valid email address with Gmail, Yahoo, or iCloud domain')
+            return
+        }
+
+
+        let a:any=await signInApi({ data: { email: em, password: p, rememberMe: rem } }).then((result) => {
+            console.log(result);
+            dispatch(setStudentDetails(result.user.userData))
+            naviagate('/user/home')    
+        })
     };
 
     return (
@@ -84,7 +110,7 @@ const SignIn: React.FC = () => {
                         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                         <button type="submit" className="bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800">Sign In</button>
                         <p className='text-center mt-4'>Don’t have an account? <Link to={"/user/signUp"} className="text-blue-500 hover:underline">Sign Up</Link></p>
-                        <div className="mt-4 flex items-center justify-center">
+                        {/* <div className="mt-4 flex items-center justify-center">
                             <hr className="w-1/4 border-gray-400" />
                             <p className="mx-2 text-sm text-gray-500 text-center">Or continue with email</p>
                             <hr className="w-1/4 border-gray-400" />
@@ -92,7 +118,7 @@ const SignIn: React.FC = () => {
                         <button type="button" className="mt-4 bg-white w-full text-black px-4 py-2 border-2 rounded hover:bg-gray-100 flex items-center justify-center">
                             <img src="/src/assets/google-icon.png" alt="Google Icon" className="h-5 w-5" />
                             <span className="mr-2">Sign In with Google</span>
-                        </button>
+                        </button> */}
                     </form>
                 </div>
                 <div className="w-[812px] max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')" }}>

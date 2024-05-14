@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { signInApi } from '../../services/student/api'
+import { adminSignInApi } from '../../services/admin/api';
+import { toast } from 'sonner';
+import { useDispatch } from 'react-redux';
+import { setAdminDetails } from '../../store/slice/adminSlice';
 
 const AdminSignIn: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
-    const [rememberMe, setRememberMe] = useState<boolean>(false);
+    let dispatch = useDispatch()
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -45,9 +48,36 @@ const AdminSignIn: React.FC = () => {
         const datas: FormData = new FormData(e.currentTarget)
         const em: string | null = datas.get('email')
         const p: string | null = datas.get('password')
-        const rem: boolean = datas.get('rememberMe') === 'on';
+        if(!em || !p){
+            toast.error('Please fill out all fields')
+            return
+        }
+        if(!validateEmail(em)){
+            toast.error('Please enter a valid email address with Gmail, Yahoo, or iCloud domain')
+            return
+        }
 
-       
+        if (!p.trim()) {
+            toast.error('Password cannot be empty')
+            return
+        }
+
+        let a = await adminSignInApi({ data: { email: em, password: p } }).then((result) => {
+            console.log('result',result.admin.admin);
+            
+            if(result.statusCode===200){
+                console.log(result.admin.admin);
+                
+                toast.success("Login successful")
+                dispatch(setAdminDetails(result.admin.admin))
+                
+            }else if(result.statusCode===400){
+                toast.error("Invalid credentials")
+            }
+        }).catch((err) => {
+            toast.error('admin not found');
+            console.log(err);
+        })
     };
 
     return (
@@ -70,30 +100,18 @@ const AdminSignIn: React.FC = () => {
                                 </button>
                             </div>
                         </div>
-                        <div className="flex justify-between">
-                            <div className="flex items-center mb-4">
-                                <input type="checkbox" id="rememberMe" name="rememberMe" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} className="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 border-2 rounded" />
-                                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">Remember me</label>
-                            </div>
+                        <div className="">
                             <div className="mb-4">
-                                <a href="#" className="text-sm text-blue-500 hover:underline">Forget Password?</a>
+                                <Link to="#" className="text-sm text-blue-500 hover:underline">Forget Password?</Link>
                             </div>
                         </div>
                         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                         <button type="submit" className="bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800">Sign In</button>
-                        <p className='text-center mt-4'>Don’t have an account? <Link to={"/user/signUp"} className="text-blue-500 hover:underline">Sign Up</Link></p>
-                        <div className="mt-4 flex items-center justify-center">
-                            <hr className="w-1/4 border-gray-400" />
-                            <p className="mx-2 text-sm text-gray-500 text-center">Or continue with email</p>
-                            <hr className="w-1/4 border-gray-400" />
-                        </div>
-                        <button type="button" className="mt-4 bg-white w-full text-black px-4 py-2 border-2 rounded hover:bg-gray-100 flex items-center justify-center">
-                            <img src="/src/assets/google-icon.png" alt="Google Icon" className="h-5 w-5" />
-                            <span className="mr-2">Sign In with Google</span>
-                        </button>
+
+
                     </form>
                 </div>
-                <div className="w-[812px] max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')" }}>
+                <div className="w-[812px] max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80')" }}>
                 </div>
             </div>
         </div>
