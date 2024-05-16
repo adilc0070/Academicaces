@@ -3,7 +3,7 @@ import LandingPage from './pages/LandingPage';
 import UserRoute from './Routes/UserRoute';
 import AdminRoute from './Routes/AdminRoute';
 import { Toaster } from 'sonner'
-import dotenv from "dotenv"
+import InstructorRoutes from './Routes/InstructorRoutes';
 
 
 function App() {
@@ -12,8 +12,9 @@ function App() {
       <Toaster richColors position='top-right' closeButton />
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/user/*" element={<UserRoute />} />
+        <Route path="/*" element={<UserRoute />} />
         <Route path="/admin/*" element={<AdminRoute />} />
+        <Route path='/instructor/*' element={<InstructorRoutes />} />
       </Routes>
     </>
   );

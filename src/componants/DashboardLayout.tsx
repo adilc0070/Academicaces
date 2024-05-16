@@ -51,14 +51,14 @@ function DashboardLayout() {
                                 (
                                     <>
 
-                                        <a href="/user/signIn" className="text-gray-200 hover:text-white focus:text-white dark:text-gray-400">Login</a>
-                                        <a href="#" className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 md:px-5 md:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Sign up</a>
+                                        <a href="/signIn" className="text-gray-200 hover:text-white focus:text-white dark:text-gray-400">Login</a>
+                                        <a href="/signUp" className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 md:px-5 md:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Sign up</a>
                                     </>
                                 ) :
                                 (
                                     <>
 
-                                        <a href="/user/signOut" className="text-gray-200 hover:text-white focus:text-white dark:text-gray-400">Logout</a>
+                                        <a href="/signOut" className="text-gray-200 hover:text-white focus:text-white dark:text-gray-400">Logout</a>
                                     </>
                                 )
 

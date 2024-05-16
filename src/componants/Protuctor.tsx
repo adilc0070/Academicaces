@@ -37,7 +37,7 @@ export function StudentIsLoggedOut() {
     const userId = useSelector((state:RootState)=>state.student.email)
 
     return (
-        userId ? <Navigate to='/user/home'/> : <Outlet/>
+        userId ? <Navigate to='/home'/> : <Outlet/>
     )
 }
 

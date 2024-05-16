@@ -40,7 +40,7 @@ const OTPVerification: React.FC = ({ emailOTP }: any) => {
                 console.log(result.user.userData);
                 toast.success(result?.user?.message);
                 dispatch(setStudentDetails(result.user.userData))
-                navigate('/user/home')
+                navigate('/home')
 
             }).catch((err) => {
                 toast.error(err?.response?.data?.message);
