@@ -1,11 +1,11 @@
 import DashBoard from '../../componants/DashBoard';
-import InstructorLayout from '../../componants/InstructorsLayout';
+import StudentLayout from '../../componants/StudentLayOut';
 
 function HomePage() {
     return (
-        <InstructorLayout >
+        <StudentLayout >
             <DashBoard />
-        </InstructorLayout>
+        </StudentLayout>
 
     );
 }

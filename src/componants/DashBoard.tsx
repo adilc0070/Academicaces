@@ -1,6 +1,7 @@
 import React from 'react'
 import CardITems from './CardITems';
 import CardTable from './CardTable';
+import CardFullLength from './CardFullLength';
 
 function DashBoard() {
     return (
@@ -37,7 +38,7 @@ function DashBoard() {
             </div>
             <div className="bg-white p-4 rounded-lg shadow mb-4">
                 <div className="mb-4 border p-3 font-medium border-gray-300">Candidate Overview</div>
-                <div className="h-64 bg-gray-200">[Chart]</div>
+                <div className="h-64 bg-gray-200">[Chaasdsdaasdasrt]</div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="bg-white p-4 rounded-lg shadow">
@@ -81,6 +82,8 @@ function DashBoard() {
                 <CardITems />
                 <CardITems />
                 <CardITems />
+                <CardITems />
+                <CardFullLength/>
 
             </div>
         </div>
