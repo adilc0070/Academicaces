@@ -3,7 +3,7 @@ import axios from "axios";
 
 
 const api = axios.create({
-    baseURL: process.env.BASE_URL,
+    baseURL: "http://localhost:3000",
 });
 
 type data={
@@ -13,13 +13,14 @@ type data={
     password: string
 }
 
-export const instructorSignUpApi = async (data: data) => {
-    const response = await api.post("/auth/instructor/signup", data)
+export const instructorSignUpApi = async (data: data) => {    
+    const response = await api.post("/auth/instructor/signUp", data)
+    console.log(response.data);
     return response.data
 }
 
 export const instructorSignInApi = async (data: data) => {
-    const response = await api.post("/auth/instructor/signin", data)
+    const response = await api.post("/auth/instructor/signIn", data)
     return response.data
 }
 

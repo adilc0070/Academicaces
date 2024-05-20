@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Logo from "./Logo";
 
-const StudentLayout = ({ children }): React. => {
+const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (

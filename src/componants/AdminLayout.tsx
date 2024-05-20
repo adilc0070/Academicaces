@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Logo from './Logo';
 
-const AdminLayout = ({ children }): React.ReactElement => {
+const AdminLayout = ({ children }: { children: React.ReactNode })=> {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (

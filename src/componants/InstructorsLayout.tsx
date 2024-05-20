@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const InstructorLayout = ({ children }): React.ReactElement => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -10,11 +11,11 @@ const InstructorLayout = ({ children }): React.ReactElement => {
         <div className="text-2xl font-bold mb-8">Dashboard</div>
         <nav>
           <ul>
-            <li className="mb-4"><a href="#" className="block">Create New Course</a></li>
-            <li className="mb-4"><a href="#" className="block">My Courses</a></li>
-            <li className="mb-4"><a href="#" className="block">Earning</a></li>
-            <li className="mb-4"><a href="#" className="block">Message</a></li>
-            <li className="mb-4"><a href="#" className="block">Settings</a></li>
+            {['Dashboard', 'Courses', 'ManageCourses','Earnings',"Message", 'Settings'].map((item, index) => (
+              <li key={index} className="mb-4"><Link to={`/instructor/${item.toLowerCase()}`} className="block">{item}</Link></li>
+              
+            ))}
+            
           </ul>
         </nav>
       </aside>

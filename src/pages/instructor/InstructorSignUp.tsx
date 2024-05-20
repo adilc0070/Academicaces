@@ -1,17 +1,82 @@
 import React, { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { signUpApi } from '../../services/student/api'
+import { instructorSignUpApi } from '../../services/instructor/api';
+import { toast } from 'sonner';
 
 const InstructorSignUp: React.FC = () => {
-    const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
-    const [userName, setUserName] = useState<string>('');
+    const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [bio, setBio] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
-    const [error, setError] = useState<string>('');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+    const [nameError, setNameError] = useState<string>('');
+    const [emailError, setEmailError] = useState<string>('');
+    const [bioError, setBioError] = useState<string>('');
+    const [passwordError, setPasswordError] = useState<string>('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
+    const [success, setSuccess] = useState<string>('');
+
+    const validateEmail = (email: string): boolean => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|icloud)\.com$/;
+        return emailRegex.test(email);
+    };
+
+    const validatePassword = (password: string): boolean => {
+        const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
+        return passwordRegex.test(password);
+    };
+
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        const value = e.target.value;
+        setName(value);
+        if (!value.trim()) {
+            setNameError('Name is required.');
+        } else {
+            setNameError('');
+        }
+    };
+
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        const value = e.target.value;
+        setEmail(value);
+        if (!validateEmail(value)) {
+            setEmailError('Please enter a valid email address with Gmail, Yahoo, or iCloud domain.');
+        } else {
+            setEmailError('');
+        }
+    };
+    const handleBioChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        const value = e.target.value;
+        setBio(value);
+        if (value.length < 10) {
+            setBioError('Please enter about 10 characters of your self.');
+        } else {
+            setBioError('');
+        }
+    };
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        const value = e.target.value;
+        setPassword(value);
+        if (!validatePassword(value)) {
+            setPasswordError('Password must be at least 8 characters long and include a number and a special character.');
+        } else {
+            setPasswordError('');
+        }
+    };
+
+    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        const value = e.target.value;
+        setConfirmPassword(value);
+        if (value !== password) {
+            setConfirmPasswordError('Passwords do not match.');
+        } else {
+            setConfirmPasswordError('');
+        }
+    };
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -21,118 +86,142 @@ const InstructorSignUp: React.FC = () => {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
-    const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const { value } = e.target;
-        setUserName(value);
-    };
-
-    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const { value } = e.target;
-        setEmail(value);
-
-        // Validation: Check if email is valid
-        if (!validateEmail(value)) {
-            setError('Please enter a valid email address.');
-        } else {
-            setError('');
-        }
-    };
-
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const { value } = e.target;
-        setPassword(value);
-
-        // Validation: Check if password meets criteria
-        if (value.length < 8) {
-            setError('Password must be at least 8 characters long.');
-        } else {
-            setError('');
-        }
-    };
-
-    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const { value } = e.target;
-        setConfirmPassword(value);
-
-        // Validation: Check if passwords match
-        if (value !== password) {
-            setError('Passwords do not match.');
-        } else {
-            setError('');
-        }
-    };
-
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setSuccess('');
 
-        // Validation: Check if all fields are filled
-        
-        let data = new FormData();
-        let Name = data.get('userName');
-        let Email = data.get('email');
-        let Bio = data.get('bio');
-        let Password = data.get('password');
-        
-        if (!userName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-            setError('Please fill out all fields.');
+        if (!name.trim()) {
+            setNameError('Name is required.');
             return;
         }
-        await signUpApi({ data: { userName: userName, email: email, bio: bio, password: password } }).then((result) => {
-            console.log(result);
-        }).catch((err) => {
-            console.log(err);
-            
-        });
-    };
+        if (!validateEmail(email)) {
+            setEmailError('Please enter a valid email address with Gmail, Yahoo, or iCloud domain.');
+            return;
+        }
+        if (!validatePassword(password)) {
+            setPasswordError('Password must be at least 8 characters long and include a number and a special character.');
+            return;
+        }
+        if (password !== confirmPassword) {
+            setConfirmPasswordError('Passwords do not match.');
+            return;
+        }
+        if (bio.length < 10) {
+            setBioError('Please enter about 10 characters of your self.');
+            return;
+        }
 
-    const validateEmail = (email: string): boolean => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+        try {
+            // API call to sign up the user
+            await instructorSignUpApi({ data: { userName: name, email: email, bio: bio, password: password } }).then((result) => {
+                console.log(result.data);
+                toast.success('Account created successfully. Please check your email to verify your account.');
+            });
+        } catch (error) {
+            setSuccess('asdsadasd');
+            setNameError('Failed to create account. Please try again later.');
+        }
     };
 
     return (
-        <div className="gradient-bg h-screen flex items-center justify-center">
-            <div className="w-[1008px] bg-white md:border-2 md:border-black border-2 rounded-lg flex justify-center">
-                <div className="w-[500px] p-8 border-black border-2 rounded-lg">
-                    <h2 className="text-5xl text-center font-bold mb-4">Welcome</h2>
-                    <p className="text-gray-600 text-center text-md font-medium mb-8">Enter your details to create an account.</p>
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-4">
-                            <label htmlFor="userName" className="block text-sm font-medium text-gray-700">User Name</label>
-                            <input type="text" id="userName" name="userName" className="mt-1 p-2 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" value={userName} onChange={handleUserNameChange} />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" id="email" name="email" className="mt-1 p-2 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" value={email} onChange={handleEmailChange} />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="bio" className="block text-sm font-medium text-gray-700">About Your Self</label>
-                            <input type="text" id="bio" name="bio" className="mt-1 p-2 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" value={bio} onChange={(e) => setBio(e.target.value)} />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                            <div className="relative">
-                                <input type={showPassword ? "text" : "password"} id="password" name="password" className="mt-1 p-2 pr-10 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" value={password} onChange={handlePasswordChange} />
-                                <button type="button" className="absolute inset-y-0 right-0 px-3 py-2 bg-blue-500 text-white border-2 rounded-r focus:outline-none" onClick={togglePasswordVisibility}>
-                                    {showPassword ? <BsEyeSlash /> : <BsEye />}
-                                </button>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="bg-white shadow-lg rounded-lg flex max-w-4xl w-full overflow-hidden">
+                {/* Left side with form */}
+                <div className="w-full md:w-1/2 p-8">
+                    <h2 className="text-3xl font-koulen text-center text-blue-600">Academicaces</h2>
+                    <p className="text-center text-gray-600 mt-4">Create your account</p>
+                    {(nameError || emailError || passwordError || confirmPasswordError) && <p className="text-red-500 text-sm mt-1">{(nameError || emailError || passwordError || confirmPasswordError)}</p>}
+                    <div className="mt-6">
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-4">
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    className={`mt-1 p-2 block w-full border-2 rounded ${nameError ? 'border-red-500' : 'border-gray-300'} focus:ring-indigo-500 focus:border-indigo-500`}
+                                    value={name}
+                                    onChange={handleNameChange}
+                                />
+
                             </div>
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
-                            <div className="relative">
-                                <input type={showConfirmPassword ? "text" : "password"} id="confirmPassword" name="confirmPassword" className="mt-1 p-2 pr-10 block w-full border-2 rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" value={confirmPassword} onChange={handleConfirmPasswordChange} />
-                                <button type="button" className="absolute inset-y-0 right-0 px-3 py-2 bg-blue-500 text-white border-2 rounded-r focus:outline-none" onClick={toggleConfirmPasswordVisibility}>
-                                    {showConfirmPassword ? <BsEyeSlash /> : <BsEye />}
-                                </button>
+                            <div className="mb-4">
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    className={`mt-1 p-2 block w-full border-2 rounded ${emailError ? 'border-red-500' : 'border-gray-300'} focus:ring-indigo-500 focus:border-indigo-500`}
+                                    value={email}
+                                    onChange={handleEmailChange}
+                                />
+
                             </div>
-                        </div>
-                        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-                        <button type="submit" className="bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800">Sign Up</button>
-                        <p className='text-center mt-4'>Do you have an account? <Link to="/user/signIn" className="text-blue-500 hover:underline">Sign In</Link></p>
-                    </form>
+                            <div className="mb-4">
+                                <label htmlFor="bio" className="block text-sm font-medium text-gray-700">About Your self</label>
+                                <input
+                                    type="text"
+                                    id="bio"
+                                    name="bio"
+                                    className={`mt-1 p-2 block w-full border-2 rounded ${bioError ? 'border-red-500' : 'border-gray-300'} focus:ring-indigo-500 focus:border-indigo-500`}
+                                    value={bio}
+                                    onChange={handleBioChange}
+                                />
+
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        id="password"
+                                        name="password"
+                                        className={`mt-1 p-2 pr-10 block w-full border-2 rounded ${passwordError ? 'border-red-500' : 'border-gray-300'} focus:ring-indigo-500 focus:border-indigo-500`}
+                                        value={password}
+                                        onChange={handlePasswordChange}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute inset-y-0 right-0 px-3 py-2 bg-gray-200 text-gray-600 border-2 rounded-r focus:outline-none"
+                                        onClick={togglePasswordVisibility}
+                                    >
+                                        {showPassword ? <BsEyeSlash /> : <BsEye />}
+                                    </button>
+                                </div>
+
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        className={`mt-1 p-2 pr-10 block w-full border-2 rounded ${confirmPasswordError ? 'border-red-500' : 'border-gray-300'} focus:ring-indigo-500 focus:border-indigo-500`}
+                                        value={confirmPassword}
+                                        onChange={handleConfirmPasswordChange}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute inset-y-0 right-0 px-3 py-2 bg-gray-200 text-gray-600 border-2 rounded-r focus:outline-none"
+                                        onClick={toggleConfirmPasswordVisibility}
+                                    >
+                                        {showConfirmPassword ? <BsEyeSlash /> : <BsEye />}
+                                    </button>
+                                </div>
+
+                            </div>
+                            {success && <p className="text-green-500 text-sm mb-4">{success}</p>}
+                            <button type="submit" className={`bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800 ${!name || !email || !password || !confirmPassword ? 'opacity-50 cursor-not-allowed' : ''}`}>Sign Up</button>
+                            <p className='text-center mt-4'>Already have an account? <Link to={"/instructor/signIn"} className="text-blue-500 hover:underline">Sign In</Link></p>
+                        </form>
+                    </div>
                 </div>
-                <div className="w-[812px] max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')" }}>
+                {/* Right side with image */}
+                <div className="hidden md:block w-1/2 bg-blue-500 bg-transparent rounded-r-lg ">
+                    <div className="h-full flex items-center justify-center p-8">
+                        <img src="https://img.freepik.com/free-photo/female-african-american-speaker-giving-presentation-hall-university-workshop_155003-3580.jpg?t=st=1716007090~exp=1716010690~hmac=1c382da9dda4ce7da6b3a376fbb01b63059c8dd6d86abedcf470c30af4c29241&w=740" alt="Academicases image" className="object-cover h-full w-full rounded-r-lg" />
+                    </div>
                 </div>
             </div>
         </div>
