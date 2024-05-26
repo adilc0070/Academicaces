@@ -104,11 +104,13 @@ const CourseCurriculum = () => {
                 <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l">
                     Previous
                 </button>
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r ml-2">
+                <button onClick={()=>{}} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r ml-2">
                     Submit
                 </button>
             </div>
+
         </div>
+        
     );
 };
 

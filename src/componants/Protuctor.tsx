@@ -58,7 +58,7 @@ export function InstructorIsLoggedOut() {
 
     return (
 
-        doctorId ? <Navigate to='/instructor/home'/> : <Outlet/>
+        doctorId ? <Navigate to='/instructor/dashboard'/> : <Outlet/>
 
     )
 }

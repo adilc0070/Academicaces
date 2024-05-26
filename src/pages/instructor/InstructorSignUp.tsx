@@ -130,7 +130,7 @@ const InstructorSignUp: React.FC = () => {
                 <div className="w-full md:w-1/2 p-8">
                     <h2 className="text-3xl font-koulen text-center text-blue-600">Academicaces</h2>
                     <p className="text-center text-gray-600 mt-4">Create your account</p>
-                    {(nameError || emailError || passwordError || confirmPasswordError) && <p className="text-red-500 text-sm mt-1">{(nameError || emailError || passwordError || confirmPasswordError)}</p>}
+                    {(nameError || emailError|| bioError || passwordError || confirmPasswordError) && <p className="text-red-500 text-sm mt-1">{(nameError || emailError|| bioError || passwordError || confirmPasswordError)}</p>}
                     <div className="mt-6">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">

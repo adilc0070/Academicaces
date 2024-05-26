@@ -6,7 +6,7 @@ import CourseCurriculum from '../../componants/CourseCurriculum'
 function AddCourse() {
     return (
         <InstructorLayout>
-            {/* <CourseAddingForm /> */}
+            <CourseAddingForm />
             <CourseCurriculum />
         </InstructorLayout>
     )

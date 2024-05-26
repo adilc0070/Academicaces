@@ -1,9 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { CgLogOut } from "react-icons/cg";
+import { Link, useNavigate } from "react-router-dom";
+import { setInstructorLogOut } from "../store/slice/instructorSlice";
+import { useDispatch, } from "react-redux";
 const InstructorLayout = ({ children }): React.ReactElement => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const dispatch=useDispatch()
+  let navigate=useNavigate()
+  const logoutHandle=()=>{
+    dispatch(setInstructorLogOut())
+    localStorage.removeItem('instructorToken')
+    navigate('/instructor/signIn')    
+  }
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
@@ -11,11 +19,13 @@ const InstructorLayout = ({ children }): React.ReactElement => {
         <div className="text-2xl font-bold mb-8">Dashboard</div>
         <nav>
           <ul>
-            {['Dashboard', 'Courses', 'ManageCourses','Earnings',"Message", 'Settings'].map((item, index) => (
-              <li key={index} className="mb-4"><Link to={`/instructor/${item.toLowerCase()}`} className="block">{item}</Link></li>
-              
+            {['Dashboard', 'Courses', 'ManageCourses', 'Earnings', "Message", 'Settings'].map((item, index) => (
+              (window.location.pathname).includes(`/instructor/${item.toLowerCase()}`) ? <li key={index} className="mb-4 bg-blue-700"><Link to={`/instructor/${item.toLowerCase()}`} className="block bg-blue-700 text-white font-bold">{item}</Link></li> :
+                <li key={index} className="mb-4"><Link to={`/instructor/${item.toLowerCase()}`} className="block">{item}</Link></li>
+
             ))}
-            
+            <li onClick={() => logoutHandle()} className="mb-4"><a href="#" className="block"><CgLogOut className="inline-block mr-3" size={28}/>Logout</a></li>
+
           </ul>
         </nav>
       </aside>

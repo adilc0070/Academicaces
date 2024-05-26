@@ -13,7 +13,7 @@ function InstructorRoutes() {
                 <Route path='/signUp' element={<InstructorSignUp />} />
             </Route>
             <Route path='/dashboard' element={<HomePage />} />
-            <Route path='/managecourses' element={<AddCourse/>} />
+            <Route path='/managecourses' element={<AddCourse />} />
             <Route path='/' element={<InstructorIsLoggedIn />}>
             </Route>
         </Routes>

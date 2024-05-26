@@ -3,6 +3,8 @@ import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { instructorSignInApi } from '../../services/instructor/api';
+import { useDispatch } from 'react-redux';
+import { setInstructorDetails } from '../../store/slice/instructorSlice';
 
 const InstructorSignIn: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -11,6 +13,7 @@ const InstructorSignIn: React.FC = () => {
     const [emailError, setEmailError] = useState<string>('');
     const [passwordError, setPasswordError] = useState<string>('');
     const [success, setSuccess] = useState<string>('');
+    const dispatch=useDispatch()
 
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|icloud)\.com$/;
@@ -65,10 +68,14 @@ const InstructorSignIn: React.FC = () => {
                 console.log(result);
                 if(result.statusCode===200){
                     toast.success('Signed in successfully.');
-                    setSuccess('Signed in successfully.');
-                    window.location.href = '/instructor/home';
+                    toast.warning(result.instructor.message);
+                    localStorage.setItem('instructorToken', result);
+                    dispatch(setInstructorDetails(result.instructor));
+
+                }else{
+
+                    toast.error('Failed to sign in. Please check your email and password and try again.');
                 }
-                toast.error('Failed to sign in. Please check your email and password and try again.');
             });
         } catch (error) {
             setSuccess('');
