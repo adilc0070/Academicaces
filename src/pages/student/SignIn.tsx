@@ -109,7 +109,8 @@ const SignIn: React.FC = () => {
                         </div>
                         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                         <button type="submit" className="bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800">Sign In</button>
-                        <p className='text-center mt-4'>Don’t have an account? <Link to={"/user/signUp"} className="text-blue-500 hover:underline">Sign Up</Link></p>
+                        <p className='text-center mt-4'>Don’t have an account? <Link to={"/signUp"} className="text-blue-500 hover:underline">Sign Up</Link></p>
+                        <p className='text-center mt-4'>Instructor can sign up here <Link to={"/instructor/signIn"} className="text-blue-500 hover:underline">Instructor</Link></p>
                         {/* <div className="mt-4 flex items-center justify-center">
                             <hr className="w-1/4 border-gray-400" />
                             <p className="mx-2 text-sm text-gray-500 text-center">Or continue with email</p>

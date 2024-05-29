@@ -138,7 +138,7 @@ const SignUp: React.FC = () => {
                             </div>
                         </div>
                         <button type="submit" className="bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800">Sign Up</button>
-                        <p className='text-center mt-4'>Do you have an account? <Link to="/user/signIn" className="text-blue-500 hover:underline">Sign In</Link></p>
+                        <p className='text-center mt-4'>Do you have an account? <Link to="/signIn" className="text-blue-500 hover:underline">Sign In</Link></p>
                     </form>
                 </div>
                 <div className="w-[812px] max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')" }}>

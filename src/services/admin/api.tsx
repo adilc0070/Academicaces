@@ -30,7 +30,9 @@ export const blockStudentApi = async (id: string, status: string) => {
 }
 
 export const listInstructorsApi = async () => {
+    
     const response = await api.get('/admin/listInstructors')
+    console.log("listInstructors Api ",response.data);
     return response.data
 }
 
@@ -49,4 +51,11 @@ export const blockInstructorApi = async (id: string) => {
     return response.data
 }
 
-
+export const addCategoryApi = async (data) => {
+    const response = await api.post('/admin/addCatagorie', data)
+    return response.data
+}
+export const listCatogoriesApi = async () => {
+    const response = await api.get('/admin/listCatagories')    
+    return response.data
+}

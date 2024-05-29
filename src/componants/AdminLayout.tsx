@@ -1,8 +1,20 @@
 import { useState } from 'react';
 import Logo from './Logo';
+import { setAdminLogOut } from '../store/slice/adminSlice';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
-const AdminLayout = ({ children }: { children: React.ReactNode })=> {
+const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const handleLogOut = () => {
+        dispatch(setAdminLogOut())
+        localStorage.removeItem('adminToken')
+        window.location.reload();
+        navigate('/admin/signIn');
+    }
 
     return (
         <div className="flex min-h-screen bg-gray-100">
@@ -11,10 +23,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode })=> {
                 <nav>
                     <ul>
                         {
-                            ["Instructors",'Students',"Categories", "Earning","Message","Settings",].map((item, index) => (
-                                <li key={index} className="mb-4"><a href="#" className="block">{item}</a></li>
+                            ["Instructors", 'Students', "Categories", "Earning", "Message", "Settings",].map((item, index) => (
+                                <li key={index} className="mb-4"><p onClick={() => navigate(`/admin/${item.toLowerCase()}`)} className="block">{item}</p></li>
                             ))
                         }
+                        <li onClick={() => handleLogOut()} className="mb-4"><a href="#" className="block">LogOut</a></li>
                     </ul>
                 </nav>
             </aside>

@@ -43,6 +43,12 @@ export const listCourses = async () => {
     const response = await api.get("/instructor/listCourses")
     return response.data
 }
+export const addCourseApi=async (data)=>{
+    console.log('dat',data)
+    const response = await api.post('/instructor/addCourse',data)
+    return response.data
+
+}
 
 
 
