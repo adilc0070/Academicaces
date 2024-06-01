@@ -5,6 +5,8 @@ import AdminDashboard from '../pages/admin/AdminDashboard';
 import StudentList from '../pages/admin/studentList';
 import CategoryManagement from '../pages/admin/CategoryManagement';
 import InstructorsList from '../pages/admin/InstructorList';
+import Error400admin from '../pages/admin/Error400';
+
 
 function AdminRoute() {
     return (
@@ -13,10 +15,11 @@ function AdminRoute() {
                 <Route path="/signIn" element={<AdminSignIn />} />
             </Route>
             <Route path='/' element={<AdminIsLoggedIn />} >
-                <Route path='/dashboard' element={<AdminDashboard/>} />
-                <Route path='/students' element={<StudentList/>} />
-                <Route path='/instructors' element={<InstructorsList/>} />
-                <Route path='/categories' element={<CategoryManagement/>} />
+                <Route path='/dashboard' element={<AdminDashboard />} />
+                <Route path='/students' element={<StudentList />} />
+                <Route path='/instructors' element={<InstructorsList />} />
+                <Route path='/categories' element={<CategoryManagement />} />
+                <Route path='/*' element={<Error400admin />} />
             </Route>
 
         </Routes>

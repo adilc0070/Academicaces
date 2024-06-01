@@ -1,6 +1,3 @@
-// import { useEffect, useState } from 'react'
-import CardITems from './CardITems';
-import CardTable from './CardTable';
 import CardFullLength from './CardFullLength';
 // import { listInstructorsApi } from '../services/admin/api';
 
@@ -77,13 +74,7 @@ function DashBoard() {
                     <div className="h-32 bg-gray-200">[Chat]</div>
                 </div>
 
-                {/* <CardTable data={data} /> */}
-
-                {/* <CardITems />
-                <CardITems />
-                <CardITems />
-                <CardITems />
-                <CardITems /> */}
+                
                 <CardFullLength />
 
             </div>

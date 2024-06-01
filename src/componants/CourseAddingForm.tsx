@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
 import { listCatogoriesApi } from "../services/admin/api";
 import { addCourseApi } from "../services/instructor/api";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 const CourseAddingForm = () => {
+    const instructor = useSelector((state: RootState) => state.instructor);
     const [categories, setCategories] = useState([]);
+    const [thumbnail, setThumbnail] = useState(null); // Initialize as null
+    // const [video, setVideo] = useState("");
     const [formData, setFormData] = useState({
         thumbnail: "",
         video: "",
         title: "",
         subtitle: "",
         category: "",
-        topic: ""
+        topic: "",
+        instructor: instructor.email
     });
     const [formErrors, setFormErrors] = useState({});
 
@@ -20,6 +26,23 @@ const CourseAddingForm = () => {
             setCategories(result.catogaries);
         });
     }, []);
+
+    const setFileToBase = (file) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            setThumbnail(reader.result);
+        }
+    }
+
+    const handleThumbnailChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFileToBase(file);
+            setFormData({ ...formData, thumbnail: file });
+        }
+        console.log("thumbnail file", file);
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -73,13 +96,25 @@ const CourseAddingForm = () => {
                         <label className="block text-sm font-medium text-gray-700">Course Thumbnail</label>
                         <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                             <div className="space-y-1 text-center">
-                                <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                    <path d="M28 8H14a2 2 0 00-2 2v28h28V16L28 8z" fill="#e5e7eb"></path>
-                                </svg>
-                                <div className="flex text-sm text-gray-600">
+                                {thumbnail ? (
+                                    <img src={thumbnail} alt="Thumbnail" className="mx-auto h-48 w-48 object-cover" />
+                                ) : (
+                                    <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                        <path d="M28 8H14a2 2 0 00-2 2v28h28V16L28 8z" fill="#e5e7eb"></path>
+                                    </svg>
+                                )}
+                                <div className="text-sm text-gray-600">
+                                    
                                     <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                         <span>Upload Image</span>
-                                        <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                                        <input id="file-upload" onChange={handleThumbnailChange} name="file-upload" type="file" className="sr-only" />
+                                    </label>
+                                </div>
+                                <div className="flex text-sm text-gray-600">
+                                    
+                                    <label htmlFor="file-delete" className="relative cursor-pointer bg-white rounded-md font-medium text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500">
+                                        <span>Delete Image</span>
+                                        <input id="file-delete" onClick={()=>{setThumbnail(null)}} name="file-delete" type="button" className="sr-only" />
                                     </label>
                                 </div>
                                 <p className="text-xs text-gray-500">PNG, JPG up to 6MB</p>

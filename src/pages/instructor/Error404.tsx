@@ -1,10 +1,10 @@
-import React from 'react'
 import InstructorLayout from '../../componants/InstructorsLayout'
-
+import Error400 from '../../componants/Error400'
 function Error404() {
+
   return (
     <InstructorLayout>
-      <div>page not Found</div>
+      <Error400/>
     </InstructorLayout>
   )
 }

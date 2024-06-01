@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Test from "../../componants/Test";
 import { RootState } from "../../store/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Logo from "../../componants/Logo";
 import { setStudentLogOut } from "../../store/slice/studentSlice";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ function StudentDashboard() {
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const toggleProfileDropdown = () => {
         setIsProfileDropdownOpen(!isProfileDropdownOpen);
     };
@@ -21,8 +22,9 @@ function StudentDashboard() {
     };
     const signOut = () => {
         localStorage.clear();
-        setStudentLogOut()
-        window.location.reload();
+        dispatch(setStudentLogOut())
+        navigate('/signIn')
+        
     }
     let student = useSelector((state: RootState) => state.student);
     return (

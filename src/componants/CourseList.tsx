@@ -1,6 +1,6 @@
 
 import CourseCard from "./CourseCard";
-import Error503 from "./Error503";
+import Error503 from "./Error400";
 type Course = {
     id: number;
     title: string;

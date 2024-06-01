@@ -9,31 +9,31 @@ function CardTable({ data, title, block }) {
                 <table className="items-center w-full border-collapse text-blueGray-700 border-2">
                     <thead className="thead-light">
                         <tr>
-                            <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                            <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-lg uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                                 {`${title} Name`}
                             </th>
-                            <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                            <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-lg uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                                 email
                             </th>
-                            <th className="px-6 bg-blueGray-50 text-blueGray-700 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left min-w-140-px">action</th>
+                            <th className="px-6 bg-blueGray-50 text-blueGray-700 align-middle border border-solid border-blueGray-100 py-3 text-lg uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left min-w-140-px">action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {data.map((item, index) => (
                             <tr key={index}>
-                                <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+                                <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-md  whitespace-nowrap p-4 text-left">
                                     {item.userName}
                                 </th>
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-md  whitespace-nowrap p-4">
                                     {item.email}
                                 </td>
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-md  whitespace-nowrap p-4">
                                     {item.bio}
                                 </td>
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-md  whitespace-nowrap p-4">
                                     <div className="flex items-center gap-x-6">
                                         <button className="text-blue-500 transition-colors duration-200 hover:text-indigo-500 focus:outline-none">
-                                            {item.verified ? <BiLock fontSize={'20px'} onClick={() => block(item._id, item.verified)} /> : <BiLockOpen fontSize={'20px'} onClick={() => block(item._id, item.verified)} />}
+                                            {item.verified ? <BiLock fontSize={'20px'} color='red' onClick={() => block(item._id, item.verified)} /> : <BiLockOpen fontSize={'20px'} color='green' onClick={() => block(item._id, item.verified)} />}
 
                                         </button>
                                     </div>

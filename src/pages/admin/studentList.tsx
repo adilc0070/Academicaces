@@ -13,7 +13,9 @@ function StudentList() {
     }, [])
     let block=async (id,status)=>{
         console.log("id",id,"status",status);
-        await blockStudentApi(id,status)
+        await blockStudentApi(id,status).then((result)=>{
+            setStudents(result.user);
+        })
         
     }
    

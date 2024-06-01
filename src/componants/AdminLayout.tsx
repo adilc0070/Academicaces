@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import Logo from './Logo';
 import { setAdminLogOut } from '../store/slice/adminSlice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { CgLogOut } from 'react-icons/cg';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,7 +14,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         dispatch(setAdminLogOut())
         localStorage.removeItem('adminToken')
         window.location.reload();
-        navigate('/admin/signIn');
+        navigate('/admin/dashboard');
     }
 
     return (
@@ -23,11 +24,16 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <nav>
                     <ul>
                         {
-                            ["Instructors", 'Students', "Categories", "Earning", "Message", "Settings",].map((item, index) => (
-                                <li key={index} className="mb-4"><p onClick={() => navigate(`/admin/${item.toLowerCase()}`)} className="block">{item}</p></li>
+                            ["Dashboard","Instructors", 'Students', "Categories", "Earning", "Message", "Settings",].map((item, index) => (
+                                (window.location.pathname).includes(`/admin/${item.toLowerCase()}`) ? <div onClick={()=>navigate(`/admin/${item.toLowerCase()}`)} key={index} className="block mb-4 bg-sky-950 drop-shadow-none rounded-3xl max-w-full max-h-full p-2 text-center">
+                                    <li className=""><p  className="font-bold ">{item}</p></li>
+                                </div> :
+                                    <div key={index} onClick={()=>navigate(`/admin/${item.toLowerCase()}`)}  className="mb-4 p-2 ">
+                                        <li ><p className="block">{item}</p></li>
+                                    </div>
                             ))
                         }
-                        <li onClick={() => handleLogOut()} className="mb-4"><a href="#" className="block">LogOut</a></li>
+                        <li onClick={() => handleLogOut()} className="mb-4"><p className="block"><CgLogOut className="inline-block mr-3" size={28} />Logout</p></li>
                     </ul>
                 </nav>
             </aside>
@@ -42,7 +48,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
                         </svg>
                     </button>
-                    <div className="text-xl font-bold">Dashboard</div>
+                    <div className="text-xl font-bold">{(window.location.pathname).split('/')[2].toLocaleUpperCase() }</div>
                 </header>
 
                 <main className="flex-1 p-8">

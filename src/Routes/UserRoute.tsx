@@ -10,12 +10,12 @@ function UserRoute() {
     return (
         <Routes>
             <Route path='' element={<StudentIsLoggedOut />} >
-                <Route path='/Tesss' element={<HomePage/>} />
                 <Route path="/signIn" element={<SignIn />} />
                 <Route path="/signUp" element={<SignUp />} />
 
             </Route>
             <Route path="/" element={<StudentIsLoggedIn />} >
+                <Route path='/Tesss' element={<HomePage />} />
                 <Route path="/home" element={<StudentDashboard />} />
             </Route>
         </Routes>

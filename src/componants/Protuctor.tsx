@@ -27,7 +27,7 @@ export function StudentIsLoggedIn() {
     const userId = useSelector((state:RootState)=>state.student.email)
 
     return (
-      userId ? <Outlet/>: <Navigate to='/user/signIn'/> 
+      userId ? <Outlet/>: <Navigate to='/signIn'/> 
     )
 }
 
