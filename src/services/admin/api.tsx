@@ -59,3 +59,19 @@ export const listCatogoriesApi = async () => {
     const response = await api.get('/admin/listCatagories')    
     return response.data
 }
+export const deleteCategoryApi = async (id: string) => {
+    console.log('id',id);
+    
+    const response = await api.delete(`/admin/deleteCatagory/${id}`)
+    return response.data
+}
+
+export const updateCategoryApi= async (id: string, data) => {
+    const response = await api.patch(`/admin/updateCatagory/${id}`, data)
+    console.log("response.data from api",response.data);
+    return response.data
+}
+export const toggleCategoryBlockApi= async (id: string, status: boolean) => {
+    const response = await api.patch(`/admin/toggleCatagoryBlock/${id}`, { status })
+    return response.data
+}
