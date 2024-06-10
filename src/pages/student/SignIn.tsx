@@ -14,9 +14,9 @@ const SignIn: React.FC = () => {
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [rememberMe, setRememberMe] = useState<boolean>(false);
-    const student=useSelector((state:RootState)=>state.student)
-    const dispatch=useDispatch()
-    const naviagate=useNavigate()
+    const student = useSelector((state: RootState) => state.student)
+    const dispatch = useDispatch()
+    const naviagate = useNavigate()
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -65,16 +65,16 @@ const SignIn: React.FC = () => {
             return
         }
 
-        if(!validateEmail(em)){
+        if (!validateEmail(em)) {
             toast.error('Please enter a valid email address with Gmail, Yahoo, or iCloud domain')
             return
         }
 
 
-        let a:any=await signInApi({ data: { email: em, password: p, rememberMe: rem } }).then((result) => {
-            console.log(result);
+        let a: any = await signInApi({ data: { email: em, password: p, rememberMe: rem } }).then((result) => {
+            console.log('result', result);
             dispatch(setStudentDetails(result.user.userData))
-            naviagate('/user/home')    
+            naviagate('/user/home')
         })
     };
 

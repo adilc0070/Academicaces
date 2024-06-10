@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Logo from './Logo';
 import { setAdminLogOut } from '../store/slice/adminSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { CgLogOut } from 'react-icons/cg';
 
@@ -24,11 +24,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <nav>
                     <ul>
                         {
-                            ["Dashboard","Instructors", 'Students', "Categories", "Earning", "Message", "Settings",].map((item, index) => (
-                                (window.location.pathname).includes(`/admin/${item.toLowerCase()}`) ? <div onClick={()=>navigate(`/admin/${item.toLowerCase()}`)} key={index} className="block mb-4 bg-sky-950 drop-shadow-none rounded-3xl max-w-full max-h-full p-2 text-center">
-                                    <li className=""><p  className="font-bold ">{item}</p></li>
+                            ["Dashboard", "Instructors", 'Courses', 'Students', "Categories", "Earning", "Message", "Settings",].map((item, index) => (
+                                (window.location.pathname).includes(`/admin/${item.toLowerCase()}`) ? <div onClick={() => navigate(`/admin/${item.toLowerCase()}`)} key={index} className="block mb-4 bg-sky-950 drop-shadow-none rounded-3xl max-w-full max-h-full p-2 text-center">
+                                    <li className=""><p className="font-bold ">{item}</p></li>
                                 </div> :
-                                    <div key={index} onClick={()=>navigate(`/admin/${item.toLowerCase()}`)}  className="mb-4 p-2 ">
+                                    <div key={index} onClick={() => navigate(`/admin/${item.toLowerCase()}`)} className="mb-4 p-2 ">
                                         <li ><p className="block">{item}</p></li>
                                     </div>
                             ))
@@ -48,7 +48,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
                         </svg>
                     </button>
-                    <div className="text-xl font-bold">{(window.location.pathname).split('/')[2].toLocaleUpperCase() }</div>
+                    <div className="text-xl font-bold">{(window.location.pathname).split('/')[2].toLocaleUpperCase()}</div>
                 </header>
 
                 <main className="flex-1 p-8">

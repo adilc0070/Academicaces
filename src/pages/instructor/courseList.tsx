@@ -13,6 +13,7 @@ function CourseList() {
         const fetchCourses = async () => {
             try {
                 const coursesData = await listCourses(instructor);
+                console.log(coursesData)
                 setCourses(coursesData.courses);
             } catch (error) {
                 console.error("Error fetching courses: ", error);

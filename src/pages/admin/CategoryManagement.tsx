@@ -5,7 +5,7 @@ import AdminLayout from '../../componants/AdminLayout'
 function CategoryManagement() {
     return (
         <AdminLayout>
-            <TableInput title={'Categorys '} />
+            <TableInput title={'Category Management'} />
         </AdminLayout>
     )
 }

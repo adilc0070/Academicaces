@@ -7,6 +7,7 @@ import AddCourse from '../pages/instructor/AddCourse'
 import Error404 from '../pages/instructor/Error404'
 import CourseList from '../pages/instructor/courseList'
 import EditCourse from '../pages/instructor/EditCourse'
+import IndividualCourse from '../pages/instructor/IndividualCourse'
 
 function InstructorRoutes() {
     return (
@@ -22,6 +23,7 @@ function InstructorRoutes() {
                 <Route path='/managecourses' element={<AddCourse />} />
                 <Route path='/courses' element={<CourseList />} />
                 <Route path='/edit-course' element={<EditCourse/>}/>
+                <Route path='/individualCourse' element={<IndividualCourse/>}/>
             </Route>
         </Routes>
     )

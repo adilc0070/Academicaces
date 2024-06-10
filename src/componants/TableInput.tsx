@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { BiLock, BiLockOpen, BiEdit, BiTrash } from 'react-icons/bi';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { addCategoryApi, listCatogoriesApi, updateCategoryApi, toggleCategoryBlockApi, deleteCategoryApi } from '../services/admin/api';
+import { toast } from 'sonner';
 
 function TableInput({ title }) {
     const [data, setData] = useState([]);
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
     const [inputVisible, setInputVisible] = useState(false);
     const [value, setValue] = useState('');
     const [error, setError] = useState('');
@@ -11,18 +16,26 @@ function TableInput({ title }) {
     const [editingValue, setEditingValue] = useState('');
 
     useEffect(() => {
-        listCatogoriesApi().then((result) => {
-            setData(result.catogaries);
-        });
-    }, []);
+        fetchCategories();
+    }, [page]);
+
+    const fetchCategories = async () => {
+        const result = await listCatogoriesApi(page);
+        setData(result.catogaries);
+        setTotal(result.total);
+    };
 
     const handleButtonClick = () => {
         setInputVisible(!inputVisible);
     };
 
-    const validateInput = (inputValue) => {
+    const validateInput = (inputValue, currentIndex = null) => {
         if (inputValue.trim() === '' || inputValue.length < 1) {
-            setError('Input cannot be empty');
+            setError('Input cannot be empty or just spaces');
+            return false;
+        }
+        if (data.some((category, index) => category.name.toLowerCase() === inputValue.toLowerCase().trim() && index !== currentIndex)) {
+            setError('Category name must be unique');
             return false;
         }
         setError('');
@@ -39,8 +52,9 @@ function TableInput({ title }) {
         e.preventDefault();
 
         if (validateInput(value)) {
-            await addCategoryApi({ value }).then((response) => {
-                setData(response.catogary);
+            let response = await addCategoryApi({ value: value.trim() }).then((result) => {
+                toast.success('Category added');
+                setData([result.catogary, ...data]);
             });
 
             setValue('');
@@ -52,18 +66,37 @@ function TableInput({ title }) {
 
     const handleEditChange = (e) => {
         setEditingValue(e.target.value);
+        validateInput(e.target.value, editingIndex);
     };
 
     const handleEditSubmit = async (index) => {
-        if (validateInput(editingValue)) {
-            await updateCategoryApi(data[index]._id, { name: editingValue }).then((response) => {
-                console.log('response', response);
-                const updatedData = [...data];
-                updatedData[index] = response;                
-                setData(response);
+        if (validateInput(editingValue, index)) {
+            confirmAlert({
+                title: 'Confirm to edit',
+                message: `Are you sure you want to edit the category to "${editingValue}"?`,
+                buttons: [
+                    {
+                        label: 'Yes',
+                        onClick: async () => {
+                            await updateCategoryApi(data[index]._id, { name: editingValue.trim() }).then((response) => {
+                                const updatedData = [...data];
+                                updatedData[index] = response;
+                                setData(updatedData);
+                                toast.success('Category updated');
+                            }).catch((error) => {
+                                toast.error('Failed to update category');
+                                console.error(error);
+                            });
+                            setEditingIndex(null);
+                            setEditingValue('');
+                        }
+                    },
+                    {
+                        label: 'No',
+                        onClick: () => { }
+                    }
+                ]
             });
-            setEditingIndex(null);
-            setEditingValue('');
         } else {
             setError('Failed to update category');
         }
@@ -71,25 +104,68 @@ function TableInput({ title }) {
 
     const handleBlockToggle = async (index) => {
         const category = data[index];
-        await toggleCategoryBlockApi(category.id, !category.blocked).then((response) => {
-            const updatedData = [...data];
-            updatedData[index] = response.catogary;
-            setData(updatedData);
+        confirmAlert({
+            title: 'Confirm to block/unblock',
+            message: `Are you sure you want to ${category.isBlock ? 'unblock' : 'block'} the category "${category.name}"?`,
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: async () => {
+                        await toggleCategoryBlockApi(category._id, !category.isBlock).then((response) => {
+                            const updatedData = [...data];
+                            updatedData[index] = response;
+                            setData(updatedData);
+                            toast.success(`Category ${category.isBlock ? 'unblocked' : 'blocked'}`);
+                        }).catch((error) => {
+                            toast.error(`Failed to ${category.isBlock ? 'unblock' : 'block'} category`);
+                            console.error(error);
+                        });
+                    }
+                },
+                {
+                    label: 'No',
+                    onClick: () => { }
+                }
+            ]
         });
     };
 
     const handleDelete = async (index) => {
         const category = data[index];
-        // console.log('category', category);
-        await deleteCategoryApi(category._id).then(() => {
-            const updatedData = data.filter((_, i) => i !== index);
-            setData(updatedData);
+        confirmAlert({
+            title: 'Confirm to delete',
+            message: `Are you sure you want to delete the category "${category.name}"?`,
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: async () => {
+                        await deleteCategoryApi(category._id).then(() => {
+                            const updatedData = data.filter((_, i) => i !== index);
+                            setData(updatedData);
+                            toast.success('Category deleted');
+                        }).catch((error) => {
+                            toast.error('Failed to delete category');
+                            console.error(error);
+                        });
+                    }
+                },
+                {
+                    label: 'No',
+                    onClick: () => { }
+                }
+            ]
         });
     };
 
+    const handlePageChange = (newPage) => {
+        console.log('Page change triggered, new page:', newPage); // Debugging
+        setPage(newPage);
+    };
+
+    
     return (
         <div className="bg-white p-4 rounded-lg shadow">
-            <div className="block w-full overflow-x-auto">
+            <div className="overflow-x-auto">
                 <div className="mb-4 border p-3 font-medium border-gray-300">{title}</div>
 
                 <div className="mb-4 flex justify-end">
@@ -115,89 +191,104 @@ function TableInput({ title }) {
                         className="bg-blue-500 text-white p-2 rounded-lg"
                         onClick={handleButtonClick}
                     >
-                        {inputVisible ? 'Close' : `New ${title}`}
+                        {inputVisible ? 'Close' : `New ${title.split(' ')[0]}`}
                     </button>
                 </div>
                 {error && <div className="text-red-500 mb-4">{error}</div>}
-                <table className="items-center w-full border-collapse text-blueGray-900 si-2">
-                    <thead className="thead-light">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
                         <tr>
-                            <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-md uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
-                                {`${title} Name`}
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {`${title.split(' ')[0]} Name`}
                             </th>
-                            <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-md uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 No Of Course
                             </th>
-                            <th className="px-6 bg-blueGray-50 text-blueGray-700 align-middle border border-solid border-blueGray-100 py-3 text-md uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left min-w-140-px">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Action
                             </th>
-                            <th className="px-6 bg-blueGray-50 text-blueGray-700 align-middle border border-solid border-blueGray-100 py-3 text-md uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left min-w-140-px">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Delete
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="bg-white divide-y divide-gray-200">
                         {data.length === 0 ? (
                             <tr>
-                                <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-md whitespace-nowrap p-4 text-left">
+                                <td className="px-6 py-4 whitespace-nowrap" colSpan="4">
                                     No data
-                                </th>
+                                </td>
                             </tr>
                         ) : (
                             data.map((item, index) => (
                                 <tr key={index}>
-                                    <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-md whitespace-nowrap p-4 text-left">
+                                    <td className="px-6 py-4 whitespace-nowrap">
                                         {editingIndex === index ? (
                                             <input
                                                 type="text"
                                                 value={editingValue}
                                                 onChange={handleEditChange}
-                                                className="border p-2 rounded-lg border-gray-300 w-64 text-red-700 text-lg"
+                                                className="border p-2 rounded-lg border-gray-300 w-full"
                                             />
                                         ) : (
                                             item.name
                                         )}
-                                    </th>
-                                    <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-md whitespace-nowrap p-4">
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
                                         {item.noCoures}
                                     </td>
-                                    <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-md whitespace-nowrap p-4">
-                                        <div className="flex justify-between items-center w-10 gap-x-6">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center gap-x-2">
                                             {editingIndex === index ? (
-                                                <button
-                                                    className="text-green-500 transition-colors duration-200 hover:text-green-700 focus:outline-none"
-                                                    onClick={() => handleEditSubmit(index)}
-                                                >
-                                                    Save
-                                                </button>
+                                                <>
+                                                    <button
+                                                        className="text-green-500 hover:text-green-700"
+                                                        onClick={() => handleEditSubmit(index)}
+                                                    >
+                                                        Save
+                                                    </button>
+                                                    <button
+                                                        className="text-red-500 hover:text-red-700"
+                                                        onClick={() => setEditingIndex(null)}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </>
                                             ) : (
-                                                <button
-                                                className="text-blue-500 transition-colors duration-200 hover:text-indigo-500 focus:outline-none flex items-center"
-                                                onClick={() => {
-                                                    setEditingIndex(index);
-                                                    setEditingValue(item.name);
-                                                }}
-                                            >
-                                                <BiEdit className="mr-1" size={20} />
-                                                <span className="ml-1">Edit</span>
-                                            </button>
-                                            
+                                                <>
+                                                    <button
+                                                        className="text-blue-500 hover:text-indigo-500 flex items-center"
+                                                        onClick={() => {
+                                                            setEditingIndex(index);
+                                                            setEditingValue(item.name);
+                                                        }}
+                                                    >
+                                                        <BiEdit className="mr-1" size={20} />
+                                                        <span className="ml-1">Edit</span>
+                                                    </button>
+                                                    <button
+                                                        className="text-blue-500 hover:text-indigo-500"
+                                                        onClick={() => handleBlockToggle(index)}
+                                                    >
+                                                        {item.isBlock ? (
+                                                            <span className="flex items-center text-green-500 hover:text-green-700">
+                                                                <BiLockOpen className="mr-1" size={20} />
+                                                                <span className="ml-1">Unblock</span>
+                                                            </span>
+                                                        ) : (
+                                                            <span className="flex items-center text-red-500 hover:text-red-700">
+                                                                <BiLock className="mr-1" size={20} />
+                                                                <span className="ml-1">Block</span>
+                                                            </span>
+                                                        )}
+                                                    </button>
+                                                </>
                                             )}
-                                            {/* <button
-                                                className="text-blue-500 transition-colors duration-200 hover:text-indigo-500 focus:outline-none"
-                                                onClick={() => handleBlockToggle(index)}
-                                            >
-                                                {item.verified ? (
-                                                    <BiLockOpen fontSize={'20px'} />
-                                                ) : (
-                                                    <BiLock fontSize={'20px'} />
-                                                )}
-                                            </button> */}
                                         </div>
                                     </td>
-                                    <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-md whitespace-nowrap p-4">
+                                    <td className="px-6 py-4 whitespace-nowrap">
                                         <button
-                                            className="text-red-500 transition-colors duration-200 hover:text-red-700 focus:outline-none"
+                                            className="text-red-500 hover:text-red-700"
                                             onClick={() => handleDelete(index)}
                                         >
                                             <BiTrash fontSize={'20px'} />
@@ -208,6 +299,23 @@ function TableInput({ title }) {
                         )}
                     </tbody>
                 </table>
+                <div className="flex justify-between mt-4">
+                    <button
+                        className="bg-gray-500 text-white p-2 rounded-lg"
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1}
+                    >
+                        Previous
+                    </button>
+                    <span className="p-2 ">Page <strong>{`${page}`}</strong> {` of ${Math.ceil(total / 8)}`}</span>
+                    <button
+                        className="bg-gray-500 text-white p-2 rounded-lg"
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === Math.ceil(total / 8)}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     );

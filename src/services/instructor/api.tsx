@@ -61,20 +61,18 @@ export const addCourseApi = async (data) => {
             'Content-Type': 'multipart/form-data'
         }
     });
-
+    
     return response.data;
 }
 
 export const curriculumApi = async (id, data) => {
-    console.log("id", id, "data", data);
-
     // Create a new FormData object
     const formData = new FormData();
 
     data.forEach((section, index) => {
         formData.append(`sections[${index}][id]`, section.id);
         formData.append(`sections[${index}][name]`, section.name);
-
+        formData.append(`sections[${index}][isFree]`, section.isFree);
         section.lectures.forEach((lecture, lectureIndex) => {
             const lecturePrefix = `sections[${index}][lectures][${lectureIndex}]`;
 
@@ -82,6 +80,7 @@ export const curriculumApi = async (id, data) => {
             formData.append(`${lecturePrefix}[name]`, lecture.name);
             formData.append(`${lecturePrefix}[notes]`, lecture.notes);
             formData.append(`${lecturePrefix}[description]`, lecture.description);
+            
 
             if (lecture.file) {
 
@@ -102,9 +101,6 @@ export const curriculumApi = async (id, data) => {
                 'Content-Type': 'multipart/form-data'
             }
         })
-        console.log(response.data);
-
-
         return response.data;
     } catch (error) {
         throw error;

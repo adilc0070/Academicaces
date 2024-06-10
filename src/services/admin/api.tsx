@@ -15,24 +15,25 @@ export const adminSignInApi = async (data: data) => {
     return response.data
 }
 
-export const listStudentsApi= async () => {
+export const listStudentsApi = async (page = 1, limit = 10) => {
     console.log("listStudents Api ")
-    const response = await api.get('/admin/listUser')
+    const response = await api.get(`/admin/listUser?page=${page}&limit=${limit}`);
     console.log(response);
-    
-    return response.data
+    return response.data;
 }
 
 
-export const blockStudentApi = async (id: string, status: string) => {
-    const response = await api.patch(`/admin//changeStatus/${id}`, { status })
-    return response.data
-}
+
+export const blockStudentApi = async (id, status) => {
+    const response = await api.patch(`/admin/changeStatus/${id}`, { status });
+    return response.data;
+};
+
 
 export const listInstructorsApi = async () => {
-    
+
     const response = await api.get('/admin/listInstructors')
-    console.log("listInstructors Api ",response.data);
+    console.log("listInstructors Api ", response.data);
     return response.data
 }
 
@@ -55,23 +56,35 @@ export const addCategoryApi = async (data) => {
     const response = await api.post('/admin/addCatagorie', data)
     return response.data
 }
-export const listCatogoriesApi = async () => {
-    const response = await api.get('/admin/listCatagories')    
-    return response.data
+export const listCatogoriesApi = async (page = 1, limit = 8) => {
+    const response = await api.get(`/admin/listCatagories?page=${page}&limit=${limit}`);
+    return response.data;
 }
 export const deleteCategoryApi = async (id: string) => {
-    console.log('id',id);
-    
+    console.log('id', id);
+
     const response = await api.delete(`/admin/deleteCatagory/${id}`)
     return response.data
 }
 
-export const updateCategoryApi= async (id: string, data) => {
+export const updateCategoryApi = async (id: string, data) => {
     const response = await api.patch(`/admin/updateCatagory/${id}`, data)
-    console.log("response.data from api",response.data);
+    console.log("response.data from api", response.data);
     return response.data
 }
-export const toggleCategoryBlockApi= async (id: string, status: boolean) => {
-    const response = await api.patch(`/admin/toggleCatagoryBlock/${id}`, { status })
+export const toggleCategoryBlockApi = async (id: string, status: boolean) => {
+    console.log("id", id, "status", status);
+
+    const response = await api.patch(`/admin/catagory/${id}/changeStatus`, { status })
+    return response.data
+}
+
+export const listAllCoursesApi = async () => {
+    const response = await api.get('/admin/listAllCourses')
+    return response.data
+}
+
+export const verifieCourseApi = async (id: string, status: boolean) => {
+    const response = await api.patch(`/admin/course/${id}/changeStatus`, { status })
     return response.data
 }
