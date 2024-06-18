@@ -13,6 +13,7 @@ function InstructorRoutes() {
     return (
         <Routes>
             <Route path='/*' element={<Error404 />} />
+            
             <Route path='' element={<InstructorIsLoggedOut />}>
                 <Route path='/signIn' element={<InstructorSignIn />} />
                 <Route path='/signUp' element={<InstructorSignUp />} />

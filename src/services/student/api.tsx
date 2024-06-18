@@ -16,7 +16,8 @@ export const signInApi = async ({ data }: { data: data }) => {
 }
 
 export const signUpApi = async ({ data }: { data: data }) => {
-
+    console.log('data', data);
+    
     const response = await api.post("auth/user/signUp", data);
     return response.data;
 }
@@ -25,4 +26,5 @@ export const otpSend = async ({ data }: { data: data }) => {
     const response = await api.post(`auth/user/verifyOtp/`, data)
     return response.data;
 }
+
 

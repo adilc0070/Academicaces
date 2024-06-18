@@ -47,7 +47,7 @@ const InstructorLayout = ({ children }): React.ReactElement => {
           <div className="text-xl font-bold">{(window.location.pathname).split('/')[2].toLocaleUpperCase() }</div>
         </header>
 
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 ">
           {children}
         </main>
       </div>

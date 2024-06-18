@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useDispatch } from "react-redux"
 import { setStudentDetails } from "../store/slice/studentSlice"
+import { instructorOtpSend } from '../services/instructor/api';
+import { setInstructorDetails } from '../store/slice/instructorSlice';
 const OTPVerification: React.FC = ({ emailOTP }: any) => {
     const [otp, setOTP] = useState<string[]>(['', '', '', '']);
     const [error, setError] = useState<string>('');
     const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
-    const navigate= useNavigate();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const handleChange = (index: number, value: string) => {
         // Validation: Only accept numbers
@@ -34,18 +36,33 @@ const OTPVerification: React.FC = ({ emailOTP }: any) => {
 
     const handleSubmit = async () => {
         const otpString = otp.join('');
+
         if (otpString.length === 4) {
             console.log('Submitting OTP:', otpString);
-            let ress = await otpSend({ data: { otp: otpString, email:  emailOTP } }).then((result) => {
-                console.log(result.user.userData);
-                toast.success(result?.user?.message);
-                dispatch(setStudentDetails(result.user.userData))
-                navigate('/home')
+            if (window.location.pathname.includes('instructor')) {
 
-            }).catch((err) => {
-                toast.error(err?.response?.data?.message);
-                console.log(err);
-            })
+                await instructorOtpSend({ data: { otp: otpString, email: emailOTP } }).then((result) => {
+                    console.log(" result ", result.user);
+                    toast.success(result?.message);
+                    dispatch(setInstructorDetails(result?.user))
+                    navigate('/instructor/dashboard')
+                    
+                    // dispatch(setInstructorDetails(result?.instructor?.instructor))
+                })
+
+            } else {
+                let ress = await otpSend({ data: { otp: otpString, email: emailOTP } }).then((result) => {
+
+                    toast.success(result?.user?.message);
+                    dispatch(setStudentDetails(result.user.userData))
+                    navigate('/home')
+
+                }).catch((err) => {
+                    toast.error(err?.response?.data?.message);
+                    console.log(err);
+                })
+
+            }
         } else {
             setError('Please fill all fields');
         }

@@ -5,13 +5,12 @@ type Item = {
   heading: string;
   description: string;
   imageName: string;
-  bgColor: string;
   fontColor: string;
-}
+};
 
 type CarouselProps = {
   items: Item[];
-}
+};
 
 const Carousel: React.FC<CarouselProps> = ({ items }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -27,24 +26,30 @@ const Carousel: React.FC<CarouselProps> = ({ items }) => {
   if (items.length === 0) {
     return (
       <div className='flex justify-center items-center w-full h-[800px]'>
-        <div className="flex justify-center items-center w-full h-full">
+        <div className="flex flex-col justify-center items-center">
           <CircularProgress />
-          
-          <p className='mx-6 text-xl'>does not exist</p>
+          <p className='mt-4 text-xl'>No items available</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="flex justify-center w-full h-auto ">
-      <div className={`flex flex-row w-[92%] rounded-3xl mt-9 ${items[activeIndex].bgColor} ${items[activeIndex].fontColor} `} >
-        <div className="flex-1 flex flex-col justify-center items-start mx-4">
-          <h2 className="text-5xl font-bold">{items[activeIndex].heading}</h2>
-          <p className="text-lg">{items[activeIndex].description}</p>
+    <div className="flex justify-center w-full h-auto mt-9">
+      <div className="flex flex-col lg:flex-row w-[92%] bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="flex-1 flex flex-col justify-center items-start p-8">
+          <h2 className="text-4xl font-bold mb-4" style={{ color: items[activeIndex].fontColor }}>{items[activeIndex].heading}</h2>
+          <p className="text-lg mb-4" style={{ color: items[activeIndex].fontColor }}>{items[activeIndex].description}</p>
+          <div className="bg-gray-200 p-2 rounded-full">
+            <span className="text-gray-600">Slide {activeIndex + 1} of {items.length}</span>
+          </div>
         </div>
-        <div className="flex-1 bg-red-200 rounded-xl">
-          <img src={items[activeIndex].imageName} alt={items[activeIndex].heading} className=" h-auto object-cover w-full" style={{ width: '1004px', height: '600px' }} />
+        <div className="flex-1">
+          <img 
+            src={items[activeIndex].imageName} 
+            alt={items[activeIndex].heading} 
+            className="w-full h-full object-cover"
+          />
         </div>
       </div>
     </div>

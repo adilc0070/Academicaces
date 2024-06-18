@@ -17,7 +17,7 @@ function TableInput({ title }) {
 
     useEffect(() => {
         fetchCategories();
-    }, [page]);
+    }, [page,data]);
 
     const fetchCategories = async () => {
         const result = await listCatogoriesApi(page);
@@ -53,7 +53,9 @@ function TableInput({ title }) {
 
         if (validateInput(value)) {
             let response = await addCategoryApi({ value: value.trim() }).then((result) => {
+                console.log(result);
                 toast.success('Category added');
+                
                 setData([result.catogary, ...data]);
             });
 

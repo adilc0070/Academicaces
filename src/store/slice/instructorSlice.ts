@@ -11,12 +11,12 @@ const instructorSlice = createSlice({
     initialState,
     reducers: {
         setInstructorDetails: (state, action) => {
-            state.userName = action.payload.userName;
+            state.userName = action.payload.name;
             state.email = action.payload.email;
             state.password = action.payload.password;
         },
         setInstructorLogOut: (state) => {
-            state.userName = "";
+            state.name = "";
             state.email = "";
             state.password = "";
         },

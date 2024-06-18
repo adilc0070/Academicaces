@@ -1,8 +1,19 @@
 import { useState } from "react";
 import Logo from "./Logo";
+import { useDispatch } from "react-redux";
+import { setStudentLogOut } from "../store/slice/studentSlice";
+import { useNavigate } from "react-router-dom";
 
 const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const dispatch=useDispatch()
+    const navigate=useNavigate()
+    const signOut = () => {
+        localStorage.clear();
+        dispatch(setStudentLogOut())
+        navigate('/signIn')
+        
+    }
 
     return (
         <div className="flex min-h-screen bg-gray-100">
@@ -15,6 +26,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
                                 <li key={index} className="mb-4"><a href="#" className="block">{item}</a></li>
                             ))
                         }
+                        <li className="mb-4" onClick={()=>signOut()}><a className="block">Logout</a></li>
                     </ul>
                 </nav>
             </aside>

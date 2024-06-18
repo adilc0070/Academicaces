@@ -18,7 +18,6 @@ type data = {
 
 export const instructorSignUpApi = async (data: data) => {
     const response = await api.post("/auth/instructor/signUp", data)
-    console.log(response.data);
     return response.data
 }
 
@@ -43,9 +42,9 @@ export const listEnrollers = async () => {
 }
 
 export const listCourses = async (data) => {
-    console.log("data",data);
-    
-    const response = await api.post("/instructor/listCourses",{data:data})
+    console.log("data", data);
+
+    const response = await api.post("/instructor/listCourses", { data: data })
     return response.data
 }
 export const addCourseApi = async (data) => {
@@ -61,7 +60,7 @@ export const addCourseApi = async (data) => {
             'Content-Type': 'multipart/form-data'
         }
     });
-    
+
     return response.data;
 }
 
@@ -80,7 +79,7 @@ export const curriculumApi = async (id, data) => {
             formData.append(`${lecturePrefix}[name]`, lecture.name);
             formData.append(`${lecturePrefix}[notes]`, lecture.notes);
             formData.append(`${lecturePrefix}[description]`, lecture.description);
-            
+
 
             if (lecture.file) {
 
@@ -106,5 +105,67 @@ export const curriculumApi = async (id, data) => {
         throw error;
     }
 };
+
+export const editCourseApi = async (id, data) => {
+
+    const formData = new FormData();
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+            formData.append(key, data[key]);
+        }
+    }
+    const response = await api.put(`/instructor/${id}/editCourse`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+
+    return response.data;
+}
+export const updateCourseApi = async (id, data) => {
+
+    const formData = new FormData();
+    data.forEach((section, index) => {
+        formData.append(`sections[${index}][id]`, section.id);
+        formData.append(`sections[${index}][name]`, section.name);
+        formData.append(`sections[${index}][isFree]`, section.isFree);
+        formData.append(`sections[${index}][order]`, section.order);
+        section.lectures.forEach((lecture, lectureIndex) => {
+            const lecturePrefix = `sections[${index}][lectures][${lectureIndex}]`;
+
+            formData.append(`${lecturePrefix}[id]`, lecture.id);
+            formData.append(`${lecturePrefix}[name]`, lecture.name);
+            formData.append(`${lecturePrefix}[notes]`, lecture.notes);
+            formData.append(`${lecturePrefix}[description]`, lecture.description);
+            
+
+
+            if (lecture.file) {
+
+                formData.append(`${lecturePrefix}[file]`, lecture.file);
+                formData.append(`${lecturePrefix}[fileName]`, `${lecturePrefix}[file]`);
+            }
+
+            if (lecture.video) {
+                formData.append(`${lecturePrefix}[video]`, lecture.video);
+                formData.append(`${lecturePrefix}[videoName]`, `${lecturePrefix}[video]`);
+            }
+        });
+    })
+    const response = await api.put(`/instructor/${id}/updateCourse`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+
+    return response.data;
+}
+
+export const deleteCourseApi = async (id: string,status: boolean) => {
+    console.log("id", id, "status", status);
+    
+    const response = await api.patch(`/instructor/${id}/changeStatus`,{status})
+    return response.data
+}
 
 

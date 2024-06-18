@@ -15,6 +15,7 @@ function EditCourse() {
     return (
         <InstructorLayout>
             <CourseEdit course={course} />
+            
         </InstructorLayout>
     );
 }

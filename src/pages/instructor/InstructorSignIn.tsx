@@ -68,12 +68,9 @@ const InstructorSignIn: React.FC = () => {
                 console.log(result);
                 if(result.statusCode===200){
                     toast.success('Signed in successfully.');
-                    toast.warning(result.instructor.message);
                     localStorage.setItem('instructorToken', result);
                     dispatch(setInstructorDetails(result.instructor));
-
                 }else{
-
                     toast.error('Failed to sign in. Please check your email and password and try again.');
                 }
             });
@@ -127,10 +124,11 @@ const InstructorSignIn: React.FC = () => {
                             {success && <p className="text-green-500 text-sm mb-4">{success}</p>}
                             <button type="submit" className={`bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800 ${!email || !password ? 'opacity-50 cursor-not-allowed' : ''}`}>Sign In</button>
                             <p className='text-center mt-4'>Don't have an account? <Link to={"/instructor/signUp"} className="text-blue-500 hover:underline">Sign Up</Link></p>
+                            <p className='text-center mt-4'>are you a student ?<Link to={"/signIn"} className="text-blue-500 hover:underline">Sign In</Link></p>
                         </form>
                     </div>
                 </div>
-                {/* Right side with image */}
+
                 <div className="hidden md:block w-1/2 bg-blue-500 bg-transparent rounded-r-lg ">
                     <div className="h-full flex items-center justify-center p-8">
                         <img src="https://img.freepik.com/free-photo/female-african-american-speaker-giving-presentation-hall-university-workshop_155003-3580.jpg?t=st=1716007090~exp=1716010690~hmac=1c382da9dda4ce7da6b3a376fbb01b63059c8dd6d86abedcf470c30af4c29241&w=740" alt="Academicases image" className="object-cover h-full w-full rounded-r-lg" />
