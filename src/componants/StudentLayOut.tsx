@@ -2,17 +2,18 @@ import { useState } from "react";
 import Logo from "./Logo";
 import { useDispatch } from "react-redux";
 import { setStudentLogOut } from "../store/slice/studentSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { CgLogOut } from "react-icons/cg";
 
 const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const dispatch=useDispatch()
-    const navigate=useNavigate()
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const signOut = () => {
         localStorage.clear();
         dispatch(setStudentLogOut())
         navigate('/signIn')
-        
+
     }
 
     return (
@@ -21,12 +22,17 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
                 <div ><Logo /></div>
                 <nav>
                     <ul>
-                        {
-                            ['Dashboard', 'Instructors', 'Courses', 'Message', 'Settings',].map((item, index) => (
-                                <li key={index} className="mb-4"><a href="#" className="block">{item}</a></li>
-                            ))
-                        }
-                        <li className="mb-4" onClick={()=>signOut()}><a className="block">Logout</a></li>
+                        {['Home', 'Courses', 'My-Courses', 'Profile', 'Message', 'Wishlist','Assignments'].map((item, index) => (
+
+                            (window.location.pathname).includes(`/${item.toLowerCase()}`) ? <div key={index} className="block mb-4 bg-blue-950 drop-shadow-none rounded-3xl max-w-full max-h-full p-2 text-center">
+                                <li className=""><Link to={`/${item.toLowerCase()}`} className="font-bold  ">{item}</Link></li>
+                            </div> :
+                                <div key={index} className="mb-4 p-2 ">
+                                    <li ><Link to={`/${item.toLowerCase()}`} className="block">{item}</Link></li>
+                                </div>
+
+                        ))}
+                        <li className="mb-4" onClick={() => signOut()}><a className="block"><CgLogOut className="inline-block mr-3" size={28} />Logout</a></li>
                     </ul>
                 </nav>
             </aside>

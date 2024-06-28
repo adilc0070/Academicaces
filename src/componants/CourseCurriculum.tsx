@@ -1,15 +1,20 @@
 import { useState } from 'react';
 import { curriculumApi } from '../services/instructor/api';
 import { BiPencil, BiPlusCircle, BiTrash } from 'react-icons/bi';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
-const CourseCurriculum = ({id}) => {
+const CourseCurriculum = ({ id }) => {
     const [sections, setSections] = useState([
         { id: 1, name: 'Section 1', isFree: false, lectures: [{ id: 1, name: 'Lesson name', video: '', notes: '', file: '', description: '' }] }
     ]);
 
     const [modal, setModal] = useState({ sectionId: null, lectureId: null });
     const [formData, setFormData] = useState({ name: '', video: '', notes: '', file: '', description: '' });
+    const [errors, setErrors] = useState({});
     const [sectionEditModal, setSectionEditModal] = useState({ isOpen: false, sectionId: null, sectionName: '', isFree: false });
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const generateUniqueId = (arr) => arr.length ? Math.max(...arr.map(item => item.id)) + 1 : 1;
 
@@ -71,7 +76,17 @@ const CourseCurriculum = ({id}) => {
         setFormData({ ...formData, [name]: files[0] });
     };
 
+    const validateForm = () => {
+        let tempErrors = {};
+        if (!formData.name) tempErrors.name = "Lecture name is required";
+        if (!formData.description) tempErrors.description = "Description is required";
+        if (!formData.notes) tempErrors.notes = "Lecture notes are required";
+        setErrors(tempErrors);
+        return Object.keys(tempErrors).length === 0;
+    };
+
     const saveModalData = () => {
+        if (!validateForm()) return;
         setSections(sections.map(section => {
             if (section.id === modal.sectionId) {
                 return {
@@ -87,12 +102,23 @@ const CourseCurriculum = ({id}) => {
     const getFileName = (file) => file ? file.name : 'No file selected';
 
     const submitForm = async () => {
+        setLoading(true);
         try {
-            await curriculumApi(id, sections);
+            await curriculumApi(id, sections).then((response) => {
+                console.log(response);
+                
+                if(response.statusCode === 200){
+                    toast.success(response.message);
+                    navigate('/instructor/profile');
+                }else{
+                    toast.error(response.error);
+                }
+            })
             console.log('Form submitted successfully');
         } catch (error) {
             console.error('Error submitting form', error);
         }
+        setLoading(false);
     };
 
     const openSectionEditModal = (sectionId, sectionName) => {
@@ -177,14 +203,13 @@ const CourseCurriculum = ({id}) => {
                 </button>
             </div>
             <div className="mt-6 flex justify-end">
-                
                 <button onClick={submitForm} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r ml-2">
-                    Submit
+                    {loading ? 'Saving...' : 'Save'}
                 </button>
             </div>
 
             {modal.sectionId !== null && modal.lectureId !== null && (
-                <EditModal formData={formData} handleInputChange={handleInputChange} handleFileChange={handleFileChange} saveModalData={saveModalData} closeModal={closeModal} />
+                <EditModal formData={formData} handleInputChange={handleInputChange} handleFileChange={handleFileChange} saveModalData={saveModalData} closeModal={closeModal} errors={errors} />
             )}
 
             {sectionEditModal.isOpen && (
@@ -194,30 +219,35 @@ const CourseCurriculum = ({id}) => {
     );
 };
 
-const EditModal = ({ formData, handleInputChange, handleFileChange, saveModalData, closeModal }) => (
+const EditModal = ({ formData, handleInputChange, handleFileChange, saveModalData, closeModal, errors }) => (
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white p-6 rounded-lg shadow-lg">
             <h3 className="text-lg font-bold mb-4">Edit Content</h3>
             <div className="mb-4">
                 <label className="block text-gray-700">Lecture Name</label>
                 <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full p-2 border rounded mt-1" />
+                {errors.name && <p className="text-red-500">{errors.name}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Description</label>
                 <input type="text" name="description" value={formData.description} onChange={handleInputChange} className="w-full p-2 border rounded mt-1" />
+                {errors.description && <p className="text-red-500">{errors.description}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Lecture Notes</label>
                 <textarea name="notes" value={formData.notes} onChange={handleInputChange} className="w-full p-2 border rounded mt-1" />
+                {errors.notes && <p className="text-red-500">{errors.notes}</p>}
             </div>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div className="mb-4">
                     <label className="block text-gray-700">Upload Video</label>
                     <input type="file" name="video" onChange={handleFileChange} className="w-full p-2 border rounded mt-1" />
+                    {errors.video && <p className="text-red-500">{errors.video}</p>}
                 </div>
                 <div className="mb-4">
                     <label className="block text-gray-700">Attach File</label>
                     <input type="file" name="file" onChange={handleFileChange} className="w-full p-2 border rounded mt-1" />
+                    {errors.file && <p className="text-red-500">{errors.file}</p>}
                 </div>
             </div>
             <div className="flex justify-end">

@@ -1,8 +1,9 @@
 import { BiCertification, BiBookOpen, BiTrendingUp, BiHelpCircle, BiDollar } from 'react-icons/bi';
-import { RiLiveLine } from 'react-icons/ri'
+import { RiLiveLine } from 'react-icons/ri';
 import { toast } from 'sonner';
+
 function IconCard() {
-    const title: string = "We're committed to providing you with a seamless and enriching learning experience. Here's what sets us apart";
+    const title = "We're committed to providing you with a seamless and enriching learning experience. Here's what sets us apart:";
     const features = [
         { icon: BiCertification, title: "Certification", description: "Validate your skills and achievements with industry-recognized certificates upon course completion." },
         { icon: BiBookOpen, title: "Seamless Learning Experience", description: "Learn anytime, anywhere, on any device with our user-friendly platform." },
@@ -11,35 +12,33 @@ function IconCard() {
         { icon: RiLiveLine, title: "Live Classes", description: "Engage in real-time discussions and interactive learning experiences with expert instructors." },
         { icon: BiDollar, title: "Affordable Price", description: "Access high-quality education at affordable prices, making learning accessible to all." },
     ];
+
     return (
         <div className='flex justify-center mt-9'>
-            <div className='w-[92%] h-full bg-gray-100 '>
-                <div className="flex justify-left text-left text-5xl  max-lg:text-lg max-sm:w-full w-4/6 ">
-                    <p className="text-content overflow-hidden break-words font-bold my-4">{title}</p>
+            <div className='w-[92%] bg-gray-100 p-8 rounded-lg shadow-md'>
+                <div className="text-left mb-8">
+                    <h2 className="text-3xl font-bold text-gray-800">{title}</h2>
                 </div>
-                <div className="w-full h-full flex justify-center  bg-cover bg-center">
-                    <div className="grid grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1 gap-5 items-center w-auto h-auto p-9 ">
-                        {features.map((feature, index) => (
-                            <div key={index} className="card w-[300px] h-[250px] shadow-2xl border-4 rounded-2xl hover:bg-sky-800 text-black hover:text-white">
-                                <div className="cardI flex justify-center items-center w-full h-2/4">
-                                    <div className="cardLogo flex justify-center items-center rounded-2xl bg-sky-800 w-[100px] h-[100px]">
-                                        <feature.icon style={{ fontSize: "50px" }} />
-                                    </div>
-                                </div>
-                                <div className="flex justify-center">
-                                    <span className='text-lg font-koulen font-medium' onClick={() => {toast.success(feature.title) }}>{feature.title}</span>
-                                </div>
-                                <div className="flex justify-center text-center">
-                                    <p className="text-content max-h-20 overflow-hidden break-words text-sm font-semibold mx-2">{feature.description}</p>
+                <div className="grid grid-cols-3 gap-8 max-lg:grid-cols-2 max-sm:grid-cols-1">
+                    {features.map((feature, index) => (
+                        <div 
+                            key={index} 
+                            className="card bg-white p-6 rounded-lg shadow-lg hover:bg-sky-800 hover:text-white transition duration-300 transform hover:scale-105"
+                            onClick={() => toast.success(feature.title)}
+                        >
+                            <div className="flex justify-center mb-4">
+                                <div className="p-4 rounded-full bg-sky-800 text-white">
+                                    <feature.icon style={{ fontSize: "40px" }} />
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                            <h3 className="text-xl font-semibold mb-2 text-center">{feature.title}</h3>
+                            <p className="text-center text-gray-700">{feature.description}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
-
-    )
+    );
 }
 
-export default IconCard
+export default IconCard;

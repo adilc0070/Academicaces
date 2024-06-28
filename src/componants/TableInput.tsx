@@ -5,7 +5,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { addCategoryApi, listCatogoriesApi, updateCategoryApi, toggleCategoryBlockApi, deleteCategoryApi } from '../services/admin/api';
 import { toast } from 'sonner';
 
-function TableInput({ title }) {
+function TableInput({ title }: { title: string }) {
     const [data, setData] = useState([]);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
@@ -29,7 +29,7 @@ function TableInput({ title }) {
         setInputVisible(!inputVisible);
     };
 
-    const validateInput = (inputValue, currentIndex = null) => {
+    const validateInput = (inputValue: string, currentIndex = null) => {
         if (inputValue.trim() === '' || inputValue.length < 1) {
             setError('Input cannot be empty or just spaces');
             return false;
@@ -48,11 +48,11 @@ function TableInput({ title }) {
         validateInput(value);
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (validateInput(value)) {
-            let response = await addCategoryApi({ value: value.trim() }).then((result) => {
+            await addCategoryApi({ value: value.trim() }).then((result) => {
                 console.log(result);
                 toast.success('Category added');
                 

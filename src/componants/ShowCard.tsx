@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Blocked, Verified } from './Logo';
+import { Blocked, Pending, Verified } from './Logo';
 import { deleteCourseApi } from '../services/instructor/api';
 import { toast } from 'sonner';
+
 
 function ShowCard({ title, description, imageUrl, course }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [activeChapterIndex, setActiveChapterIndex] = useState(null);
     const [activeLessonIndex, setActiveLessonIndex] = useState(null);
     const navigate = useNavigate();
-    console.log('course', course);
-    
-    useEffect(() => {   
+    // console.log('course', course);
+
+    useEffect(() => {
         const handleOutsideClick = (event) => {
             if (modalOpen && !event.target.closest('.modal-content')) {
                 setModalOpen(false);
@@ -23,17 +24,17 @@ function ShowCard({ title, description, imageUrl, course }) {
         return () => {
             document.removeEventListener('mousedown', handleOutsideClick);
         };
-    }, [modalOpen]);
+    }, [modalOpen, course]);
 
     const handleEditClick = () => {
         navigate('/instructor/edit-course', { state: { course } });
     };
     const handleDeleteClick = () => {
         setModalOpen(false);
-        deleteCourseApi(course._id,course.isBlock).then((result) => {
+        deleteCourseApi(course._id, course.isBlock).then((result) => {
             console.log(result);
             toast.success(result.message);
-            navigate('/instructor/courses'); 
+            navigate('/instructor/profile');
         })
     };
 
@@ -49,23 +50,41 @@ function ShowCard({ title, description, imageUrl, course }) {
         <div className="bg-white border rounded-lg overflow-hidden shadow-lg">
             <img className="w-full h-64 object-cover" src={imageUrl} alt={title} />
             <div className="p-4">
-                <div className="flex justify-between items-center">
+                <div className="mb-4">
                     <span className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">{course.category.name}</span>
-                    {course.isBlocked ? (
-                        <button className="text-gray-400 hover:text-gray-600">
-                            <Blocked />
-                        </button>
-                    ) : (
-                        <button onClick={handleEditClick} className="text-gray-400 hover:text-gray-600">
-                            <Verified />
-                        </button>
-                    )}
                 </div>
+                <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-2 md:space-y-0 md:space-x-4">
+                    <div className="flex items-center space-x-2">
+                        <span className="text-xs font-bold">Admin Verified:</span>
+                        {course.verified ? (
+                            <button className="text-green-500 hover:text-green-700">
+                                <Verified title={'Approved'} />
+                            </button>
+                        ) : (
+                            <button onClick={handleEditClick} className="text-red-500 hover:text-red-700">
+                                <Pending title={'Waiting'} />
+                            </button>
+                        )}
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <span className="text-xs font-bold">Status:</span>
+                        {course.isBlock ? (
+                            <button className="text-red-500 hover:text-red-700">
+                                <Blocked title={'Blocked'} />
+                            </button>
+                        ) : (
+                            <button onClick={handleEditClick} className="text-green-500 hover:text-green-700">
+                                <Verified title={'Accessible'} />
+                            </button>
+                        )}
+                    </div>
+                </div>
+
                 <h2 className="text-xl font-semibold my-2">{title}</h2>
                 <p className="text-gray-600 mb-4">{description}</p>
                 <div className="flex justify-between items-center">
                     <div className="text-xs text-gray-500">
-                        <span className="block">{course.lessons} Lesson</span>
+                        <span className="block">{course.lessons} Lessons</span>
                         <span className="block">{course.instructor.name}</span>
                     </div>
                     <div className="text-xl font-bold text-green-500">${course.price}</div>
@@ -164,6 +183,7 @@ function ShowCard({ title, description, imageUrl, course }) {
                                 </div>
 
                                 <div className="border-t border-gray-200 pt-4">
+                                    <h3 className="text-xl font-semibold text-gray-800 mb-2">Trailer</h3>
                                     <iframe
                                         className="w-full h-48 rounded"
                                         src={course.triler}
@@ -181,11 +201,10 @@ function ShowCard({ title, description, imageUrl, course }) {
                                     </button>
                                     <button
                                         id='delete-course'
-                                        // Uncomment and define handleDeleteClick to enable delete functionality
                                         onClick={handleDeleteClick}
                                         className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded transition duration-200 ease-in-out"
                                     >
-                                        Delete
+                                        Block
                                     </button>
                                 </div>
                             </div>

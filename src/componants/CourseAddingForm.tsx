@@ -27,7 +27,8 @@ const CourseAddingForm = () => {
         instructor: instructor.email
     });
     const [formErrors, setFormErrors] = useState({});
-
+    const [loading, setLoading] = useState(false);
+    
     useEffect(() => {
         listCatogoriesApi().then((result) => {
             console.log(result.catogaries);
@@ -57,7 +58,6 @@ const CourseAddingForm = () => {
             setFileToBase(file, setThumbnail);
             setFormData({ ...formData, thumbnail: file });
         }
-        console.log("thumbnail file", file);
     };
 
     const handleVideoChange = (e) => {
@@ -74,7 +74,6 @@ const CourseAddingForm = () => {
             setFileToBase(file, setVideoPreview);
             setFormData({ ...formData, video: file });
         }
-        console.log("video file", file);
     };
 
     const validateFileType = (file, allowedTypes) => {
@@ -92,19 +91,19 @@ const CourseAddingForm = () => {
 
     const validateForm = () => {
         const errors = {};
-        if (!formData.title.trim()) {
-            errors.title = "Title is required";
+        if (!formData.title.trim() || formData.title.length < 3) {
+            errors.title = "Title is required and should be at least 3 characters long";
         }
-        if (!formData.subtitle.trim()) {
-            errors.subtitle = "Subtitle is required";
+        if (!formData.subtitle.trim() || formData.subtitle.length < 3) {
+            errors.subtitle = "Subtitle is required and should be at least 3 characters long";
         }
         if (!formData.category) {
             errors.category = "Category is required";
         }
-        if (!formData.topic.trim()) {
-            errors.topic = "Course topic is required";
+        if (!formData.topic.trim() || formData.topic.length < 3) {
+            errors.topic = "Course topic is required and should be at least 3 characters long";
         }
-        if (!formData.price) {
+        if (!formData.price || formData.price < 0) {
             errors.price = "Price is required";
         }
         if (!formData.video) {
@@ -118,21 +117,27 @@ const CourseAddingForm = () => {
     };
 
     const handleSubmit = (e) => {
+        setLoading(true);
         e.preventDefault();
         if (validateForm()) {
-            let response = addCourseApi(formData).then((result) => {
-                result.statusCode === 200 ? toast.success(result.message) : toast.error(result.error);
-                console.log("result", result);
-                setId(result.course._id);
-                setPage(2);
-
+            setLoading(true);
+            const response = addCourseApi(formData).then((result) => {
+                console.log(result);
+                
+                if(result.statusCode == 200) {
+                    toast.success(result.message)    
+                    setId(result.course._id);
+                    setPage(2);
+                }else toast.error(result.error);
+                
+                
             })
             toast.promise(response, {
                 loading: "Adding course... Please wait",
                 success: <b>Course added</b>,
             })
-
-        }
+            setLoading(false);
+        }else setLoading(false); 
     };
 
     return (
@@ -258,9 +263,9 @@ const CourseAddingForm = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r ml-2"
+                                    className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r ml-2 ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
                                 >
-                                    Save & Next
+                                    {loading ? "saving..." : "Save"}
                                 </button>
                             </div>
                         </form>

@@ -16,7 +16,7 @@ const instructorSlice = createSlice({
             state.password = action.payload.password;
         },
         setInstructorLogOut: (state) => {
-            state.name = "";
+            state.userName = "";
             state.email = "";
             state.password = "";
         },

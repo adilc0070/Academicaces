@@ -1,55 +1,90 @@
-import { useEffect, useState } from "react";
-import Carousel from "../componants/Carrosil";
-import CourseList from "../componants/CourseList";
-import IconCard from "../componants/IconCard";
+import { useEffect, useState, lazy, Suspense } from "react";
+import { listCourses } from "../services/student/api";
 import NavBar from "../componants/LandingNavBar";
-import { listAllCoursesApi } from "../services/admin/api";
-import { CircularProgress } from "@mui/material";
-import InstructorInterFace from "../componants/InstructorInterFace";
+import Footer from "../componants/Footer";
+
+const Carousel = lazy(() => import("../componants/Carrosil"));
+const IconCard = lazy(() => import("../componants/IconCard"));
+const InstructorInterFace = lazy(() => import("../componants/InstructorInterFace"));
+const CoursesList = lazy(() => import("../componants/CoursesList"));
 
 function LandingPage() {
   const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  async function fetchCourses() {
+    try {
+      const result = await listCourses({ category: '', sort: -1, search: '', page: 1, limit: 3 });
+      console.log("result from list in landing", result);
+      setCourses(result.courses);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  }
 
   useEffect(() => {
-    listAllCoursesApi().then((result) => {
-      setCourses(result.courses.slice(0, 4));
-      setLoading(false);
-    });
+    fetchCourses();
   }, []);
 
   return (
     <>
       <NavBar />
-      <Carousel items={[
-        {
-          heading: 'Item 1',
-          description: 'Description for item 1',
-          imageName: 'src/assets/giovanni-gagliardi-fvT3t9iOaJI-unsplash.jpg',
-          fontColor: 'text-white'
-        },
-        {
-          heading: 'Item 2',
-          description: 'Description for item 2',
-          imageName: 'src/assets/mimi-thian-vdXMSiX-n6M-unsplash.jpg',
-          fontColor: 'text-sky-900'
-        },
-        {
-          heading: 'Item 3',
-          description: 'Description for item 3',
-          imageName: 'src/assets/woman-attending-online-class_23-2148854923.jpg',
-          fontColor: 'text-black'
-        },
-      ]} />
-      <IconCard />
-      {loading ? (
-        <div className="flex justify-center items-center h-[400px]">
-          <CircularProgress />
-        </div>
-      ) : (
-        <CourseList courses={courses} />
-      )}
-      <InstructorInterFace />
+      <main className="bg-gray-100">
+        <section className="hero-section">
+          <Suspense fallback={
+            <div className="flex justify-center items-center">
+              <div className="text-center">
+                Loading Carousel...
+              </div>
+            </div>
+          }>
+            <Carousel items={[
+              {
+                heading: 'Engaging eLearning Content',
+                description: 'Crafting compelling eLearning content that captivates learners and fosters skill development.',
+                imageName: 'src/assets/giovanni-gagliardi-fvT3t9iOaJI-unsplash.jpg',
+              },
+              {
+                heading: 'Interactive Learning Experiences',
+                description: 'Explore the power of interactive learning experiences that drive student engagement and knowledge retention.',
+                imageName: 'src/assets/mimi-thian-vdXMSiX-n6M-unsplash.jpg',
+              },
+              {
+                heading: 'Flexible Digital Learning',
+                description: 'Discover the benefits of flexible digital learning that adapts to diverse learning styles and preferences.',
+                imageName: 'src/assets/woman-attending-online-class_23-2148854923.jpg',
+              },
+            ]} />
+          </Suspense>
+        </section>
+        <section className="feature-icons p-4">
+          <Suspense fallback={
+            <div>
+              Loading IconCard...
+            </div>
+          }>
+            <IconCard />
+          </Suspense>
+        </section>
+        <section className="popular-courses p-4 bg-white">
+          <Suspense fallback={
+            <div className="flex justify-center items-center">
+              <div className="text-center">
+                Loading CoursesList...
+              </div>
+            </div>
+          }>
+            <h2 className="text-2xl text-center font-bold mb-4">Popular Courses</h2>
+            <p className="text-gray-600 mb-4 text-center">Explore our popular courses</p>
+            <CoursesList courses={courses} />
+          </Suspense>
+        </section>
+        <section className="instructor-interface p-4 bg-gray-100">
+          <Suspense fallback={<div>Loading Instructor Interface...</div>}>
+            <InstructorInterFace />
+          </Suspense>
+        </section>
+        <Footer />
+      </main>
     </>
   );
 }

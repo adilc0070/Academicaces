@@ -1,143 +1,138 @@
 import { useState } from 'react';
 import { GrFavorite } from 'react-icons/gr';
+import { FaLock } from 'react-icons/fa'
+import { loadStripe } from '@stripe/stripe-js';
+import { buyCourse } from '../services/student/api';
+const CoursePage = ({ course }) => {
 
-const CoursePage = () => {
     const [activeTab, setActiveTab] = useState('curriculum');
+    const lessons = course?.chapters.map((val) => val.lessonsID.length).reduce((prev, curr) => prev + curr, 0);
 
+    const [activeChapterIndex, setActiveChapterIndex] = useState(null);
+    const [activeLessonIndex, setActiveLessonIndex] = useState(null);
+
+    const toggleChapterAccordion = (index) => {
+        setActiveChapterIndex(activeChapterIndex === index ? null : index);
+        setActiveLessonIndex(null); // Close any open lesson when a chapter is toggled
+    };
+
+    const toggleLessonAccordion = (index) => {
+        setActiveLessonIndex(activeLessonIndex === index ? null : index);
+    };
+    const enroll = async () => {
+        const stripe = await loadStripe('pk_test_51PV9k0ARI7iTzCKLDmWS58VDN6U9odDEXQIQY8mWgMJPbusodhqLwzzNVUAJcNnYCaiCImfwv5lpunCYA8LRgXiX00bZLtvq9x');
+        try {
+          const response = await buyCourse({ data: { courseId: _id, price, image: thumbnail } })
+          const { id: sessionId } = response.data.session;
+          const { error } = await stripe.redirectToCheckout({ sessionId });
+          if (error) {
+            console.error('Stripe Checkout Error:', error);
+          }
+        } catch (error) {
+          console.error('Server Error:', error);
+        }
+      };
     const renderTabContent = () => {
         switch (activeTab) {
             case 'curriculum':
                 return (
                     <div className="p-6 rounded-lg shadow-md">
-                        <h2 className="text-2xl font-semibold mb-4">Intro Course content</h2>
-                        <div className="mb-4">
-                            <div className="flex justify-between items-center mb-2">
-                                <span>Video: Lorem ipsum dolor sit amet.</span>
-                                <span>22 minutes</span>
+                        <h2 className="text-2xl font-semibold mb-4">Course Content</h2>
+                        {course?.chapters.map((chapter, chapterIndex) => (
+                            <div key={chapter._id} className="mb-4">
+                                <button
+                                    className="flex justify-between items-center w-full text-left p-2 border rounded"
+                                    onClick={() => toggleChapterAccordion(chapterIndex)}
+                                    disabled={!chapter.isFree} // Disable button if chapter is not free
+                                >
+                                    <span className="text-gray-700">
+                                        <strong>Chapter {chapterIndex + 1}:</strong> {chapter.name}
+                                    </span>
+                                    <span>
+                                        {!chapter.isFree ? <FaLock className="text-red-500" /> : (activeChapterIndex === chapterIndex ? '-' : '+')}
+                                    </span>
+                                </button>
+                                {activeChapterIndex === chapterIndex && chapter.isFree && (
+                                    <div className="p-4 border-t border-gray-200 bg-gray-50 rounded-lg shadow-sm">
+                                        <p className="text-gray-800 font-semibold mb-2">
+                                            <strong>Order:</strong> {chapter.order}
+                                        </p>
+                                        {chapter.lessonsID.length > 0 ? (
+                                            <div>
+                                                {chapter.lessonsID.map((lesson, lessonIndex) => (
+                                                    <div key={lesson._id} className="mb-4">
+                                                        <button
+                                                            className="flex justify-between items-center w-full text-left p-3 border border-gray-300 bg-white rounded-lg hover:bg-gray-100 transition duration-150"
+                                                            onClick={() => toggleLessonAccordion(lessonIndex)}
+                                                        >
+                                                            <span className="text-gray-800 font-medium">
+                                                                <strong>Lesson {lessonIndex + 1}:</strong> {lesson.name}
+                                                            </span>
+                                                            <span className="text-gray-500">{activeLessonIndex === lessonIndex ? '-' : '+'}</span>
+                                                        </button>
+                                                        {activeLessonIndex === lessonIndex && (
+                                                            <div className="p-3 border-t border-gray-300 bg-white rounded-b-lg">
+                                                                {lesson.isFree && (
+                                                                    <p className="text-green-600 font-semibold mb-2">This lesson is free!</p>
+                                                                )}
+                                                                <p className="text-gray-800 mb-2">
+                                                                    <strong>Description :</strong> {lesson.description}
+                                                                </p>
+                                                                <p className="text-gray-800 font-medium mb-2">
+                                                                    <strong>Video:</strong>
+                                                                </p>
+                                                                <video className="w-full h-56 rounded mb-4 shadow-sm" controls>
+                                                                    <source src={lesson.video[0]} type="video/mp4" />
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                                <p className="text-gray-800 font-medium mb-2">
+                                                                    <strong>Files:</strong>
+                                                                </p>
+                                                                <ul className="list-disc list-inside space-y-2">
+                                                                    {lesson.files && (
+                                                                        <li className="text-gray-800">
+                                                                            <iframe
+                                                                                src={lesson.files}
+                                                                                className="w-full h-48 rounded border object-cover border-gray-300 shadow-sm"
+                                                                                rel="noopener noreferrer"
+                                                                            />
+                                                                        </li>
+                                                                    )}
+                                                                </ul>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-gray-800">No lessons available</p>
+                                        )}
+                                    </div>
+                                )}
                             </div>
-                            <button className="text-purple-600">Preview</button>
-                        </div>
-                        <div className="mb-4">
-                            <div className="flex justify-between items-center mb-2">
-                                <span>Video: Lorem ipsum dolor sit amet.</span>
-                                <span>05 minutes</span>
-                            </div>
-                            <button className="text-purple-600">Preview</button>
-                        </div>
-                        <div className="mb-4">
-                            <div className="flex justify-between items-center mb-2">
-                                <span>Video: Lorem ipsum dolor sit amet.</span>
-                                <span>10 minutes</span>
-                            </div>
-                            <button className="text-purple-600">Preview</button>
-                        </div>
-                        <div className="mb-4">
-                            <div className="flex justify-between items-center mb-2">
-                                <span>Video: Lorem ipsum dolor sit amet.</span>
-                                <span>15 minutes</span>
-                            </div>
-                            <button className="text-purple-600">Preview</button>
-                        </div>
-                        <div>
-                            <div className="flex justify-between items-center mb-2">
-                                <span>Lesson 03 Exam:</span>
-                                <span>20 Ques</span>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 );
             case 'description':
                 return (
                     <div className="p-6 rounded-lg shadow-md">
-                        <h2 className="text-2xl font-semibold mb-4">Experience Description</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vulputate vestibulum Phasellus rhoncus, dolor eget viverra pretium, dolor tellus aliquet nunc, vitae ultricies erat elit eu lacus. Vestibulum non justo consectetur, cursus ante, tincidunt sapien. Nulla quis diam sit amet turpis interdum accumsan quis nec enim. Vivamus faucibus ex sed nibh egestas elementum. Mauris et bibendum dui. Aenean consequat pulvinar luctus.</p>
-                        <p>We have covered many special events such as fireworks, fairs, parades, races, walks, awards ceremonies, fashion shows, sporting events, and even a memorial service.</p>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vulputate vestibulum Phasellus rhoncus, dolor eget viverra pretium, dolor tellus aliquet nunc, vitae ultricies erat elit eu lacus. Vestibulum non justo consectetur, cursus ante, tincidunt sapien. Nulla quis diam sit amet turpis interdum accumsan quis nec enim. Vivamus faucibus ex sed nibh egestas elementum. Mauris et bibendum dui. Aenean consequat pulvinar luctus.</p>
+                        <h2 className="text-2xl font-semibold mb-4">Description</h2>
+                        <p>{course?.subtitle}</p>
                     </div>
                 );
             case 'reviews':
                 return (
                     <div className="p-6 rounded-lg shadow-md">
                         <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
-                        <div className="flex items-center mb-4">
-                            <span className="text-5xl font-bold text-purple-600">5.0</span>
-                            <div className="ml-4 flex-1">
-                                <div className="flex items-center">
-                                    <span className="text-yellow-500">★ ★ ★ ★ ★</span>
-                                    <span className="text-gray-600 ml-2">(17 Reviews)</span>
-                                </div>
-                                <div className="flex flex-col mt-2">
-                                    <div className="flex items-center">
-                                        <span className="text-gray-600 mr-2">5</span>
-                                        <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                                            <div className="h-2 bg-pink-500 rounded-full" style={{ width: '100%' }}></div>
-                                        </div>
-                                        <span className="text-gray-600 ml-2">10</span>
-                                    </div>
-                                    <div className="flex items-center mt-1">
-                                        <span className="text-gray-600 mr-2">4</span>
-                                        <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                                            <div className="h-2 bg-pink-500 rounded-full" style={{ width: '50%' }}></div>
-                                        </div>
-                                        <span className="text-gray-600 ml-2">5</span>
-                                    </div>
-                                    <div className="flex items-center mt-1">
-                                        <span className="text-gray-600 mr-2">3</span>
-                                        <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                                            <div className="h-2 bg-pink-500 rounded-full" style={{ width: '30%' }}></div>
-                                        </div>
-                                        <span className="text-gray-600 ml-2">2</span>
-                                    </div>
-                                    <div className="flex items-center mt-1">
-                                        <span className="text-gray-600 mr-2">2</span>
-                                        <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                                            <div className="h-2 bg-pink-500 rounded-full" style={{ width: '20%' }}></div>
-                                        </div>
-                                        <span className="text-gray-600 ml-2">2</span>
-                                    </div>
-                                    <div className="flex items-center mt-1">
-                                        <span className="text-gray-600 mr-2">1</span>
-                                        <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                                            <div className="h-2 bg-pink-500 rounded-full" style={{ width: '10%' }}></div>
-                                        </div>
-                                        <span className="text-gray-600 ml-2">1</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mb-4">
-                            <h3 className="text-lg font-semibold">Customer Reviews</h3>
-                            {Array(3).fill().map((_, index) => (
-                                <div key={index} className="flex items-start mb-4">
-                                    <img src="https://via.placeholder.com/50" alt="Reviewer" className="rounded-full mr-4" />
-                                    <div>
-                                        <div className="flex items-center mb-2">
-                                            <span className="text-gray-800 font-semibold">Adam Smit</span>
-                                            <span className="text-gray-500 ml-2">September 2, 2024</span>
-                                        </div>
-                                        <div className="text-yellow-500">★ ★ ★ ★ ★</div>
-                                        <p className="text-gray-600 mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Doloribus, omnis fugit corporis iste magnam ratione.</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-semibold mb-2">Add a Review</h3>
-                            <div className="flex items-center mb-4">
-                                <span className="text-gray-800 font-semibold mr-2">Your Ratings:</span>
-                                <div className="text-yellow-500">★ ★ ★ ★ ★</div>
-                            </div>
-                            <textarea className="w-full p-2 border rounded mb-4" rows="4" placeholder="Type your comments..."></textarea>
-                            <button className="bg-sky-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">Submit</button>
-                        </div>
+                        {/* Replace with actual review content */}
                     </div>
-
                 );
             case 'instructor':
                 return (
                     <div className="p-6 rounded-lg shadow-md">
                         <h2 className="text-2xl font-semibold mb-4">Instructor Information</h2>
-                        <p>Details about the instructor...</p>
+                        <p>{course?.instructor.bio}</p>
+                        <p>Email: {course?.instructor.email}</p>
                     </div>
                 );
             default:
@@ -146,25 +141,24 @@ const CoursePage = () => {
     };
 
     return (
-        <div className="flex flex-col md:flex-row ">
+        <div className="flex flex-col md:flex-row">
             {/* Left Section */}
             <div className="flex-1">
                 <div className="p-6 rounded-lg shadow-md mb-6">
                     <div className="flex items-center space-x-2 mb-4">
-                        <span className="px-3 py-1 bg-sky-600 text-white text-sm rounded">Featured</span>
-                        <span className="px-3 py-1 bg-pink-600 text-white text-sm rounded">Ux Design</span>
+                        <span className="px-3 py-1 bg-sky-600 text-white text-sm rounded">{course?.category?.name}</span>
                     </div>
-                    <h1 className="text-4xl font-bold mb-2">Making Music with Other People</h1>
+                    <h1 className="text-4xl font-bold mb-2">{course?.title}</h1>
                     <div className="flex items-center text-gray-600 mb-4">
-                        <span className="mr-2">23 Lessons</span>
+                        <span className="mr-2">{lessons} Lessons</span>
                         <span className="mr-2">|</span>
                         <span className="flex items-center">
-                            <span className="mr-1">4.5</span>
+                            <span className="mr-1">{course?.rating}</span>
                             <span>⭐</span>
-                            <span>(44)</span>
+                            <span>({course?.reviewsCount})</span>
                         </span>
                         <span className="mx-2">|</span>
-                        <span>Last Update: Sep 29, 2024</span>
+                        <span>Last Update: {new Date(course?.updatedAt).toLocaleDateString()}</span>
                     </div>
                     <div className="border-b border-gray-200 mb-4"></div>
                     <div className="flex space-x-4">
@@ -200,39 +194,37 @@ const CoursePage = () => {
             <div className="md:w-1/3 lg:w-1/4 md:ml-8 md:mt-6">
                 <div className="p-6 rounded-lg shadow-md mb-6 flex flex-col items-center">
                     <img
-                        src="https://via.placeholder.com/300"
+                        src={course?.thumbnail}
                         alt="Course"
                         className="rounded-lg mb-4 w-full max-w-xs h-auto"
                     />
                     <div className="text-center mb-4">
-                        <span className="text-2xl font-bold text-purple-600">$32.00</span>
-                        <span className="text-gray-500 line-through ml-2">$67.00</span>
-                        <span className="text-green-600 ml-2">68% OFF</span>
+                        <span className="text-gray-500 line-through ml-2">${course?.price + (course?.price / 10)}</span>
+                        <span className="text-2xl font-bold text-purple-600">${course?.price}</span>
+                        <span className="text-green-600 ml-2">{10}% OFF</span>
                     </div>
                     <div className="flex justify-center space-x-2 mb-4">
                         <button className="bg-sky-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"><GrFavorite fontSize={"20px"} /></button>
-                        <button className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700 transition">Enroll Now</button>
+                        <button onClick={()=>enroll()} className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700 transition">Enroll Now</button>
                     </div>
-                    <div className="text-center text-gray-500">45-Days Money-Back Guarantee</div>
                 </div>
-
 
                 <div className="p-6 rounded-lg shadow-md">
                     <ul className="text-gray-700 space-y-2">
-                        <li><strong>Instructor:</strong> D. William</li>
-                        <li><strong>Start Date:</strong> 05 Dec 2024</li>
-                        <li><strong>Total Duration:</strong> 08hr 32Min</li>
-                        <li><strong>Enrolled:</strong> 100</li>
-                        <li><strong>Lectures:</strong> 30</li>
-                        <li><strong>Skill Level:</strong> Basic</li>
-                        <li><strong>Language:</strong> Spanish</li>
-                        <li><strong>Quiz:</strong> Yes</li>
-                        <li><strong>Certificate:</strong> Yes</li>
+                        <li><strong>Instructor:</strong> {course?.instructor.name}</li>
+                        {/* <li><strong>Total Duration:</strong> {course?.totalDuration}</li> */}
+                        {/* <li><strong>Enrolled:</strong> {course?.enrolledStudents.length}</li> */}
+                        <li><strong>Chapters:</strong> {course?.chapters.length}</li>
+                        <li><strong>Total Lessons:</strong> {lessons}</li>
+                        {/* <li><strong>Skill Level:</strong> {course?.skillLevel}</li> */}
+                        {/* <li><strong>Language:</strong> {course?.language}</li> */}
+                        {/* <li><strong>Quiz:</strong> {course?.quiz ? "Yes" : "No"}</li> */}
+                        {/* <li><strong>Certificate:</strong> {course?.certificate ? "Yes" : "No"}</li> */}
                     </ul>
                 </div>
                 <div className="p-6 rounded-lg shadow-md mt-6 text-center">
                     <div className="mb-2">More inquiry about course:</div>
-                    <div className="text-purple-600 text-lg font-bold">+47 333 78 901</div>
+                    <div className="text-purple-600 text-lg font-bold">{course?.instructor.email}</div>
                 </div>
             </div>
         </div>

@@ -9,6 +9,7 @@ import Error400admin from '../pages/admin/Error400';
 import CourseVerification from '../pages/admin/CourseVerification';
 
 
+
 function AdminRoute() {
     return (
         <Routes>
@@ -22,6 +23,7 @@ function AdminRoute() {
                 <Route path='/instructors' element={<InstructorsList />} />
                 <Route path='/courses' element={<CourseVerification />} />
                 <Route path='/categories' element={<CategoryManagement />} />
+                
                 <Route path='/*' element={<Error400admin />} />
             </Route>
 

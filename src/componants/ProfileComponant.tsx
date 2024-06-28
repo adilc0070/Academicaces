@@ -1,12 +1,15 @@
-import React from 'react'
-
-function ProfileComponant() {
+function ProfileComponant({ instructors }: {instructors:{profile:string,userName:string}}) {
     return (
         <div className="bg-white p-4 rounded-lg shadow">
-            <div className="mb-4 border p-3 font-medium border-gray-300">Selling Courses</div>
+            <div className="mb-4 border p-3 font-medium border-gray-300">Profile</div>
             <div className="max-w-lg mx-auto my-10 bg-white rounded-lg shadow-md p-5">
-                <img className="w-32 h-32 rounded-full mx-auto" src="https://picsum.photos/200" alt="Profile picture" />
-                <h2 className="text-center text-2xl font-semibold mt-3">John Doe</h2>
+                {instructors.profile ?
+                    <img className="w-32 h-32 rounded-full mx-auto" src="https://picsum.photos/200" alt="Profile picture" />
+                    :
+                    <img className="w-32 h-32 rounded-full mx-auto" src={`${instructors.profile}`} alt="Profile picture" />
+
+                }
+                <h2 className="text-center text-2xl font-semibold mt-3">{instructors.userName}</h2>
                 <p className="text-center text-gray-600 mt-1">Software Engineer</p>
                 <div className="flex justify-center mt-5">
                     <a href="#" className="text-blue-500 hover:text-blue-700 mx-3">Twitter</a>

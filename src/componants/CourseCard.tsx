@@ -1,61 +1,53 @@
-import { Button } from "@mui/material";
-import { BiBookOpen } from "react-icons/bi";
-import { BsStarFill, BsDownload } from "react-icons/bs";
+import { loadStripe } from '@stripe/stripe-js';
+import { buyCourse } from '../services/student/api';
+import { useNavigate } from 'react-router-dom';
 
-type Course = {
-    title: string;
-    subtitle: string;
-    category: {
-        name: string
-    };
-    instructor: {
-        name: string
-    };
-    topic: string;
-    chapters: [];
-    price: number;
-    thumbnail: string;
-    enrolledStudents: [];
-    verified: boolean
-};
 
-function CourseCard({ course }: { course: Course }) {
-    return (
-        <div className="flex flex-col w-full max-w-md mx-auto bg-gray-900 rounded-xl shadow-lg overflow-hidden">
-            <div className="relative">
-                <img
-                    src={course.thumbnail}
-                    className="object-cover w-full h-64"
-                    alt={course.title}
-                />
-                {course.verified && (
-                    <div className="absolute top-2 right-2 bg-yellow-500 text-black rounded-full px-3 py-1 flex items-center">
-                        <BsStarFill className="mr-1" /><span>Verified</span>
-                    </div>
-                )}
-            </div>
-            <div className="p-6 bg-gray-800">
-                <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-400 text-sm">{course.category.name}</span>
-                </div>
-                <h2 className="text-2xl font-bold text-white mt-2">{course.title}</h2>
-                <h3 className="text-lg text-gray-300 mt-1">Instructor: {course.instructor.name}</h3>
-                <p className="text-sm text-gray-400 mt-2">{course.subtitle}</p>
-                <p className="text-sm text-gray-400 mt-1">{course.topic}</p>
-                <div className="flex items-center mt-4 text-gray-400">
-                    <BsDownload />
-                    <span className="ml-2">{course.enrolledStudents.length} Downloads</span>
-                    <BiBookOpen className="ml-6" />
-                    <span className="ml-2">{course.chapters.length} Lessons</span>
-                </div>
-                <div className="flex items-center mt-4">
-                    <span className="text-xl text-red-500 line-through">₹{course.price + 400}</span>
-                    <span className="text-2xl text-green-400 font-bold ml-4">₹{course.price}</span>
-                </div>
-                <Button variant="contained" color="primary" className="w-full mt-4">Enroll Now</Button>
-            </div>
+const CourseCard = ({ _id, category, title, price, chapters, instructor, rating = 5, thumbnail }): JSX.Element => {
+
+  const lessons = chapters.map((val) => val.lessonsID.length).reduce((prev, curr) => prev + curr, 0);
+  const navigate = useNavigate();
+  const enroll = async () => {
+    const stripe = await loadStripe('pk_test_51PV9k0ARI7iTzCKLDmWS58VDN6U9odDEXQIQY8mWgMJPbusodhqLwzzNVUAJcNnYCaiCImfwv5lpunCYA8LRgXiX00bZLtvq9x');
+    try {
+      const response = await buyCourse({ data: { courseId: _id, price, image: thumbnail } })
+      const { id: sessionId } = response.data.session;
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+      if (error) {
+        console.error('Stripe Checkout Error:', error);
+      }
+    } catch (error) {
+      console.error('Server Error:', error);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-4">
+      <img src={thumbnail} alt={title} className="w-full h-32 object-cover rounded-t-lg" />
+      <div className="p-4">
+        <span className="text-xs bg-red-500 text-white py-1 px-2 rounded-full">{category.name}</span>
+        <h3 onClick={() => navigate(`/course/${_id}`)} className="mt-2 text-lg font-semibold">{title}</h3>
+        <div className="flex items-center justify-between mt-2">
+          <div className="text-gray-700">
+            <span className="line-through">${price + parseInt(price * 30 / 100)}</span> <span className="font-bold">${price}</span>
+          </div>
+          <div className="text-yellow-500">
+            {Array.from({ length: rating }).map((_, index) => (
+              <span key={index}>&#9733;</span>
+            ))}
+          </div>
         </div>
-    );
-}
+        <div className="mt-2 text-gray-500 text-sm">
+          <span>{chapters.length} Chapters</span> <span>{lessons} Lessons</span>
+        </div>
+        <div className="mt-4 flex items-center">
+          <img src={instructor.thumbnail} alt={instructor.name} className="w-8 h-8 rounded-full" />
+          <span className="ml-2">{instructor.name}</span>
+        </div>
+        <button onClick={enroll} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Enroll Now</button>
+      </div>
+    </div>
+  );
+};
 
 export default CourseCard;

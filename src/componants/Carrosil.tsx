@@ -5,7 +5,6 @@ type Item = {
   heading: string;
   description: string;
   imageName: string;
-  fontColor: string;
 };
 
 type CarouselProps = {
@@ -18,7 +17,7 @@ const Carousel: React.FC<CarouselProps> = ({ items }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveIndex((prevIndex) => (prevIndex + 1) % items.length);
-    }, 10000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [items.length]);
@@ -38,17 +37,17 @@ const Carousel: React.FC<CarouselProps> = ({ items }) => {
     <div className="flex justify-center w-full h-auto mt-9">
       <div className="flex flex-col lg:flex-row w-[92%] bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="flex-1 flex flex-col justify-center items-start p-8">
-          <h2 className="text-4xl font-bold mb-4" style={{ color: items[activeIndex].fontColor }}>{items[activeIndex].heading}</h2>
-          <p className="text-lg mb-4" style={{ color: items[activeIndex].fontColor }}>{items[activeIndex].description}</p>
+          <h2 className="text-4xl font-bold mb-4">{items[activeIndex].heading}</h2>
+          <p className="text-lg mb-4">{items[activeIndex].description}</p>
           <div className="bg-gray-200 p-2 rounded-full">
             <span className="text-gray-600">Slide {activeIndex + 1} of {items.length}</span>
           </div>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 flex justify-center items-center bg-gray-100">
           <img 
             src={items[activeIndex].imageName} 
             alt={items[activeIndex].heading} 
-            className="w-full h-full object-cover"
+            className="w-full h-full max-h-[500px] object-cover"
           />
         </div>
       </div>

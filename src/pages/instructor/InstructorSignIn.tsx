@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { instructorSignInApi } from '../../services/instructor/api';
 import { useDispatch } from 'react-redux';
@@ -14,6 +14,7 @@ const InstructorSignIn: React.FC = () => {
     const [passwordError, setPasswordError] = useState<string>('');
     const [success, setSuccess] = useState<string>('');
     const dispatch=useDispatch()
+    const navigate =useNavigate()
 
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|icloud)\.com$/;
@@ -120,6 +121,10 @@ const InstructorSignIn: React.FC = () => {
                                         {showPassword ? <BsEyeSlash /> : <BsEye />}
                                     </button>
                                 </div>
+                   
+
+                                <p className="text-sm text-gray-600 mt-2" onClick={() => navigate('/instructor/forgotPassword')}>Forgot your password?</p>
+
                             </div>
                             {success && <p className="text-green-500 text-sm mb-4">{success}</p>}
                             <button type="submit" className={`bg-black w-full text-white px-4 py-2 border-2 rounded hover:bg-gray-800 ${!email || !password ? 'opacity-50 cursor-not-allowed' : ''}`}>Sign In</button>

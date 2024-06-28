@@ -68,17 +68,17 @@ const CourseEdit = ({ course }) => {
 
     const validateForm = () => {
         const errors = {};
-        if (!formData.title.trim()) {
-            errors.title = "Title is required";
+        if (!formData.title.trim() || formData.title.length < 3) {
+            errors.title = "Title is required and should be at least 3 characters long";
         }
-        if (!formData.subtitle.trim()) {
-            errors.subtitle = "Subtitle is required";
+        if (!formData.subtitle.trim() || formData.subtitle.length < 3) {
+            errors.subtitle = "Subtitle is required and should be at least 3 characters long";
         }
         if (!formData.category) {
             errors.category = "Category is required";
         }
-        if (!formData.topic.trim()) {
-            errors.topic = "Course topic is required";
+        if (!formData.topic.trim() || formData.topic.length < 3) {
+            errors.topic = "Course topic is required and should be at least 3 characters long";
         }
         if (!formData.price) {
             errors.price = "Price is required";
@@ -98,7 +98,6 @@ const CourseEdit = ({ course }) => {
         if (validateForm()) {
             setLoading(true);
             editCourseApi(course._id, formData).then((result) => {
-                console.log(result);
                 toast.success('Course updated');
                 setLoading(false);
                 navigate('/instructor/courses')
@@ -110,7 +109,7 @@ const CourseEdit = ({ course }) => {
     return (
         <>
             <div className="bg-white shadow rounded-lg p-8">
-                <h2 className="text-2xl font-bold mb-6">Basic Information</h2>
+                <h2 className="text-2xl font-bold mb-6">Edit Course Details</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>

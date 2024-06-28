@@ -42,8 +42,6 @@ export const listEnrollers = async () => {
 }
 
 export const listCourses = async (data) => {
-    console.log("data", data);
-
     const response = await api.post("/instructor/listCourses", { data: data })
     return response.data
 }
@@ -65,7 +63,7 @@ export const addCourseApi = async (data) => {
 }
 
 export const curriculumApi = async (id, data) => {
-    // Create a new FormData object
+
     const formData = new FormData();
 
     data.forEach((section, index) => {
@@ -94,16 +92,13 @@ export const curriculumApi = async (id, data) => {
         });
     });
 
-    try {
-        const response = await api.post(`/instructor/${id}/curriculum`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
+
+    const response = await api.post(`/instructor/${id}/curriculum`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+    return response.data;
 };
 
 export const editCourseApi = async (id, data) => {
@@ -137,7 +132,7 @@ export const updateCourseApi = async (id, data) => {
             formData.append(`${lecturePrefix}[name]`, lecture.name);
             formData.append(`${lecturePrefix}[notes]`, lecture.notes);
             formData.append(`${lecturePrefix}[description]`, lecture.description);
-            
+
 
 
             if (lecture.file) {
@@ -161,11 +156,31 @@ export const updateCourseApi = async (id, data) => {
     return response.data;
 }
 
-export const deleteCourseApi = async (id: string,status: boolean) => {
+export const deleteCourseApi = async (id: string, status: boolean) => {
     console.log("id", id, "status", status);
-    
-    const response = await api.patch(`/instructor/${id}/changeStatus`,{status})
+
+    const response = await api.patch(`/instructor/${id}/changeStatus`, { status })
     return response.data
 }
 
 
+export const forgotPasswordApi = async (data) => {
+    const response = await api.post("/auth/instructor/forgetPassword", data)
+    return response.data
+
+}
+export const resetPasswordApi = async (data: {}) => {
+    const response = await api.post("/auth/instructor/resetPassword", data)
+    return response.data
+
+}
+
+
+export const listBlockedCourses = async (data) => {
+    const response = await api.get(`/instructor/${data}/blockedCourses`)
+    return response.data
+}
+export const listVerifiedCourses = async (data) => {
+    const response = await api.get(`/instructor/${data}/verifiedCourses`)
+    return response.data
+} 

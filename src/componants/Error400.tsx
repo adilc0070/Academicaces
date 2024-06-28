@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 function Error400() {
-    let naviagate=useNavigate()
+    const naviagate=useNavigate()
     return (
 <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
         <div className="text-center">

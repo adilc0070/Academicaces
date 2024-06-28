@@ -3,10 +3,10 @@ import { CgLogOut } from "react-icons/cg";
 import { Link, useNavigate } from "react-router-dom";
 import { setInstructorLogOut } from "../store/slice/instructorSlice";
 import { useDispatch, } from "react-redux";
-const InstructorLayout = ({ children }): React.ReactElement => {
+const InstructorLayout = ({ children }:{children:React.ReactNode}): React.ReactElement => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch()
-  let navigate = useNavigate()
+  const navigate = useNavigate()
   const logoutHandle = () => {
     dispatch(setInstructorLogOut())
     localStorage.removeItem('instructorToken')
@@ -19,8 +19,7 @@ const InstructorLayout = ({ children }): React.ReactElement => {
         <div className="text-2xl font-bold mb-8">Dashboard</div>
         <nav>
           <ul>
-            {['Dashboard', 'Courses', 'ManageCourses', 'Earnings', "Message", 'Settings'].map((item, index) => (
-
+            {['Dashboard', 'Add-Course', 'Earnings', "Message", 'Profile'].map((item, index) => (
               (window.location.pathname).includes(`/instructor/${item.toLowerCase()}`) ? <div key={index} className="block mb-4 bg-blue-950 drop-shadow-none rounded-3xl max-w-full max-h-full p-2 text-center">
                 <li className=""><Link to={`/instructor/${item.toLowerCase()}`} className="font-bold  ">{item}</Link></li>
               </div> :

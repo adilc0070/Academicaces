@@ -1,4 +1,3 @@
-import React from 'react'
 import InstructorLayout from '../../componants/InstructorsLayout'
 import CourseAddingForm from '../../componants/CourseAddingForm'
 

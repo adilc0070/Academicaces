@@ -5,13 +5,11 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
 const CurriculumEdit = ({ course }) => {
-    console.log(course);
-    
     const [sections, setSections] = useState(course.chapters.map(chapter => ({
         id: chapter._id,
         name: chapter.name,
         isFree: chapter.isFree,
-        odred: chapter.order,
+        order: chapter.order,
         lectures: chapter.lessonsID.map(lesson => ({
             id: lesson._id,
             name: lesson.name,
@@ -24,6 +22,7 @@ const CurriculumEdit = ({ course }) => {
     const [loading, setLoading] = useState(false);
     const [modal, setModal] = useState({ sectionId: null, lectureId: null });
     const [formData, setFormData] = useState({ name: '', video: '', notes: '', file: '', description: '', order: 0 });
+    const [errors, setErrors] = useState({});
     const [sectionEditModal, setSectionEditModal] = useState({ isOpen: false, sectionId: null, sectionName: '', isFree: false });
     const navigate = useNavigate();
 
@@ -33,7 +32,6 @@ const CurriculumEdit = ({ course }) => {
         return maxId + 1;
     };
 
-
     const addSection = () => {
         const newSection = { id: generateUniqueId(), name: `Section ${sections.length + 1}`, isFree: false, lectures: [], order: sections.length + 1 };
         setSections([...sections, newSection]);
@@ -42,7 +40,7 @@ const CurriculumEdit = ({ course }) => {
     const addLecture = (sectionId) => {
         const updatedSections = sections.map(section => {
             if (section.id === sectionId) {
-                const newLecture = { id: generateUniqueId(), name: 'Lesson name', video: '', notes: '', file: '', description: '' ,order: sections.length + 1};
+                const newLecture = { id: generateUniqueId(), name: 'Lesson name', video: '', notes: '', file: '', description: '', order: sections.length + 1 };
                 return { ...section, lectures: [...section.lectures, newLecture] };
             }
             return section;
@@ -80,29 +78,55 @@ const CurriculumEdit = ({ course }) => {
 
     const closeModal = () => {
         setModal({ sectionId: null, lectureId: null });
+        setErrors({});
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: '' });
+        }
     };
 
     const handleFileChange = (e) => {
         const { name, files } = e.target;
         setFormData({ ...formData, [name]: files[0] });
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: '' });
+        }
+    };
+
+    const validateForm = () => {
+        let valid = true;
+        const newErrors = {};
+
+        if (!formData.name) {
+            newErrors.name = 'Lecture name is required';
+            valid = false;
+        }
+        if (!formData.description) {
+            newErrors.description = 'Description is required';
+            valid = false;
+        }
+
+        setErrors(newErrors);
+        return valid;
     };
 
     const saveModalData = () => {
-        setSections(sections.map(section => {
-            if (section.id === modal.sectionId) {
-                return {
-                    ...section,
-                    lectures: section.lectures.map(lecture => lecture.id === modal.lectureId ? { ...lecture, ...formData } : lecture)
-                };
-            }
-            return section;
-        }));
-        closeModal();
+        if (validateForm()) {
+            setSections(sections.map(section => {
+                if (section.id === modal.sectionId) {
+                    return {
+                        ...section,
+                        lectures: section.lectures.map(lecture => lecture.id === modal.lectureId ? { ...lecture, ...formData } : lecture)
+                    };
+                }
+                return section;
+            }));
+            closeModal();
+        }
     };
 
     const getFileName = (file) => file ? file.name : 'No file selected';
@@ -113,10 +137,11 @@ const CurriculumEdit = ({ course }) => {
             await updateCourseApi(course._id, sections).then((response) => {
                 toast.success(response.message);
                 navigate(`/instructor/courses`);
-            })
+            });
             setLoading(false);
         } catch (error) {
             console.error('Error submitting form', error);
+            setLoading(false);
         }
     };
 
@@ -208,7 +233,7 @@ const CurriculumEdit = ({ course }) => {
                 </button>
             </div>
             {modal.sectionId !== null && modal.lectureId !== null && (
-                <EditModal formData={formData} handleInputChange={handleInputChange} handleFileChange={handleFileChange} saveModalData={saveModalData} closeModal={closeModal} />
+                <EditModal formData={formData} handleInputChange={handleInputChange} handleFileChange={handleFileChange} saveModalData={saveModalData} closeModal={closeModal} errors={errors} />
             )}
             {sectionEditModal.isOpen && (
                 <SectionEditModal sectionEditModal={sectionEditModal} handleSectionNameChange={handleSectionNameChange} handleSectionPremiumChange={handleSectionPremiumChange} saveSectionName={saveSectionName} setSectionEditModal={setSectionEditModal} />
@@ -217,17 +242,19 @@ const CurriculumEdit = ({ course }) => {
     );
 };
 
-const EditModal = ({ formData, handleInputChange, handleFileChange, saveModalData, closeModal }) => (
+const EditModal = ({ formData, handleInputChange, handleFileChange, saveModalData, closeModal, errors }) => (
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white p-6 rounded-lg shadow-lg">
             <h3 className="text-lg font-bold mb-4">Edit Content</h3>
             <div className="mb-4">
                 <label className="block text-gray-700">Lecture Name</label>
                 <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full p-2 border rounded mt-1" />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Description</label>
                 <input type="text" name="description" value={formData.description} onChange={handleInputChange} className="w-full p-2 border rounded mt-1" />
+                {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Lecture Notes</label>
@@ -237,6 +264,7 @@ const EditModal = ({ formData, handleInputChange, handleFileChange, saveModalDat
                 <div className="mb-4">
                     <label className="block text-gray-700">Upload Video</label>
                     <input type="file" name="video" onChange={handleFileChange} className="w-full p-2 border rounded mt-1" />
+                    
                 </div>
                 <div className="mb-4">
                     <label className="block text-gray-700">Attach File</label>
