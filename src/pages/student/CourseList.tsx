@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import StudentLayout from '../../componants/StudentLayOut';
-import CoursesList from '../../componants/CoursesList';
+import { useEffect, useState, useCallback } from 'react';
+import { throttle } from 'lodash';
+import StudentLayout from '../../components/StudentLayOut';
+import CoursesList from '../../components/CoursesList';
 import { listCatogoriesApi } from '../../services/admin/api';
 import { listCourses } from '../../services/student/api';
-
 
 function CourseList() {
     const [courses, setCourses] = useState([]);
@@ -17,6 +17,7 @@ function CourseList() {
     });
     const [totalCourses, setTotalCourses] = useState(0);
 
+    // Define the function to fetch courses from the API
     const fetchCourses = () => {
         listCourses(formdata).then((result) => {
             setCourses(result.courses);
@@ -24,18 +25,34 @@ function CourseList() {
         });
     };
 
+    // Create a throttled version of fetchCourses
+    const throttledFetchCourses = useCallback(
+        throttle(() => {
+            fetchCourses();
+        }, 500), // 300ms interval for throttling
+        [formdata] // Dependency on formdata, so it will update the throttle function when formdata changes
+    );
+
+    // Call the throttledFetchCourses whenever formdata changes
+    useEffect(() => {
+        throttledFetchCourses();
+        // Cleanup the throttle function when the component unmounts
+        return throttledFetchCourses.cancel;
+    }, [throttledFetchCourses]);
+
+    // Fetch categories on initial render
     useEffect(() => {
         listCatogoriesApi().then((result) => {
             setCategories(result.catogaries);
         });
-        fetchCourses();
-    }, [formdata]);
+    }, []);
 
+    // Handle search button click
     const handleSearch = () => {
         setFormData({ ...formdata, page: 1 }); // Reset to the first page when searching
-        fetchCourses();
     };
 
+    // Handle form data changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevFormData) => ({
@@ -44,6 +61,7 @@ function CourseList() {
         }));
     };
 
+    // Handle next page button click
     const handleNextPage = () => {
         setFormData((prevFormData) => ({
             ...prevFormData,
@@ -51,6 +69,7 @@ function CourseList() {
         }));
     };
 
+    // Handle previous page button click
     const handlePreviousPage = () => {
         setFormData((prevFormData) => ({
             ...prevFormData,

@@ -1,14 +1,9 @@
-import axios from "axios";
-
-const api = axios.create({
-    baseURL: "http://localhost:3000",
-});
+import { api } from "../../utils/api";
 type data = {
     email: string,
     password: string,
     rememberMe: boolean
 }
-
 
 export const signInApi = async ({ data }: { data: data }) => {
 
@@ -16,7 +11,7 @@ export const signInApi = async ({ data }: { data: data }) => {
     return response.data;
 }
 
-export const signUpApi = async ({ data }: { data: {userName: string, email: string, password: string} }) => {
+export const signUpApi = async ({ data }: { data: { userName: string, email: string, password: string } }) => {
     const response = await api.post("auth/user/signUp", data);
     return response.data;
 }
@@ -80,4 +75,13 @@ export const mycourses = async (data) => {
 export const getCourse = async (data) => {
     const response = await api.get(`/student/${data.courseId}/viewCourse`);
     return response.data;
+}
+
+export const findID = async ( email: string ) => {
+    const response = await api.get(`/student/getId?email=${email}`);
+    return response.data
+}
+export const findInstructors = async ( id: string ) => {
+    const response = await api.get(`/student/${id}/listChats`);
+    return response.data
 }

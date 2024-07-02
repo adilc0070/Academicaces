@@ -1,5 +1,5 @@
-import InstructorLayout from "../../componants/InstructorsLayout"
-import CoursePage from "../../componants/coursePage"
+import InstructorLayout from "../../components/InstructorsLayout"
+import CoursePage from "../../components/coursePage"
 
 function IndividualCourse() {
   return (

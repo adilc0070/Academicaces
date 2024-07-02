@@ -3,12 +3,13 @@
 import React, { useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { otpSend, instructorOtpSend } from '../services/student/api';
+import { otpSend } from '../services/student/api';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { setStudentDetails } from '../store/slice/studentSlice';
 import { setInstructorDetails } from '../store/slice/instructorSlice';
+import { instructorOtpSend } from '../services/instructor/api';
 
 interface OTPVerificationProps {
     emailOTP: string;

@@ -1,5 +1,5 @@
-import InstructorLayout from '../../componants/InstructorsLayout'
-import Error400 from '../../componants/Error400'
+import InstructorLayout from '../../components/InstructorsLayout'
+import Error400 from '../../components/Error400'
 function Error404() {
 
   return (

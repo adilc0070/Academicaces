@@ -1,5 +1,5 @@
-import InstructorLayout from '../../componants/InstructorsLayout'
-import CourseAddingForm from '../../componants/CourseAddingForm'
+import InstructorLayout from '../../components/InstructorsLayout'
+import CourseAddingForm from '../../components/CourseAddingForm'
 
 function AddCourse() {
     return (

@@ -1,12 +1,12 @@
 import { useEffect, useState, lazy, Suspense } from "react";
 import { listCourses } from "../services/student/api";
-import NavBar from "../componants/LandingNavBar";
-import Footer from "../componants/Footer";
+import NavBar from "../components/LandingNavBar";
+import Footer from "../components/Footer";
 
-const Carousel = lazy(() => import("../componants/Carrosil"));
-const IconCard = lazy(() => import("../componants/IconCard"));
-const InstructorInterFace = lazy(() => import("../componants/InstructorInterFace"));
-const CoursesList = lazy(() => import("../componants/CoursesList"));
+const Carousel = lazy(() => import("../components/Carrosil"));
+const IconCard = lazy(() => import("../components/IconCard"));
+const InstructorInterFace = lazy(() => import("../components/InstructorInterFace"));
+const CoursesList = lazy(() => import("../components/CoursesList"));
 
 function LandingPage() {
   const [courses, setCourses] = useState([]);

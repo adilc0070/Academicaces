@@ -135,6 +135,8 @@ const CourseCurriculum = ({ id }) => {
     };
 
     const handleSectionPremiumChange = (e) => {
+        console.log(e.target.checked);
+        
         setSectionEditModal({ ...sectionEditModal, isFree: e.target.checked });
     };
 

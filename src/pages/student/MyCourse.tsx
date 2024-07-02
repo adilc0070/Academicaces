@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import StudentLayout from '../../componants/StudentLayOut'
-import CourseCardT1 from '../../componants/CourseCardT1'
+import StudentLayout from '../../components/StudentLayOut'
+import CourseCardT1 from '../../components/CourseCardT1'
 import { mycourses } from '../../services/student/api'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'

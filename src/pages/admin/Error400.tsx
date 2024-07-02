@@ -1,5 +1,5 @@
-import AdminLayout from '../../componants/AdminLayout'
-import Error400 from '../../componants/Error400'
+import AdminLayout from '../../components/AdminLayout'
+import Error400 from '../../components/Error400'
 function Error400admin() {
     return (
         <AdminLayout>

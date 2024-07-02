@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const CancelPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-center p-4">
       <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8">
@@ -20,8 +22,9 @@ const CancelPage = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="bg-red-500 text-white py-2 px-4 rounded transition duration-300"
+          onClick={() => navigate('/courses')}
         >
-          Return to Home
+          Return to Course List
         </motion.button>
       </div>
     </div>

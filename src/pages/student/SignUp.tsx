@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup'
 import { signUpApi } from '../../services/student/api';
-import OTPVerification from '../../componants/OTPVerification';
+import OTPVerification from '../../components/OTPVerification';
 
 const SignUp: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);

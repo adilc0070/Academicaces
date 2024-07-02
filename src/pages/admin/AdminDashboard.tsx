@@ -1,5 +1,5 @@
-import AdminLayout from '../../componants/AdminLayout';
-import DashBoard from '../../componants/DashBoard';
+import AdminLayout from '../../components/AdminLayout';
+import DashBoard from '../../components/DashBoard';
 
 function AdminDashboard() {
     

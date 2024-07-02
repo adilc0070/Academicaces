@@ -1,12 +1,4 @@
-
-import axios from "axios";
-
-
-
-
-const api = axios.create({
-    baseURL: "http://localhost:3000",
-});
+import { api } from "../../utils/api"
 
 type data = {
     userName: string
@@ -26,7 +18,9 @@ export const instructorSignInApi = async (data: data) => {
     return response.data
 }
 
-export const instructorOtpSend = async (data: data) => {
+export const instructorOtpSend = async (data: {otp: string, email: string}) => {
+    console.log(data);
+    
     const response = await api.post("/auth/instructor/verifyOtp", data)
     return response.data
 }
@@ -62,7 +56,7 @@ export const addCourseApi = async (data) => {
     return response.data;
 }
 
-export const curriculumApi = async (id, data) => {
+export const curriculumApi = async (id: string, data) => {
 
     const formData = new FormData();
 
@@ -184,3 +178,12 @@ export const listVerifiedCourses = async (data) => {
     const response = await api.get(`/instructor/${data}/verifiedCourses`)
     return response.data
 } 
+export const findInstructorId = async ( email: string ) => {
+    const response = await api.get(`/instructor/getId?email=${email}`);
+    return response.data
+}
+
+export const findStudents = async (id: string) => {
+    const response = await api.get(`/instructor/${id}/listChats`);
+    return response.data
+}

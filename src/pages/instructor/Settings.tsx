@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import InstructorLayout from '../../componants/InstructorsLayout';
-import DashBoardNavBar from '../../componants/DashBoardNavBar';
+import InstructorLayout from '../../components/InstructorsLayout';
+import DashBoardNavBar from '../../components/DashBoardNavBar';
 import Dashboard from './Dashboard';
 import Profile from './Profile';
 import Chat from './Chat';

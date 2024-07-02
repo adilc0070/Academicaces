@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import ShowCard from '../../componants/ShowCard';
+import ShowCard from '../../components/ShowCard';
 import { listBlockedCourses, listCourses, listVerifiedCourses } from '../../services/instructor/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';

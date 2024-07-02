@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import AdminSignIn from '../pages/admin/AdminSignIn';
-import { AdminIsLoggedIn, AdminIsLoggedOut } from '../componants/Protuctor';
+import { AdminIsLoggedIn, AdminIsLoggedOut } from '../components/Protuctor';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import StudentList from '../pages/admin/studentList';
 import CategoryManagement from '../pages/admin/CategoryManagement';

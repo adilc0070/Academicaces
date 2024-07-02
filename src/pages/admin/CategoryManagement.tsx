@@ -1,6 +1,6 @@
 import React from 'react'
-import TableInput from '../../componants/TableInput'
-import AdminLayout from '../../componants/AdminLayout'
+import TableInput from '../../components/TableInput'
+import AdminLayout from '../../components/AdminLayout'
 
 function CategoryManagement() {
     return (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import AdminLayout from '../../componants/AdminLayout';
+import AdminLayout from '../../components/AdminLayout';
 import { blockStudentApi, listStudentsApi } from '../../services/admin/api';
-import CardTable from '../../componants/CardTable';
+import CardTable from '../../components/CardTable';
 
 function StudentList() {
     const [students, setStudents] = useState([]);

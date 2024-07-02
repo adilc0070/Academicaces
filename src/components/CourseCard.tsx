@@ -8,7 +8,7 @@ const CourseCard = ({ _id, category, title, price, chapters, instructor, rating 
   const lessons = chapters.map((val) => val.lessonsID.length).reduce((prev, curr) => prev + curr, 0);
   const navigate = useNavigate();
   const enroll = async () => {
-    const stripe = await loadStripe('pk_test_51PV9k0ARI7iTzCKLDmWS58VDN6U9odDEXQIQY8mWgMJPbusodhqLwzzNVUAJcNnYCaiCImfwv5lpunCYA8LRgXiX00bZLtvq9x');
+    const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
     try {
       const response = await buyCourse({ data: { courseId: _id, price, image: thumbnail } })
       const { id: sessionId } = response.data.session;
@@ -41,7 +41,7 @@ const CourseCard = ({ _id, category, title, price, chapters, instructor, rating 
           <span>{chapters.length} Chapters</span> <span>{lessons} Lessons</span>
         </div>
         <div className="mt-4 flex items-center">
-          <img src={instructor.thumbnail} alt={instructor.name} className="w-8 h-8 rounded-full" />
+          <img src={instructor.thumbnail ? instructor.thumbnail : `https://ui-avatars.com/api/?name=${instructor.name}&background=random`} alt={instructor.name} className="w-8 h-8 rounded-full" />
           <span className="ml-2">{instructor.name}</span>
         </div>
         <button onClick={enroll} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Enroll Now</button>

@@ -1,5 +1,5 @@
-import StudentLayout from '../../componants/StudentLayOut'
-import Error400 from '../../componants/Error400'
+import StudentLayout from '../../components/StudentLayOut'
+import Error400 from '../../components/Error400'
 
 function PageNotFound() {
   return (

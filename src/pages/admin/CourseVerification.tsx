@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import AdminLayout from '../../componants/AdminLayout'
-import CardTable from '../../componants/CardTable';
+import AdminLayout from '../../components/AdminLayout'
+import CardTable from '../../components/CardTable';
 import { listAllCoursesApi, verifieCourseApi, } from '../../services/admin/api';
 import { toast } from 'sonner';
 

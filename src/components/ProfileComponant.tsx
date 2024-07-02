@@ -1,15 +1,30 @@
-function ProfileComponant({ instructors }: {instructors:{profile:string,userName:string}}) {
+import { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import { RootState } from "../store/store"
+
+function ProfileComponant( ) {
+    console.log('here');
+    
+    const [profileData, setProfileData] = useState({})
+    const instructor = useSelector((state: RootState) => state.instructor)
+    const student = useSelector((state: RootState) => state.student)
+    useEffect(() => {
+        if (window.location.pathname.includes('instructor')) {
+            setProfileData(instructor)
+            console.log("instructor", profileData);
+            
+        }else{
+            setProfileData(student)
+        }
+    },[])
     return (
         <div className="bg-white p-4 rounded-lg shadow">
             <div className="mb-4 border p-3 font-medium border-gray-300">Profile</div>
             <div className="max-w-lg mx-auto my-10 bg-white rounded-lg shadow-md p-5">
-                {instructors.profile ?
-                    <img className="w-32 h-32 rounded-full mx-auto" src="https://picsum.photos/200" alt="Profile picture" />
-                    :
-                    <img className="w-32 h-32 rounded-full mx-auto" src={`${instructors.profile}`} alt="Profile picture" />
-
+                {
+                    <img className="w-32 h-32 rounded-full mx-auto" src={profileData?.image ? profileData.image : `https://ui-avatars.com/api/?name=${profileData?.userName}&background=random`} alt="Profile picture" />
                 }
-                <h2 className="text-center text-2xl font-semibold mt-3">{instructors.userName}</h2>
+                <h2 className="text-center text-2xl font-semibold mt-3">{profileData?.userName}</h2>
                 <p className="text-center text-gray-600 mt-1">Software Engineer</p>
                 <div className="flex justify-center mt-5">
                     <a href="#" className="text-blue-500 hover:text-blue-700 mx-3">Twitter</a>

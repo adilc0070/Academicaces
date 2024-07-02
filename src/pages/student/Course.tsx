@@ -1,7 +1,7 @@
 
 import { useParams } from 'react-router-dom'
-import StudentLayout from '../../componants/StudentLayOut'
-import CoursePage from '../../componants/coursePage'
+import StudentLayout from '../../components/StudentLayOut'
+import CoursePage from '../../components/coursePage'
 import { useEffect, useState } from 'react';
 import { getCourse } from '../../services/student/api';
 

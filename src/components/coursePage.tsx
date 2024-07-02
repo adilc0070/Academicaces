@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { GrFavorite } from 'react-icons/gr';
+import { useEffect, useState } from 'react';
+// import { GrFavorite } from 'react-icons/gr';
 import { FaLock } from 'react-icons/fa'
 import { loadStripe } from '@stripe/stripe-js';
 import { buyCourse } from '../services/student/api';
@@ -10,6 +10,9 @@ const CoursePage = ({ course }) => {
 
     const [activeChapterIndex, setActiveChapterIndex] = useState(null);
     const [activeLessonIndex, setActiveLessonIndex] = useState(null);
+    useEffect(() => {
+        
+    })
 
     const toggleChapterAccordion = (index) => {
         setActiveChapterIndex(activeChapterIndex === index ? null : index);
@@ -19,19 +22,19 @@ const CoursePage = ({ course }) => {
     const toggleLessonAccordion = (index) => {
         setActiveLessonIndex(activeLessonIndex === index ? null : index);
     };
-    const enroll = async () => {
-        const stripe = await loadStripe('pk_test_51PV9k0ARI7iTzCKLDmWS58VDN6U9odDEXQIQY8mWgMJPbusodhqLwzzNVUAJcNnYCaiCImfwv5lpunCYA8LRgXiX00bZLtvq9x');
+    const enroll = async (data) => {
+        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
         try {
-          const response = await buyCourse({ data: { courseId: _id, price, image: thumbnail } })
-          const { id: sessionId } = response.data.session;
-          const { error } = await stripe.redirectToCheckout({ sessionId });
-          if (error) {
-            console.error('Stripe Checkout Error:', error);
-          }
+            const response = await buyCourse({ data: { courseId: data._id, price: data.price, image: data.thumbnail } })
+            const { id: sessionId } = response.data.session;
+            const { error } = await stripe.redirectToCheckout({ sessionId });
+            if (error) {
+                console.error('Stripe Checkout Error:', error);
+            }
         } catch (error) {
-          console.error('Server Error:', error);
+            console.error('Server Error:', error);
         }
-      };
+    };
     const renderTabContent = () => {
         switch (activeTab) {
             case 'curriculum':
@@ -72,7 +75,7 @@ const CoursePage = ({ course }) => {
                                                         </button>
                                                         {activeLessonIndex === lessonIndex && (
                                                             <div className="p-3 border-t border-gray-300 bg-white rounded-b-lg">
-                                                                {lesson.isFree && (
+                                                                {chapter.isFree && (
                                                                     <p className="text-green-600 font-semibold mb-2">This lesson is free!</p>
                                                                 )}
                                                                 <p className="text-gray-800 mb-2">
@@ -120,13 +123,13 @@ const CoursePage = ({ course }) => {
                         <p>{course?.subtitle}</p>
                     </div>
                 );
-            case 'reviews':
-                return (
-                    <div className="p-6 rounded-lg shadow-md">
-                        <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
-                        {/* Replace with actual review content */}
-                    </div>
-                );
+            // case 'reviews':
+            //     return (
+            //         <div className="p-6 rounded-lg shadow-md">
+            //             <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
+            //             {/* Replace with actual review content */}
+            //         </div>
+            //     );
             case 'instructor':
                 return (
                     <div className="p-6 rounded-lg shadow-md">
@@ -174,12 +177,12 @@ const CoursePage = ({ course }) => {
                         >
                             Description
                         </button>
-                        <button
+                        {/* <button
                             className={`py-2 px-4 ${activeTab === 'reviews' ? 'bg-sky-600 text-white' : 'bg-gray-200 text-gray-700'} rounded transition`}
                             onClick={() => setActiveTab('reviews')}
                         >
                             Reviews
-                        </button>
+                        </button> */}
                         <button
                             className={`py-2 px-4 ${activeTab === 'instructor' ? 'bg-sky-600 text-white' : 'bg-gray-200 text-gray-700'} rounded transition`}
                             onClick={() => setActiveTab('instructor')}
@@ -204,8 +207,8 @@ const CoursePage = ({ course }) => {
                         <span className="text-green-600 ml-2">{10}% OFF</span>
                     </div>
                     <div className="flex justify-center space-x-2 mb-4">
-                        <button className="bg-sky-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"><GrFavorite fontSize={"20px"} /></button>
-                        <button onClick={()=>enroll()} className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700 transition">Enroll Now</button>
+                        {/* <button className="bg-sky-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"><GrFavorite fontSize={"20px"} /></button> */}
+                        <button onClick={() => enroll(course)} className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700 transition">Enroll Now</button>
                     </div>
                 </div>
 

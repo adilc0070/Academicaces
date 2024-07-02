@@ -1,16 +1,12 @@
-import CardFullLength from './CardFullLength';
-import ProfileComponant from './ProfileComponant';
-// import { listInstructorsApi } from '../services/admin/api';
-import { RootState } from '../store/store';
-import { useSelector } from 'react-redux';
+// import CardFullLength from './CardFullLength';
+// import ProfileComponant from './ProfileComponant';
 
 function DashBoard() {
-    const instructors = useSelector((state: RootState) => state.instructor);
-    console.log("instructors",instructors);
+    
     
     return (
         <div>
-            <div className="flex justify-between items-center mb-4">
+            {/* <div className="flex justify-between items-center mb-4">
                 <div>
                     <h1 className="text-2xl font-bold">Welcome!</h1>
                 </div>
@@ -58,7 +54,7 @@ function DashBoard() {
                         </li>
                     </ul>
                 </div>
-                <ProfileComponant instructors={instructors} />
+                <ProfileComponant  />
                 <div className="bg-white p-4 rounded-lg shadow">
                     <div className="mb-4 border p-3 font-medium border-gray-300">Chat</div>
                     <div className="h-32 bg-gray-200">[Chat]</div>
@@ -67,7 +63,8 @@ function DashBoard() {
                 
                 <CardFullLength />
 
-            </div>
+            </div> */}
+            Welcome to Dashboard
         </div>
     )
 }

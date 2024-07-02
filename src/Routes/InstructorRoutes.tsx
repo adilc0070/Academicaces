@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
-import { InstructorIsLoggedIn, InstructorIsLoggedOut } from '../componants/Protuctor'
+import { InstructorIsLoggedIn, InstructorIsLoggedOut } from '../components/Protuctor'
 import InstructorSignIn from '../pages/instructor/InstructorSignIn'
 import InstructorSignUp from '../pages/instructor/InstructorSignUp'
 import HomePage from '../pages/instructor/homePage'

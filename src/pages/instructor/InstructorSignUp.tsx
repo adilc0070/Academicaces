@@ -3,7 +3,7 @@ import { BsEye, BsEyeSlash } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { instructorSignUpApi } from '../../services/instructor/api';
 import { toast } from 'sonner';
-import OTPVerification from '../../componants/OTPVerification';
+import OTPVerification from '../../components/OTPVerification';
 
 const InstructorSignUp: React.FC = () => {
     const [name, setName] = useState<string>('');

@@ -1,5 +1,5 @@
-import InstructorLayout from '../../componants/InstructorsLayout'
-import DashBoard from '../../componants/DashBoard';
+import InstructorLayout from '../../components/InstructorsLayout'
+import DashBoard from '../../components/DashBoard';
 
 function HomePage() {
   return (

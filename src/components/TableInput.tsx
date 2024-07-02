@@ -197,7 +197,7 @@ function TableInput({ title }: { title: string }) {
                     </button>
                 </div>
                 {error && <div className="text-red-500 mb-4">{error}</div>}
-                <table className="min-w-full divide-y divide-gray-200">
+                <table className="divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

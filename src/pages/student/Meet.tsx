@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import StudentLayout from '../../componants/StudentLayOut'
+import StudentLayout from '../../components/StudentLayOut'
 import { JitsiMeeting } from '@jitsi/react-sdk';
 function Meet() {
     useEffect(() => {
