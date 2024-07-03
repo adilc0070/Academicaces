@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const CourseCardT1 = ({ _id, category, title, price, chapters, instructor, rating = 5, thumbnail }): JSX.Element => {
     const lessons = chapters.map((val) => val.lessonsID.length).reduce((prev, curr) => prev + curr, 0);
     const navigate = useNavigate()
+    
 
     return (
         <div className="bg-white rounded-lg shadow-lg p-4">

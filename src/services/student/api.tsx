@@ -85,3 +85,7 @@ export const findInstructors = async ( id: string ) => {
     const response = await api.get(`/student/${id}/listChats`);
     return response.data
 }
+export const isEnrolled = async ( id: string , courseId: string) => {
+    const response = await api.get(`/student/${id}/course/${courseId}/isEnrolled`);
+    return response.data
+}

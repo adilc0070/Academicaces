@@ -3,6 +3,7 @@ import { buyCourse } from '../services/student/api';
 import { useNavigate } from 'react-router-dom';
 
 
+
 const CourseCard = ({ _id, category, title, price, chapters, instructor, rating = 5, thumbnail }): JSX.Element => {
 
   const lessons = chapters.map((val) => val.lessonsID.length).reduce((prev, curr) => prev + curr, 0);
@@ -20,6 +21,7 @@ const CourseCard = ({ _id, category, title, price, chapters, instructor, rating 
       console.error('Server Error:', error);
     }
   };
+  
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">

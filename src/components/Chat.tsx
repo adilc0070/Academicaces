@@ -1,17 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { initSocket } from '../utils/socket';
 import { findID, findInstructors } from '../services/student/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { findInstructorId, findStudents } from '../services/instructor/api';
-
-const getUserId = async (email: string) => {
-    if (window.location.pathname.includes('instructor')) {
-        return await findInstructorId(email);
-    } else {
-        return await findID(email);
-    }
-}
 
 interface User {
     _id: string;
@@ -20,17 +12,27 @@ interface User {
     profilePicture?: string;
 }
 
-interface UserListProps {
-    users: User[];
-    onSelectUser: (user: User) => void;
+interface Message {
+    text: string;
+    sender: string;
+    receiver: string;
+    timestamp: string;
 }
 
-const UserList = ({ users, onSelectUser }: UserListProps) => {
-    console.log(users);
-    
+const getUserId = async (email: string): Promise<string> => {
+    if (window.location.pathname.includes('instructor')) {
+        return await findInstructorId(email);
+    } else {
+        return await findID(email);
+    }
+}
+
+const UserList = ({ users, onlineUsers, onSelectUser }: { users: User[], onlineUsers: string[], onSelectUser: (user: User) => void }) => {
     return (
-        <div className="w-1/4 bg-gray-800 text-white p-4">
-            <h2 className="text-xl font-bold mb-4">Users</h2>
+        <div className="w-1/4 bg-gray-900 text-white p-4">
+            <h2 className="text-xl font-bold mb-4">
+                {window.location.pathname.includes('instructor') ? 'Students' : 'Instructors'}
+            </h2>
             <ul>
                 {users.map((user) => (
                     <li
@@ -39,11 +41,12 @@ const UserList = ({ users, onSelectUser }: UserListProps) => {
                         onClick={() => onSelectUser(user)}
                     >
                         <img
-                            src={user.profilePicture ? user.profilePicture : `https://ui-avatars.com/api/?name=${user.name? user.name : user.userName }&background=random`}
+                            src={user.profilePicture ? user.profilePicture : `https://ui-avatars.com/api/?name=${user.name ? user.name : user.userName}&background=random`}
                             alt={user.name ? user.name : user.userName}
                             className="w-10 h-10 rounded-full mr-3"
                         />
-                        {user.name ? user.name : user.userName}
+                        <span className="flex-grow">{user.name ? user.name : user.userName}</span>
+                        {onlineUsers.includes(user._id) && <span className="ml-2 text-green-500">●</span>}
                     </li>
                 ))}
             </ul>
@@ -51,36 +54,60 @@ const UserList = ({ users, onSelectUser }: UserListProps) => {
     );
 };
 
-interface ChatBoxProps {
-    user: User | null;
-}
-
-const ChatBox = ({ user }: ChatBoxProps) => {
+const ChatBox = ({ user, userId, socket }: { user: User | null, userId: string, socket: any }) => {
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState<{ user: string; text: string; timestamp: string }[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    useEffect(() => {
+        if (user) {
+            const fetchMessages = async () => {
+                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/messages?sender=${userId}&receiver=${user._id}`);
+                const data = await response.json();
+                setMessages(data);
+            };
+            fetchMessages();
+        }
+    }, [user, userId]);
 
     const sendMessage = () => {
         if (!user) return;
 
-        const newMessage = {
-            user: user.name? user.name : user.userName,
+        const newMessage: Message = {
             text: message,
+            sender: userId,
+            receiver: user._id,
             timestamp: new Date().toLocaleTimeString(),
         };
+
+        socket.emit("sendMessage", newMessage);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         setMessage('');
     };
 
+    useEffect(() => {
+        const handleMessage = (newMessage: Message) => {
+            if ((newMessage.sender === userId && newMessage.receiver === user._id) || (newMessage.sender === user._id && newMessage.receiver === userId)) {
+                setMessages((prevMessages) => [...prevMessages, newMessage]);
+            }
+        };
+
+        socket.on("newMessage", handleMessage);
+
+        return () => {
+            socket.off("newMessage", handleMessage);
+        };
+    }, [socket, userId, user]);
+
     return (
-        <div className="w-3/4 p-4 flex flex-col">
+        <div className="w-3/4 p-4 flex flex-col bg-gray-100">
             {user ? (
                 <>
-                    <h2 className="text-xl font-bold mb-4">Chat with {user.name? user.name : user.userName}</h2>
+                    <h2 className="text-xl font-bold mb-4">Chat with {user.name ? user.name : user.userName}</h2>
                     <div className="border rounded-lg p-4 h-96 overflow-y-auto bg-white flex flex-col">
                         <div className="flex flex-col space-y-4">
                             {messages.map((msg, index) => (
-                                <div key={index} className={`self-${msg.user === user.name ? 'end' : 'start'}`}>
-                                    <div className="bg-gray-200 p-2 rounded">
+                                <div key={index} className={`flex ${msg.sender === userId ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`p-2 rounded ${msg.sender === userId ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
                                         <p>{msg.text}</p>
                                         <span className="text-xs text-gray-500">{msg.timestamp}</span>
                                     </div>
@@ -93,7 +120,7 @@ const ChatBox = ({ user }: ChatBoxProps) => {
                             type="text"
                             placeholder="Type a message"
                             value={message}
-                            onChange={(e) => setMessage(e.target.value)}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
                             className="flex-grow p-2 border rounded-l-lg"
                         />
                         <button
@@ -111,7 +138,7 @@ const ChatBox = ({ user }: ChatBoxProps) => {
     );
 };
 
-const fetchChatUsers = async (id: string) => {
+const fetchChatUsers = async (id: string): Promise<User[]> => {
     if (window.location.pathname.includes('instructor')) {
         return await findStudents(id);
     } else {
@@ -124,6 +151,9 @@ export const ChatInterface = () => {
     const [users, setUsers] = useState<User[]>([]);
     const studentEmail = useSelector((state: RootState) => state.student.email);
     const instructorEmail = useSelector((state: RootState) => state.instructor.email);
+    const [socket, setSocket] = useState<any>(null);
+    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     useEffect(() => {
         const email = window.location.pathname.includes('instructor') ? instructorEmail : studentEmail;
@@ -134,19 +164,26 @@ export const ChatInterface = () => {
 
     useEffect(() => {
         if (userId) {
-            initSocket(userId);
+            const socketInstance = initSocket(userId);
+            setSocket(socketInstance);
             fetchChatUsers(userId).then((result) => {
                 setUsers(result);
             });
+
+            socketInstance.on("onlineStatus", (onlineUsers: string[]) => {
+                setOnlineUsers(onlineUsers);
+            });
+
+            return () => {
+                socketInstance.disconnect();
+            };
         }
     }, [userId]);
 
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
     return (
         <div className="flex min-h-screen bg-gray-100">
-            <UserList users={users} onSelectUser={setSelectedUser} />
-            <ChatBox user={selectedUser} />
+            <UserList users={users} onlineUsers={onlineUsers} onSelectUser={setSelectedUser} />
+            {socket && <ChatBox user={selectedUser} userId={userId} socket={socket} />}
         </div>
     );
 };

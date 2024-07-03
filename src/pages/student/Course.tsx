@@ -8,7 +8,7 @@ import { getCourse } from '../../services/student/api';
 function Course() {
     const { courseId } = useParams()
     const [course, setCourse] = useState(null)
-    console.log("courseId", courseId);
+;
     useEffect(() => {
         getCourse({ courseId }).then((result) => {
             setCourse(result.course)

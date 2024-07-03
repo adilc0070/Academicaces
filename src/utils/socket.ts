@@ -1,11 +1,26 @@
 import { io } from "socket.io-client";
 
-
-
-console.log(import.meta.env.VITE_BASE_URL);
-
 export const initSocket = (userId: string) => {
-    console.log(userId, "userId");
+    console.log("Initializing socket for user:", userId);
+
     const socket = io(import.meta.env.VITE_BASE_URL);
-    socket.emit("join", { userId });
+
+    socket.on("connect", () => {
+        console.log("Connected to socket server:", socket.id);
+        socket.emit("join", { userId });
+    });
+
+    socket.on("newMessage", (message) => {
+        console.log("New message received:", message);
+    });
+
+    socket.on("onlineStatus", (onlineUsers) => {
+        console.log("Online users:", onlineUsers);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("Disconnected from socket server");
+    });
+
+    return socket; // Return the socket instance
 };

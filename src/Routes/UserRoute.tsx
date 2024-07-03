@@ -27,7 +27,7 @@ function UserRoute() {
                 <Route path='/home' element={<HomePage />} />
                 <Route path='/courses' element={<CourseList/>} />
                 <Route path='/my-courses' element={<MyCourse/>} />
-                <Route path='/course/:courseId' element={<Course/>} />
+                <Route path='/course/:courseId/' element={<Course/>} />
                 <Route path='/meet' element={<Meet/>} />
                 <Route path='/success' element={<SuccessPage />} />
                 <Route path='/cancel' element={<CancelPage />} />
