@@ -14,7 +14,6 @@ function LandingPage() {
   async function fetchCourses() {
     try {
       const result = await listCourses({ category: '', sort: -1, search: '', page: 1, limit: 3 });
-      console.log("result from list in landing", result);
       setCourses(result.courses);
     } catch (error) {
       console.error("Error fetching courses:", error);

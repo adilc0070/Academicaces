@@ -2,10 +2,10 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const CourseCardT1 = ({ _id, category, title, price, chapters, instructor, rating = 5, thumbnail }): JSX.Element => {
+const CourseCardT1 = ({ _id, category, title, price, chapters, instructor, rating = 5, thumbnail, createdAt }): JSX.Element => {
     const lessons = chapters.map((val) => val.lessonsID.length).reduce((prev, curr) => prev + curr, 0);
     const navigate = useNavigate()
-    
+
 
     return (
         <div className="bg-white rounded-lg shadow-lg p-4">
@@ -25,14 +25,16 @@ const CourseCardT1 = ({ _id, category, title, price, chapters, instructor, ratin
                 </div>
                 <div className="mt-2 text-gray-500 text-sm">
                     <span>{chapters.length} Chapters</span> <span>{lessons} Lessons</span>
-                </div>
-                <div className="mt-4 flex items-center">
-                    <img src={instructor.thumbnail} alt={instructor.name} className="w-8 h-8 rounded-full" />
-                    <span className="ml-2">{instructor.name}</span>
-                </div>
-                <button onClick={() => navigate(`/course/${_id}`)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Watch Course</button>
+                    <br />
+                <span>Purchased Data</span> <span>{createdAt?.split('T')[0]}</span>
             </div>
+            <div className="mt-4 flex items-center">
+                <img src={instructor.thumbnail ? instructor.thumbnail : `https://ui-avatars.com/api/?name=${instructor.name}&background=random`} alt={instructor.name} className="w-8 h-8 rounded-full" />
+                <span className="ml-2">{instructor.name}</span>
+            </div>
+            <button onClick={() => navigate(`/course/${_id}`)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Watch Course</button>
         </div>
+        </div >
     );
 };
 

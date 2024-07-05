@@ -16,24 +16,20 @@ export const signUpApi = async ({ data }: { data: { userName: string, email: str
     return response.data;
 }
 export const otpSend = async ({ data }: { data: data }) => {
-    console.log("data from otp send api", data);
     const response = await api.post(`auth/user/verifyOtp`, data)
     return response.data;
 }
 export const forgotPassword = async ({ data }: { data: data }) => {
-    console.log("data from forgot password api", data);
     const response = await api.post(`auth/user/forgotPassword/`, data)
     return response.data;
 }
 
 export const resetPassword = async ({ data }: { data: data }) => {
-    console.log("data from reset password api", data);
     const response = await api.post(`auth/user/resetPassword/`, data)
     return response.data;
 }
 
 export const resendOtp = async ({ data }: { data: data }) => {
-    console.log("data from resend otp api", data);
     const response = await api.post(`auth/user/resendOtp/`, data)
     return response.data;
 }
@@ -61,7 +57,6 @@ export const enroll = async (data) => {
 
 
 export const buyCourse = async (data) => {
-    console.log("data from buy course api", data);
 
     const response = await api.post('/student/enrollCourse', data)
     return response

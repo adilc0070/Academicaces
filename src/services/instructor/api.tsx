@@ -18,9 +18,7 @@ export const instructorSignInApi = async (data: data) => {
     return response.data
 }
 
-export const instructorOtpSend = async (data: {otp: string, email: string}) => {
-    console.log(data);
-    
+export const instructorOtpSend = async (data: { otp: string, email: string }) => {
     const response = await api.post("/auth/instructor/verifyOtp", data)
     return response.data
 }
@@ -151,8 +149,6 @@ export const updateCourseApi = async (id, data) => {
 }
 
 export const deleteCourseApi = async (id: string, status: boolean) => {
-    console.log("id", id, "status", status);
-
     const response = await api.patch(`/instructor/${id}/changeStatus`, { status })
     return response.data
 }
@@ -168,8 +164,6 @@ export const resetPasswordApi = async (data: {}) => {
     return response.data
 
 }
-
-
 export const listBlockedCourses = async (data) => {
     const response = await api.get(`/instructor/${data}/blockedCourses`)
     return response.data
@@ -177,13 +171,17 @@ export const listBlockedCourses = async (data) => {
 export const listVerifiedCourses = async (data) => {
     const response = await api.get(`/instructor/${data}/verifiedCourses`)
     return response.data
-} 
-export const findInstructorId = async ( email: string ) => {
+}
+export const findInstructorId = async (email: string) => {
     const response = await api.get(`/instructor/getId?email=${email}`);
     return response.data
 }
 
 export const findStudents = async (id: string) => {
     const response = await api.get(`/instructor/${id}/listChats`);
+    return response.data
+}
+export const getDetails = async (id: string) => {
+    const response = await api.get(`/instructor/${id}/details`)
     return response.data
 }

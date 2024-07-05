@@ -15,12 +15,12 @@ const  DashBoardNavBar = ({ setCurrentView }: { setCurrentView: React.Dispatch<R
                     <div className="hidden md:flex items-center space-x-4">
                         <button onClick={() => setCurrentView('Dashboard')} className="text-gray-800 hover:text-gray-600">Dashboard</button>
                         <button onClick={() => setCurrentView('Profile')} className="text-gray-800 hover:text-gray-600">My Profile</button>
-                        <button onClick={() => setCurrentView('Messages')} className="text-gray-800 hover:text-gray-600">Messages</button>
-                        <button onClick={() => setCurrentView('Courses')} className="text-gray-800 hover:text-gray-600">Enrolled Courses</button>
-                        <a href="#" className="text-gray-800 hover:text-gray-600">Wishlist</a>
+                        <button onClick={() => setCurrentView('Messages')} className="text-gray-800 hover:text-gray-600">Chat</button>
+                        <button onClick={() => setCurrentView('Courses')} className="text-gray-800 hover:text-gray-600">Courses</button>
+                        {/* <a href="#" className="text-gray-800 hover:text-gray-600">Wishlist</a>
                         <a href="#" className="text-gray-800 hover:text-gray-600">Reviews</a>
                         <a href="#" className="text-gray-800 hover:text-gray-600">My Quiz Attempts</a>
-                        <a href="#" className="text-gray-800 hover:text-gray-600">Assignments</a>
+                        <a href="#" className="text-gray-800 hover:text-gray-600">Assignments</a> */}
                     </div>
                     <div className="md:hidden flex items-center">
                         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-800 hover:text-gray-600 focus:outline-none">
@@ -36,12 +36,12 @@ const  DashBoardNavBar = ({ setCurrentView }: { setCurrentView: React.Dispatch<R
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         <button onClick={() => setCurrentView('Dashboard')} className="block text-gray-800 hover:text-gray-600">Dashboard</button>
                         <button onClick={() => setCurrentView('Profile')} className="block text-gray-800 hover:text-gray-600">My Profile</button>
-                        <button onClick={() => setCurrentView('Messages')} className="block text-gray-800 hover:text-gray-600">Messages</button>
-                        <button onClick={() => setCurrentView('Courses')} className="block text-gray-800 hover:text-gray-600">Enrolled Courses</button>
-                        <a href="#" className="block text-gray-800 hover:text-gray-600">Wishlist</a>
+                        <button onClick={() => setCurrentView('Messages')} className="block text-gray-800 hover:text-gray-600">Chat</button>
+                        <button onClick={() => setCurrentView('Courses')} className="block text-gray-800 hover:text-gray-600">Courses</button>
+                        {/* <a href="#" className="block text-gray-800 hover:text-gray-600">Wishlist</a>
                         <a href="#" className="block text-gray-800 hover:text-gray-600">Reviews</a>
                         <a href="#" className="block text-gray-800 hover:text-gray-600">My Quiz Attempts</a>
-                        <a href="#" className="block text-gray-800 hover:text-gray-600">Assignments</a>
+                        <a href="#" className="block text-gray-800 hover:text-gray-600">Assignments</a> */}
                     </div>
                 </div>
             )}

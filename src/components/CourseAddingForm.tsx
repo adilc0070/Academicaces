@@ -31,7 +31,6 @@ const CourseAddingForm = () => {
     
     useEffect(() => {
         listCatogoriesApi().then((result) => {
-            console.log(result.catogaries);
             setCategories(result.catogaries);
         });
     }, []);
@@ -122,7 +121,6 @@ const CourseAddingForm = () => {
         if (validateForm()) {
             setLoading(true);
             const response = addCourseApi(formData).then((result) => {
-                console.log(result);
                 
                 if(result.statusCode == 200) {
                     toast.success(result.message)    

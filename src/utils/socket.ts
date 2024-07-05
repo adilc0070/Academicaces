@@ -2,7 +2,6 @@ import { io } from "socket.io-client";
 
 export const initSocket = (userId: string) => {
     console.log("Initializing socket for user:", userId);
-
     const socket = io(import.meta.env.VITE_BASE_URL);
 
     socket.on("connect", () => {

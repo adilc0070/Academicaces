@@ -3,8 +3,8 @@ import InstructorLayout from '../../components/InstructorsLayout';
 import DashBoardNavBar from '../../components/DashBoardNavBar';
 import Dashboard from './Dashboard';
 import Profile from './Profile';
-import Chat from './Chat';
 import CourseList from './CourseList'; 
+import { ChatInterface } from '../../components/Chat';
 
 
 function Settings() {
@@ -15,7 +15,7 @@ function Settings() {
             case 'Profile':
                 return <Profile />;
             case 'Messages':
-                return <Chat />;
+                return <ChatInterface />;
             case 'Courses':
                 return <CourseList />;
             default:

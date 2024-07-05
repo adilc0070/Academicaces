@@ -117,6 +117,15 @@ const CoursePage = ({ course }) => {
                                                                                 </li>
                                                                             )}
                                                                         </ul>
+                                                                        {isEnrolledStatus && lesson.files && (
+                                                                            <a
+                                                                                href={lesson.files}
+                                                                                download
+                                                                                className="text-blue-600 hover:underline"
+                                                                            >
+                                                                                Download Files
+                                                                            </a>
+                                                                        )}
                                                                     </>
                                                                 ) : (
                                                                     <p className="text-red-500 font-semibold">Enroll to access this content</p>
@@ -170,7 +179,7 @@ const CoursePage = ({ course }) => {
                         <span className="flex items-center">
                             <span className="mr-1">{course?.rating}</span>
                             <span>⭐</span>
-                            <span>({course?.reviewsCount})</span>
+                            <span>({})</span>
                         </span>
                         <span className="mx-2">|</span>
                         <span>Last Update: {new Date(course?.updatedAt).toLocaleDateString()}</span>

@@ -4,7 +4,8 @@ import CoursePage from "../../components/coursePage"
 function IndividualCourse() {
   return (
     <InstructorLayout>
-      <CoursePage />
+      {/* <CoursePage /> */}
+      hello
     </InstructorLayout>
   )
 }

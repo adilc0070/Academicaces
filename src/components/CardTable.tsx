@@ -1,9 +1,6 @@
-import React from 'react'
 import { BiLock, BiLockOpen } from 'react-icons/bi'
 
 function CardTable({ data, title, block, currentPage, totalPages, onPageChange }) {
-    console.log(data);
-
     const handlePreviousPage = () => {
         if (currentPage > 1) {
             onPageChange(currentPage - 1);

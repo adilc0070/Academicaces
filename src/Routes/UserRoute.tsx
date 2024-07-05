@@ -11,6 +11,7 @@ import CancelPage from '../components/CancelPage';
 import MyCourse from '../pages/student/MyCourse';
 import Course from '../pages/student/Course';
 import Chat from '../pages/student/Chat';
+import PurchaseHistory from '../pages/student/PurchaseHistory';
 
 function UserRoute() {
     return (
@@ -27,6 +28,7 @@ function UserRoute() {
                 <Route path='/home' element={<HomePage />} />
                 <Route path='/courses' element={<CourseList/>} />
                 <Route path='/my-courses' element={<MyCourse/>} />
+                <Route path='/purchases' element={<PurchaseHistory/>} />
                 <Route path='/course/:courseId/' element={<Course/>} />
                 <Route path='/meet' element={<Meet/>} />
                 <Route path='/success' element={<SuccessPage />} />

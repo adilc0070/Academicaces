@@ -9,6 +9,8 @@ import EditCourse from '../pages/instructor/EditCourse'
 import IndividualCourse from '../pages/instructor/IndividualCourse'
 import ForgotPassword from '../pages/instructor/ForgotPassword'
 import Settings from '../pages/instructor/Settings'
+import Chat from '../pages/instructor/Chat'
+
 
 function InstructorRoutes() {
     return (
@@ -26,6 +28,7 @@ function InstructorRoutes() {
                 <Route path='/add-course' element={<AddCourse />} />
                 <Route path='/edit-course' element={<EditCourse />} />
                 <Route path='/individualCourse' element={<IndividualCourse />} />
+                <Route path='/message' element={<Chat/>} />
                 <Route path='/profile' element={<Settings />}>
                     <Route path='/profile/individualCourse' element={<IndividualCourse />} />
 

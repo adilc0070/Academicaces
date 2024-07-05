@@ -17,19 +17,37 @@ interface Message {
     sender: string;
     receiver: string;
     timestamp: string;
+    isSender: boolean;
+}
+
+interface UserListProps {
+    users: User[];
+    onlineUsers: string[];
+    onSelectUser: (user: User) => void;
+}
+
+interface ChatBoxProps {
+    user: User | null;
+    userId: string;
+    socket: any;
 }
 
 const getUserId = async (email: string): Promise<string> => {
-    if (window.location.pathname.includes('instructor')) {
-        return await findInstructorId(email);
-    } else {
-        return await findID(email);
+    try {
+        if (window.location.pathname.includes('instructor')) {
+            return await findInstructorId(email);
+        } else {
+            return await findID(email);
+        }
+    } catch (error) {
+        console.error("Error fetching user ID:", error);
+        return '';
     }
-}
+};
 
-const UserList = ({ users, onlineUsers, onSelectUser }: { users: User[], onlineUsers: string[], onSelectUser: (user: User) => void }) => {
+const UserList = ({ users, onlineUsers, onSelectUser }: UserListProps) => {
     return (
-        <div className="w-1/4 bg-gray-900 text-white p-4">
+        <div className="w-1/4 bg-gray-900 text-white p-4 rounded-xl">
             <h2 className="text-xl font-bold mb-4">
                 {window.location.pathname.includes('instructor') ? 'Students' : 'Instructors'}
             </h2>
@@ -54,20 +72,31 @@ const UserList = ({ users, onlineUsers, onSelectUser }: { users: User[], onlineU
     );
 };
 
-const ChatBox = ({ user, userId, socket }: { user: User | null, userId: string, socket: any }) => {
+const ChatBox = ({ user, userId, socket }: ChatBoxProps) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
         if (user) {
             const fetchMessages = async () => {
-                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/messages?sender=${userId}&receiver=${user._id}`);
-                const data = await response.json();
-                setMessages(data);
+                try {
+                    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/messages?sender=${userId}&receiver=${user._id}`);
+                    const data = await response.json()
+                    setMessages(data);
+                } catch (error) {
+                    console.error("Error fetching messages:", error);
+                }
             };
             fetchMessages();
+            socket.on("newMessage", (newMessage: Message) => {
+                setMessages((prevMessages) => [...prevMessages, newMessage]);
+            });
+
+            return () => {
+                socket.off("newMessage");
+            };
         }
-    }, [user, userId]);
+    }, [user, userId, socket]);
 
     const sendMessage = () => {
         if (!user) return;
@@ -77,6 +106,7 @@ const ChatBox = ({ user, userId, socket }: { user: User | null, userId: string, 
             sender: userId,
             receiver: user._id,
             timestamp: new Date().toLocaleTimeString(),
+            isSender: true
         };
 
         socket.emit("sendMessage", newMessage);
@@ -84,67 +114,62 @@ const ChatBox = ({ user, userId, socket }: { user: User | null, userId: string, 
         setMessage('');
     };
 
-    useEffect(() => {
-        const handleMessage = (newMessage: Message) => {
-            if ((newMessage.sender === userId && newMessage.receiver === user._id) || (newMessage.sender === user._id && newMessage.receiver === userId)) {
-                setMessages((prevMessages) => [...prevMessages, newMessage]);
-            }
-        };
-
-        socket.on("newMessage", handleMessage);
-
-        return () => {
-            socket.off("newMessage", handleMessage);
-        };
-    }, [socket, userId, user]);
-
     return (
-        <div className="w-3/4 p-4 flex flex-col bg-gray-100">
+        <div className="w-3/4 p-4 flex flex-col bg-gray-50 border border-gray-200 rounded-lg shadow-lg">
             {user ? (
                 <>
-                    <h2 className="text-xl font-bold mb-4">Chat with {user.name ? user.name : user.userName}</h2>
-                    <div className="border rounded-lg p-4 h-96 overflow-y-auto bg-white flex flex-col">
+                    <div className="flex items-center justify-between mb-4 p-2 border-b border-gray-200 bg-gray-100 rounded-t-lg">
+                        <h2 className="text-xl font-bold">{user.name ? user.name : user.userName}</h2>
+                        {/* Add User Status */}
+                        <span className="text-sm text-gray-500">Online</span>
+                    </div>
+                    <div className="flex-grow p-4 bg-white rounded-lg overflow-y-auto">
                         <div className="flex flex-col space-y-4">
                             {messages.map((msg, index) => (
-                                <div key={index} className={`flex ${msg.sender === userId ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`p-2 rounded ${msg.sender === userId ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
+                                <div key={index} className={`flex ${msg.isSender ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`p-3 rounded-lg max-w-xs ${msg.isSender ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
                                         <p>{msg.text}</p>
-                                        <span className="text-xs text-gray-500">{msg.timestamp}</span>
+                                        <span className="text-xs text-gray-400">{msg.timestamp}</span>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <div className="mt-4 flex">
+                    <div className="mt-4 flex items-center">
                         <input
                             type="text"
-                            placeholder="Type a message"
+                            placeholder="Type your message..."
                             value={message}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
-                            className="flex-grow p-2 border rounded-l-lg"
+                            className="flex-grow p-2 border border-gray-300 rounded-l-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <button
                             onClick={sendMessage}
-                            className="bg-blue-500 text-white p-2 rounded-r-lg"
+                            className="bg-blue-500 text-white p-2 rounded-r-lg shadow-md hover:bg-blue-600 transition-colors"
                         >
                             Send
                         </button>
                     </div>
                 </>
             ) : (
-                <p className="text-xl">Select a user to start chatting</p>
+                <p className="text-xl text-gray-500">Select a user to start chatting</p>
             )}
         </div>
     );
 };
 
 const fetchChatUsers = async (id: string): Promise<User[]> => {
-    if (window.location.pathname.includes('instructor')) {
-        return await findStudents(id);
-    } else {
-        return await findInstructors(id);
+    try {
+        if (window.location.pathname.includes('instructor')) {
+            return await findStudents(id);
+        } else {
+            return await findInstructors(id);
+        }
+    } catch (error) {
+        console.error("Error fetching chat users:", error);
+        return [];
     }
-}
+};
 
 export const ChatInterface = () => {
     const [userId, setUserId] = useState<string>('');
@@ -181,7 +206,7 @@ export const ChatInterface = () => {
     }, [userId]);
 
     return (
-        <div className="flex min-h-screen bg-gray-100">
+        <div className="flex max-h-full bg-gray-100">
             <UserList users={users} onlineUsers={onlineUsers} onSelectUser={setSelectedUser} />
             {socket && <ChatBox user={selectedUser} userId={userId} socket={socket} />}
         </div>

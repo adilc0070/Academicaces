@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const CourseCard = ({ _id, category, title, price, chapters, instructor, rating = 5, thumbnail }): JSX.Element => {
+const CourseCard = ({ _id, category, title, price, chapters, instructor, rating = 5, thumbnail }:{_id: string, category: { name: string }, title: string, price: number, chapters: { lessonsID: string[] }[], instructor: { name: string, thumbnail: string }, rating: number, thumbnail: string}) => {
 
   const lessons = chapters.map((val) => val.lessonsID.length).reduce((prev, curr) => prev + curr, 0);
   const navigate = useNavigate();

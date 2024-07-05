@@ -19,7 +19,7 @@ const InstructorLayout = ({ children }:{children:React.ReactNode}): React.ReactE
         <div className="text-2xl font-bold mb-8">Dashboard</div>
         <nav>
           <ul>
-            {['Dashboard', 'Add-Course', 'Earnings', "Message", 'Profile'].map((item, index) => (
+            {['Dashboard', 'Add-Course',  "Message", 'Profile'].map((item, index) => (
               (window.location.pathname).includes(`/instructor/${item.toLowerCase()}`) ? <div key={index} className="block mb-4 bg-blue-950 drop-shadow-none rounded-3xl max-w-full max-h-full p-2 text-center">
                 <li className=""><Link to={`/instructor/${item.toLowerCase()}`} className="font-bold  ">{item}</Link></li>
               </div> :
