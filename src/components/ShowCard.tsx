@@ -87,7 +87,7 @@ function ShowCard({ title, description, imageUrl, course }) {
                         <span className="block">{course.lessons} Lessons</span>
                         <span className="block">{course.instructor.name}</span>
                     </div>
-                    <div className="text-xl font-bold text-green-500">${course.price}</div>
+                    <div className="text-xl font-bold text-green-500">₹{course.price}</div>
                 </div>
                 <div className="mt-4">
                     <button onClick={() => setModalOpen(true)} className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded w-full">View Details</button>
@@ -107,7 +107,7 @@ function ShowCard({ title, description, imageUrl, course }) {
                                 <p className="text-lg font-semibold text-gray-600 mb-4">{course.subtitle}</p>
                                 <p className="text-gray-700 mb-2"><strong>Category:</strong> {course.category.name}</p>
                                 <p className="text-gray-700 mb-2"><strong>Instructor:</strong> {course.instructor.name}</p>
-                                <p className="text-gray-700 mb-2"><strong>Price:</strong> ${course.price}</p>
+                                <p className="text-gray-700 mb-2"><strong>Price:</strong> ₹{course.price}</p>
                                 <p className="text-gray-700 mb-2"><strong>Created At:</strong> {new Date(course.createdAt).toLocaleDateString()}</p>
                                 <p className="text-gray-700 mb-4"><strong>Verified:</strong> {course.verified ? 'Yes' : 'No'}</p>
 

@@ -13,7 +13,7 @@ export default Logo
 
 
 
-function Verified({title}) {
+function Verified({title}:{title:string}) {
     return (
         <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60 dark:bg-gray-800">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -25,7 +25,7 @@ function Verified({title}) {
     )
 }
 
-function Blocked({title}) {
+function Blocked({title}:{title:string}) {
     return (
         <div className="inline-flex items-center px-3 py-1 text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:bg-gray-800">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -37,7 +37,7 @@ function Blocked({title}) {
     )
 }
 
-function Pending({title}) {
+function Pending({title}:{title:string}) {
     return (
         <div className="inline-flex items-center px-3 py-1 text-gray-500 rounded-full gap-x-2 bg-gray-100/60 dark:bg-gray-800">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -5,6 +5,7 @@ import { mycourses } from '../../services/student/api'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Link } from 'react-router-dom'
+// import FreelancerCard from '../../components/card'
 
 function MyCourse() {
     const student = useSelector((state: RootState) => state.student.email)
@@ -30,7 +31,10 @@ function MyCourse() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {courses.length > 0 ? courses.map((course, index) => (
+                        <>
                         <CourseCardT1 key={index} {...course} />
+                        {/* <FreelancerCard/> */}
+                        </>
                     )) : (
                         <p>No courses found.</p>
                     )}

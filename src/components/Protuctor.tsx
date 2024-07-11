@@ -4,61 +4,61 @@ import { Navigate, Outlet } from "react-router-dom"
 
 export function AdminIsLoggedIn() {
 
-    const adminId = useSelector((state:RootState)=>state.admin.email)
+    const adminId = useSelector((state: RootState) => state.admin.email)
 
-  return (
-    adminId ? <Outlet/>: <Navigate to='/admin/signIn'/> 
-  )
+    return (
+        adminId ? <Outlet /> : <Navigate to='/admin/signIn' />
+    )
 }
 
 
 export function AdminIsLoggedOut() {
 
-    const adminId = useSelector((state:RootState)=>state.admin.email)
+    const adminId = useSelector((state: RootState) => state.admin.email)
 
     return (
-      adminId ? <Navigate to='/admin/dashboard'/> : <Outlet/>
+        adminId ? <Navigate to='/admin/dashboard' /> : <Outlet />
     )
 }
 
 
 export function StudentIsLoggedIn() {
 
-    const userId = useSelector((state:RootState)=>state.student.email)
-
+    const userId = useSelector((state: RootState) => state.student.email)
+    const userTocken = localStorage.getItem('studentToken')
     return (
-      userId ? <Outlet/>: <Navigate to='/signIn'/> 
+        userId && userTocken ? <Outlet /> : <Navigate to='/signIn' />
     )
 }
 
 
 export function StudentIsLoggedOut() {
 
-    const userId = useSelector((state:RootState)=>state.student.email)
-
+    const userId = useSelector((state: RootState) => state.student.email)
+    const userTocken = localStorage.getItem('studentToken')
     return (
-        userId ? <Navigate to='/home'/> : <Outlet/>
+        userId && userTocken ? <Navigate to='/home' /> : <Outlet />
     )
 }
 
 
 export function InstructorIsLoggedIn() {
 
-    const doctorId = useSelector((state:RootState)=>state.instructor.email)
+    const instructorId = useSelector((state: RootState) => state.instructor.email)
 
     return (
-        doctorId ? <Outlet/>: <Navigate to='/instructor/signIn'/> 
+        instructorId ? <Outlet /> : <Navigate to='/instructor/signIn' />
     )
 }
 
 
 export function InstructorIsLoggedOut() {
 
-    const doctorId = useSelector((state:RootState)=>state.instructor.email)
+    const instructorId = useSelector((state: RootState) => state.instructor.email)
 
     return (
 
-        doctorId ? <Navigate to='/instructor/dashboard'/> : <Outlet/>
+        instructorId ? <Navigate to='/instructor/dashboard' /> : <Outlet />
 
     )
 }

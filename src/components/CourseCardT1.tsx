@@ -15,7 +15,7 @@ const CourseCardT1 = ({ _id, category, title, price, chapters, instructor, ratin
                 <h3 className="mt-2 text-lg font-semibold">{title}</h3>
                 <div className="flex items-center justify-between mt-2">
                     <div className="text-gray-700">
-                        <span className="line-through">${price + parseInt(price * 30 / 100)}</span> <span className="font-bold">${price}</span>
+                        <span className="line-through">₹{price + parseInt(price * 30 / 100)}</span> <span className="font-bold">₹{price}</span>
                     </div>
                     <div className="text-yellow-500">
                         {Array.from({ length: rating }).map((_, index) => (

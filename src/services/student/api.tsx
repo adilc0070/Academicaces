@@ -84,3 +84,12 @@ export const isEnrolled = async ( id: string , courseId: string) => {
     const response = await api.get(`/student/${id}/course/${courseId}/isEnrolled`);
     return response.data
 }
+
+export const postReview = async ({data}:{data: {id: string, rating: number, feedback: string, courseId: string}}) => {    
+    const response = await api.post(`/student/${data.id}/${data.courseId}/postReview`, data)
+    return response
+}
+export const listReviews= async (courseId:string) => {    
+    const response = await api.get(`/student/${courseId}/listReviews`)
+    return response
+}

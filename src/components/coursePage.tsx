@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FaLock } from 'react-icons/fa';
 import { loadStripe } from '@stripe/stripe-js';
-import { buyCourse, isEnrolled } from '../services/student/api';
+import { buyCourse, isEnrolled, listReviews, postReview } from '../services/student/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 
@@ -11,11 +11,21 @@ const CoursePage = ({ course }) => {
     const [activeTab, setActiveTab] = useState('curriculum');
     const [activeChapterIndex, setActiveChapterIndex] = useState(null);
     const [activeLessonIndex, setActiveLessonIndex] = useState(null);
+    const [reviews, setReviews] = useState([]);
     const student = useSelector((state: RootState) => state.student.email);
 
     useEffect(() => {
         setCourseId(course?._id);
     }, [course]);
+
+    useEffect(() => {
+        if (courseId) {
+            listReviews(courseId).then((result) => {
+                setReviews(result.data.review);
+                console.log('Reviews:', result);
+            });
+        }
+    }, [courseId,activeTab]);
 
     useEffect(() => {
         if (student && courseId) {
@@ -49,6 +59,47 @@ const CoursePage = ({ course }) => {
             console.error('Server Error:', error);
         }
     };
+
+    const [rating, setRating] = useState(0);
+    const [feedback, setFeedback] = useState('');
+
+    const handleRatingChange = (newRating) => {
+        setRating(newRating);
+    };
+
+    const handleSubmit = async () => {
+        const response = await postReview({ data: { id: student, rating, feedback, courseId } });
+        console.log(response);
+    };
+
+    const renderReviewsTab = () => (
+        <div className="p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
+            {reviews.length > 0 ? (
+                <ul className="space-y-4">
+                    {reviews.map((review) => (
+                        <li key={review._id} className="border p-4 rounded-lg shadow-sm">
+                            <div className="flex items-center mb-2">
+                                <img
+                                    src={review?.studentID?.profilePhoto ? review?.studentID?.profilePhoto : `https://ui-avatars.com/api/?name=${review.studentID.userName}&background=random`}
+                                    alt="Profile"
+                                    className="w-10 h-10 rounded-full mr-4"
+                                />
+                                <span className="font-semibold">{review?.studentID?.userName}</span>
+                                <span className="ml-2 text-yellow-500">
+                                    {Array(review?.rating).fill('⭐').join('')}
+                                </span>
+                            </div>
+                            <p className="text-gray-700">{review?.comment}</p>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No reviews yet.</p>
+            )}
+        </div>
+    );
+
 
     const renderTabContent = () => {
         switch (activeTab) {
@@ -159,6 +210,8 @@ const CoursePage = ({ course }) => {
                         <p>Email: {course?.instructor.email}</p>
                     </div>
                 );
+            case 'reviews':
+                return renderReviewsTab();
             default:
                 return null;
         }
@@ -170,16 +223,15 @@ const CoursePage = ({ course }) => {
             <div className="flex-1">
                 <div className="p-6 rounded-lg shadow-md mb-6">
                     <div className="flex items-center space-x-2 mb-4">
-                        <span className="px-3 py-1 bg-sky-600 text-white text-sm rounded">{course?.category?.name}</span>
+                        <span className="px-3 py-1 bg-sky-200 text-sky-800 rounded-lg font-semibold">{course?.category.name}</span>
+                        <span className="px-3 py-1 bg-red-200 text-red-800 rounded-lg font-semibold">{course?.level}</span>
                     </div>
-                    <h1 className="text-4xl font-bold mb-2">{course?.title}</h1>
-                    <div className="flex items-center text-gray-600 mb-4">
-                        <span className="mr-2">{lessons} Lessons</span>
-                        <span className="mr-2">|</span>
+                    <h2 className="text-3xl font-semibold mb-4">{course?.name}</h2>
+                    <div className="flex items-center text-gray-700 mb-4">
                         <span className="flex items-center">
                             <span className="mr-1">{course?.rating}</span>
                             <span>⭐</span>
-                            <span>({})</span>
+                            <span>({reviews.length} reviews)</span>
                         </span>
                         <span className="mx-2">|</span>
                         <span>Last Update: {new Date(course?.updatedAt).toLocaleDateString()}</span>
@@ -204,6 +256,12 @@ const CoursePage = ({ course }) => {
                         >
                             Instructor
                         </button>
+                        <button
+                            className={`py-2 px-4 ${activeTab === 'reviews' ? 'bg-sky-600 text-white' : 'bg-gray-200 text-gray-700'} rounded transition`}
+                            onClick={() => setActiveTab('reviews')}
+                        >
+                            Reviews
+                        </button>
                     </div>
                 </div>
                 {renderTabContent()}
@@ -217,8 +275,8 @@ const CoursePage = ({ course }) => {
                         className="rounded-lg mb-4 w-full max-w-xs h-auto"
                     />
                     <div className="text-center mb-4">
-                        <span className="text-gray-500 line-through ml-2">${course?.price + (course?.price / 10)}</span>
-                        <span className="text-2xl font-bold text-purple-600">${course?.price}</span>
+                        <span className="text-gray-500 line-through ml-2">₹{course?.price + (course?.price / 10)}</span>
+                        <span className="text-2xl font-bold text-purple-600">₹{course?.price}</span>
                         <span className="text-green-600 ml-2">{10}% OFF</span>
                     </div>
                     <div className="flex justify-center space-x-2 mb-4">
@@ -237,6 +295,47 @@ const CoursePage = ({ course }) => {
                     <div className="mb-2">More inquiry about course:</div>
                     <div className="text-purple-600 text-lg font-bold">{course?.instructor.email}</div>
                 </div>
+                {isEnrolledStatus && (
+                    <div className="max-w-sm mx-auto p-6 rounded-lg shadow-lg mt-6 bg-white">
+                        <div className="mb-4">
+                            <h2 className="text-2xl font-semibold text-gray-800">Rate this Course</h2>
+                        </div>
+                        <div className="mb-4">
+                            <p className="text-gray-600">We value your feedback. Please take a moment to rate the course.</p>
+                        </div>
+                        <div className="flex justify-center mb-4">
+                            <div className="flex space-x-2">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <svg
+                                        key={star}
+                                        className={`w-8 h-8 cursor-pointer ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                                        fill="currentColor"
+                                        viewBox="0 0 24 24"
+                                        onClick={() => handleRatingChange(star)}
+                                    >
+                                        <path d="M12 .587l3.668 7.568L24 9.423l-6 5.853L19.335 24 12 19.897 4.665 24 6 15.276 0 9.423l8.332-1.268z" />
+                                    </svg>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="mb-4">
+                            <textarea
+                                className="w-full p-2 border rounded-md"
+                                placeholder="Leave your feedback"
+                                value={feedback}
+                                onChange={(e) => setFeedback(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <button
+                                onClick={handleSubmit}
+                                className="px-4 py-2 bg-purple-600 text-white rounded-md shadow hover:bg-purple-700"
+                            >
+                                Submit Rating
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

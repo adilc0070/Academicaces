@@ -10,7 +10,8 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const signOut = () => {
-        localStorage.clear();
+        sessionStorage.removeItem('studentToken');
+        localStorage.removeItem('studentToken');
         dispatch(setStudentLogOut())
         navigate('/signIn')
 
@@ -22,7 +23,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
                 <div ><Logo /></div>
                 <nav>
                     <ul>
-                        {['Home', 'Courses', 'My-Courses', 'Profile', 'Message', 'Wishlist','Assignments'].map((item, index) => (
+                        {['Home', 'Courses', 'My-Courses', 'Profile', 'Message'].map((item, index) => (
 
                             (window.location.pathname).includes(`/${item.toLowerCase()}`) ? <div key={index} className="block mb-4 bg-blue-950 drop-shadow-none rounded-3xl max-w-full max-h-full p-2 text-center">
                                 <li className=""><Link to={`/${item.toLowerCase()}`} className="font-bold  ">{item}</Link></li>

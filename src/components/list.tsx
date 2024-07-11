@@ -1,9 +1,7 @@
 import { useState } from 'react'
 
 function List() {
-
   const [isMenuOpen, setMenuOpen] = useState(false);
-
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
   };

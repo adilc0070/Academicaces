@@ -47,10 +47,14 @@ const getUserId = async (email: string): Promise<string> => {
 
 const UserList = ({ users, onlineUsers, onSelectUser }: UserListProps) => {
     return (
-        <div className="w-1/4 bg-gray-900 text-white p-4 rounded-xl">
-            <h2 className="text-xl font-bold mb-4">
-                {window.location.pathname.includes('instructor') ? 'Students' : 'Instructors'}
-            </h2>
+        <div className="w-1/4 bg-gray-800 text-white p-4 h-screen overflow-y-auto">
+            <div className="mb-4">
+                <input
+                    type="text"
+                    placeholder="Search"
+                    className="w-full p-2 rounded-full bg-gray-700 text-white focus:outline-none"
+                />
+            </div>
             <ul>
                 {users.map((user) => (
                     <li
@@ -63,8 +67,16 @@ const UserList = ({ users, onlineUsers, onSelectUser }: UserListProps) => {
                             alt={user.name ? user.name : user.userName}
                             className="w-10 h-10 rounded-full mr-3"
                         />
-                        <span className="flex-grow">{user.name ? user.name : user.userName}</span>
-                        {onlineUsers.includes(user._id) && <span className="ml-2 text-green-500">●</span>}
+                        <div>
+                            <span className="font-bold">{user.name ? user.name : user.userName}</span>
+                            <p className="text-sm text-gray-400">Hey, How are you?</p>
+                        </div>
+                        <div className="ml-auto flex items-center space-x-2">
+                            {onlineUsers.includes(user._id) && (
+                                <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+                            )}
+                            <span className="text-sm text-gray-500">12 min</span>
+                        </div>
                     </li>
                 ))}
             </ul>
@@ -81,7 +93,7 @@ const ChatBox = ({ user, userId, socket }: ChatBoxProps) => {
             const fetchMessages = async () => {
                 try {
                     const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/messages?sender=${userId}&receiver=${user._id}`);
-                    const data = await response.json()
+                    const data = await response.json();
                     setMessages(data);
                 } catch (error) {
                     console.error("Error fetching messages:", error);
@@ -106,7 +118,7 @@ const ChatBox = ({ user, userId, socket }: ChatBoxProps) => {
             sender: userId,
             receiver: user._id,
             timestamp: new Date().toLocaleTimeString(),
-            isSender: true
+            isSender: true,
         };
 
         socket.emit("sendMessage", newMessage);
@@ -115,16 +127,32 @@ const ChatBox = ({ user, userId, socket }: ChatBoxProps) => {
     };
 
     return (
-        <div className="w-3/4 p-4 flex flex-col bg-gray-50 border border-gray-200 rounded-lg shadow-lg">
+        <div className="w-3/4 p-4 flex flex-col h-screen bg-white">
             {user ? (
                 <>
-                    <div className="flex items-center justify-between mb-4 p-2 border-b border-gray-200 bg-gray-100 rounded-t-lg">
-                        <h2 className="text-xl font-bold">{user.name ? user.name : user.userName}</h2>
-                        {/* Add User Status */}
-                        <span className="text-sm text-gray-500">Online</span>
+                    <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                        <div className="flex items-center">
+                            <img
+                                src={user.profilePicture ? user.profilePicture : `https://ui-avatars.com/api/?name=${user.name ? user.name : user.userName}&background=random`}
+                                alt={user.name ? user.name : user.userName}
+                                className="w-10 h-10 rounded-full mr-3"
+                            />
+                            <div>
+                                <h2 className="text-xl font-bold">{user.name ? user.name : user.userName}</h2>
+                                <p className="text-sm text-gray-500">Stay at home, Stay safe</p>
+                            </div>
+                        </div>
+                        <div className="flex space-x-4">
+                            <button className="text-gray-500 hover:text-gray-800">
+                                <i className="fas fa-phone-alt"></i>
+                            </button>
+                            <button className="text-gray-500 hover:text-gray-800">
+                                <i className="fas fa-video"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div className="flex-grow p-4 bg-white rounded-lg overflow-y-auto">
-                        <div className="flex flex-col space-y-4">
+                    <div className="flex-grow p-4 overflow-y-auto">
+                        <div className="space-y-4">
                             {messages.map((msg, index) => (
                                 <div key={index} className={`flex ${msg.isSender ? 'justify-end' : 'justify-start'}`}>
                                     <div className={`p-3 rounded-lg max-w-xs ${msg.isSender ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
@@ -135,20 +163,22 @@ const ChatBox = ({ user, userId, socket }: ChatBoxProps) => {
                             ))}
                         </div>
                     </div>
-                    <div className="mt-4 flex items-center">
-                        <input
-                            type="text"
-                            placeholder="Type your message..."
-                            value={message}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
-                            className="flex-grow p-2 border border-gray-300 rounded-l-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button
-                            onClick={sendMessage}
-                            className="bg-blue-500 text-white p-2 rounded-r-lg shadow-md hover:bg-blue-600 transition-colors"
-                        >
-                            Send
-                        </button>
+                    <div className="p-4 border-t border-gray-200">
+                        <div className="flex items-center">
+                            <input
+                                type="text"
+                                placeholder="Type your message..."
+                                value={message}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
+                                className="flex-grow p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button
+                                onClick={sendMessage}
+                                className="bg-blue-500 text-white p-2 rounded-r-lg shadow-md hover:bg-blue-600 transition-colors"
+                            >
+                                Send
+                            </button>
+                        </div>
                     </div>
                 </>
             ) : (
@@ -206,7 +236,7 @@ export const ChatInterface = () => {
     }, [userId]);
 
     return (
-        <div className="flex max-h-full bg-gray-100">
+        <div className="flex h-screen bg-gray-100">
             <UserList users={users} onlineUsers={onlineUsers} onSelectUser={setSelectedUser} />
             {socket && <ChatBox user={selectedUser} userId={userId} socket={socket} />}
         </div>

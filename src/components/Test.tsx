@@ -1,5 +1,5 @@
 import { BiLock, BiLockOpen } from "react-icons/bi"
-import { Blocked, Pending, Verified } from "./Logo"
+import { Blocked,  Verified } from "./Logo"
 
 function Test({title,data,block}) {
 

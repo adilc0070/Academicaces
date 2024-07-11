@@ -32,12 +32,14 @@ const SignIn: React.FC = () => {
 
         try {
             const result = await signInApi({ data: { email, password, rememberMe } });
+            localStorage.setItem('studentToken', result.user?.token);
             dispatch(setStudentDetails(result.user.userData));
             navigate('/user/home');
         } catch (error) {
             toast.error('Failed to sign in. Please try again.');
         }
     };
+    
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-500">

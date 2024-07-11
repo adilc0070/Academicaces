@@ -46,7 +46,7 @@ const PurchaseHistory: FC = () => {
                                             </td>
                                             <td className="w-1/4 py-4 px-4 border-b">{course.instructor.name}</td>
                                             <td className="w-1/4 py-4 px-4 border-b">{new Date(course.createdAt).toLocaleDateString()}</td>
-                                            <td className="w-1/4 py-4 px-4 border-b">{course.price}</td>
+                                            <td className="w-1/4 py-4 px-4 border-b">₹{course.price}</td>
                                         </tr>
                                     ))}
                                 </tbody>
