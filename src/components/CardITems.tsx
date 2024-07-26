@@ -1,6 +1,6 @@
 
 
-function CardITems({ data }) {
+function CardITems({ data }:{data:{id:number}}) {
 
     return (
         <div className="bg-white p-4 rounded-lg shadow">

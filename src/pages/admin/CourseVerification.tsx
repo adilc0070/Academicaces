@@ -16,15 +16,15 @@ function CourseVerification() {
         });
     }, [currentPage]);
 
-    const handlePageChange = (page) => {
+    const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
 
-    const block = async (id, status) => {
+    const block = async (id: string, status: boolean) => {
         await verifieCourseApi(id, status).then((result) => {
             toast.success(result.message);
             setCourses((prevCourse): any =>
-                prevCourse.map((course) =>
+                prevCourse.map((course: {_id: string}) =>
                     course._id === id ? { ...course, verified: !status } : course
                 )
             );

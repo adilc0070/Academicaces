@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FaLock } from 'react-icons/fa';
 import { loadStripe } from '@stripe/stripe-js';
-import { buyCourse, isEnrolled, listReviews, postReview } from '../services/student/api';
+import { buyCourse, getAssignment, isEnrolled, listReviews, postReply, postReview } from '../services/student/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 
@@ -13,6 +13,9 @@ const CoursePage = ({ course }) => {
     const [activeLessonIndex, setActiveLessonIndex] = useState(null);
     const [reviews, setReviews] = useState([]);
     const student = useSelector((state: RootState) => state.student.email);
+    const [assignments, setAssignments] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentFileUrl, setCurrentFileUrl] = useState('');
 
     useEffect(() => {
         setCourseId(course?._id);
@@ -25,7 +28,7 @@ const CoursePage = ({ course }) => {
                 console.log('Reviews:', result);
             });
         }
-    }, [courseId,activeTab]);
+    }, [courseId, activeTab]);
 
     useEffect(() => {
         if (student && courseId) {
@@ -71,7 +74,24 @@ const CoursePage = ({ course }) => {
         const response = await postReview({ data: { id: student, rating, feedback, courseId } });
         console.log(response);
     };
+    const [reply, setReply] = useState('');
+    const [replyingTo, setReplyingTo] = useState(null);
 
+    const handleReplyChange = (event) => {
+        setReply(event.target.value);
+    };
+
+    const handleReplySubmit = async (reviewId) => {
+        const response = await postReply({ reviewId, comment: reply, studentId: student });
+        console.log('Reply submitted:', response);
+        setReply('');
+        setReplyingTo(null);
+        listReviews(courseId).then((result) => {
+            console.log('Reviews:', result);
+
+            setReviews(result.data.review);
+        });
+    };
     const renderReviewsTab = () => (
         <div className="p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
@@ -91,6 +111,45 @@ const CoursePage = ({ course }) => {
                                 </span>
                             </div>
                             <p className="text-gray-700">{review?.comment}</p>
+                            {review.replies && review.replies.length > 0 && (
+                                <ul className="pl-8 mt-4 space-y-2">
+                                    {review.replies.map((reply) => (
+                                        <li key={reply._id} className="border p-3 rounded-lg shadow-sm">
+                                            <div className="flex items-center mb-2">
+                                                <img
+                                                    src={reply?.studentID?.profilePhoto ? reply?.studentID?.profilePhoto : `https://ui-avatars.com/api/?name=${reply.studentID.userName}&background=random`}
+                                                    alt="Profile"
+                                                    className="w-8 h-8 rounded-full mr-4"
+                                                />
+                                                <span className="font-semibold">{reply?.studentID?.userName}</span>
+                                            </div>
+                                            <p className="text-gray-700">{reply.comment}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                            <button
+                                onClick={() => setReplyingTo(review._id)}
+                                className="text-blue-500 hover:underline"
+                            >
+                                Reply
+                            </button>
+                            {replyingTo === review._id && (
+                                <div className="mt-4">
+                                    <textarea
+                                        className="w-full p-2 border rounded-md"
+                                        placeholder="Write a reply..."
+                                        value={reply}
+                                        onChange={handleReplyChange}
+                                    />
+                                    <button
+                                        onClick={() => handleReplySubmit(review._id)}
+                                        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md"
+                                    >
+                                        Submit Reply
+                                    </button>
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -99,6 +158,100 @@ const CoursePage = ({ course }) => {
             )}
         </div>
     );
+
+    useEffect(() => {
+        getAssignment(courseId).then((result) => {
+            setAssignments(result.assignment);
+        })
+    }, [courseId]);
+    const handleDownload = (fileUrl) => {
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        const filename = fileUrl.split('/').pop();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+    };
+
+
+    const Modal = ({ isOpen, onClose, fileUrl }) => {
+        if (!isOpen) return null;
+
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="bg-white p-4 rounded-lg shadow-lg relative max-w-4xl w-full h-full">
+                    <button
+                        onClick={onClose}
+                        className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl"
+                    >
+                        close
+                    </button>
+                    <iframe
+                        src={fileUrl}
+                        title="Assignment Content"
+                        className="w-full h-96"
+
+                    />
+                </div>
+            </div>
+        );
+    };
+
+
+    const renderAssignmentsTab = () => {
+
+        const openModal = (fileUrl) => {
+            setCurrentFileUrl(fileUrl);
+            setIsModalOpen(true);
+        };
+
+        const closeModal = () => {
+            setIsModalOpen(false);
+            setCurrentFileUrl('');
+        };
+
+        return (
+            <div className="p-6 rounded-lg shadow-md">
+                <h2 className="text-2xl font-semibold mb-4">Assignments</h2>
+                {assignments.length > 0 ? (
+                    <ul className="space-y-4">
+                        {assignments.map((assignment) => (
+                            <li key={assignment._id} className="border p-4 rounded-lg shadow-sm">
+                                <div className="mb-2">
+                                    <span className="font-semibold">{assignment.name}</span>
+                                </div>
+                                <p className="text-gray-700 mb-2">{assignment.instructions}</p>
+                                <div className="flex space-x-4">
+                                    <button
+                                        onClick={() => handleDownload(assignment.file)}
+                                        className="text-blue-500 hover:underline"
+                                    >
+                                        Download
+                                    </button>
+                                    <button
+                                        onClick={() => openModal(assignment.file)}
+                                        className="text-green-500 hover:underline"
+                                    >
+                                        View
+                                    </button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No assignments available.</p>
+                )}
+
+                {/* Render the Modal */}
+                <Modal
+                    isOpen={isModalOpen}
+                    onClose={closeModal}
+                    fileUrl={currentFileUrl}
+                />
+            </div>
+        );
+    };
 
 
     const renderTabContent = () => {
@@ -212,6 +365,8 @@ const CoursePage = ({ course }) => {
                 );
             case 'reviews':
                 return renderReviewsTab();
+            case 'assignments':
+                return renderAssignmentsTab();
             default:
                 return null;
         }
@@ -261,6 +416,12 @@ const CoursePage = ({ course }) => {
                             onClick={() => setActiveTab('reviews')}
                         >
                             Reviews
+                        </button>
+                        <button
+                            className={`py-2 px-4 ${activeTab === 'assignments' ? 'bg-sky-600 text-white' : 'bg-gray-200 text-gray-700'} rounded transition`}
+                            onClick={() => setActiveTab('assignments')}
+                        >
+                            Assignments
                         </button>
                     </div>
                 </div>

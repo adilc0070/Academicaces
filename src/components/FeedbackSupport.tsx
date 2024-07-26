@@ -1,5 +1,3 @@
-import React from 'react';
-
 const FeedbackSupport = () => {
     return (
         <div className="bg-white p-4 rounded-lg shadow-md">

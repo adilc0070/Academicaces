@@ -1,13 +1,23 @@
 import { loadStripe } from '@stripe/stripe-js';
-import { buyCourse } from '../services/student/api';
+import { buyCourse, isEnrolled } from '../services/student/api';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import { useEffect, useState } from 'react';
 
 
 
-const CourseCard = ({ _id, category, title, price, chapters, instructor, rating = 5, thumbnail }:{_id: string, category: { name: string }, title: string, price: number, chapters: { lessonsID: string[] }[], instructor: { name: string, thumbnail: string }, rating: number, thumbnail: string}) => {
-
+const CourseCard = ({ _id, category, title, price, chapters, instructor, rating = 5, thumbnail }: { _id: string, category: { name: string }, title: string, price: number, chapters: { lessonsID: string[] }[], instructor: { name: string, thumbnail: string }, rating: number, thumbnail: string }) => {
+  const [isEnrolledStatus, setIsEnrolledStatus] = useState(false);
   const lessons = chapters.map((val) => val.lessonsID.length).reduce((prev, curr) => prev + curr, 0);
   const navigate = useNavigate();
+  const student = useSelector((state: RootState) => state.student.email)
+  useEffect(() => {
+    isEnrolled(student, _id).then((response) => {
+      setIsEnrolledStatus(response);
+    })
+  })
+
   const enroll = async () => {
     const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
     try {
@@ -21,7 +31,7 @@ const CourseCard = ({ _id, category, title, price, chapters, instructor, rating 
       console.error('Server Error:', error);
     }
   };
-  
+
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
@@ -46,7 +56,7 @@ const CourseCard = ({ _id, category, title, price, chapters, instructor, rating 
           <img src={instructor.thumbnail ? instructor.thumbnail : `https://ui-avatars.com/api/?name=${instructor.name}&background=random`} alt={instructor.name} className="w-8 h-8 rounded-full" />
           <span className="ml-2">{instructor.name}</span>
         </div>
-        <button onClick={enroll} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Enroll Now</button>
+        {isEnrolledStatus ? <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Enrolled</button> : <button onClick={enroll} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Enroll Now</button>}
       </div>
     </div>
   );

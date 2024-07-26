@@ -185,3 +185,22 @@ export const getDetails = async (id: string) => {
     const response = await api.get(`/instructor/${id}/details`)
     return response.data
 }
+
+export const addAssigment = async (id, data) => {
+    try {
+        const response = await api.post(`/instructor/${id}/createAssignment`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error adding assignment:', error);
+        throw error;
+    }
+};
+
+export const listAssignments = async (id:string) => {
+    const response = await api.get(`/instructor/${id}/listAssignment`);
+    return response.data
+}

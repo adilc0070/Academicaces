@@ -24,7 +24,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <nav>
                     <ul>
                         {
-                            ["Dashboard", "Instructors", 'Courses', 'Students', "Categories", "Earning", "Message", "Settings",].map((item, index) => (
+                            ["Dashboard", "Instructors", 'Courses', 'Students', "Categories", "Earning",].map((item, index) => (
                                 (window.location.pathname).includes(`/admin/${item.toLowerCase()}`) ? <div onClick={() => navigate(`/admin/${item.toLowerCase()}`)} key={index} className="block mb-4 bg-sky-950 drop-shadow-none rounded-3xl max-w-full max-h-full p-2 text-center">
                                     <li className=""><p className="font-bold ">{item}</p></li>
                                 </div> :

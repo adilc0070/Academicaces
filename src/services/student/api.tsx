@@ -72,24 +72,33 @@ export const getCourse = async (data) => {
     return response.data;
 }
 
-export const findID = async ( email: string ) => {
+export const findID = async (email: string) => {
     const response = await api.get(`/student/getId?email=${email}`);
     return response.data
 }
-export const findInstructors = async ( id: string ) => {
+export const findInstructors = async (id: string) => {
     const response = await api.get(`/student/${id}/listChats`);
     return response.data
 }
-export const isEnrolled = async ( id: string , courseId: string) => {
+export const isEnrolled = async (id: string, courseId: string) => {
     const response = await api.get(`/student/${id}/course/${courseId}/isEnrolled`);
     return response.data
 }
 
-export const postReview = async ({data}:{data: {id: string, rating: number, feedback: string, courseId: string}}) => {    
+export const postReview = async ({ data }: { data: { id: string, rating: number, feedback: string, courseId: string } }) => {
     const response = await api.post(`/student/${data.id}/${data.courseId}/postReview`, data)
     return response
 }
-export const listReviews= async (courseId:string) => {    
+export const listReviews = async (courseId: string) => {
     const response = await api.get(`/student/${courseId}/listReviews`)
     return response
+}
+export const postReply = async ({ reviewId, comment, studentId }) => {
+    const response = await api.post(`/student/reviews/${reviewId}/reply`, { comment, studentId });
+    return response;
+};
+
+export const getAssignment = async (id: string) => {
+    const response = await api.get(`/student/${id}/getAssignment`);
+    return response.data
 }

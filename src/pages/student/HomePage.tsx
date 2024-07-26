@@ -57,7 +57,7 @@ function HomePage() {
                 </section>
 
                 {/* Testimonials Section */}
-                <section className="bg-gray-200 py-12">
+                {/* <section className="bg-gray-200 py-12">
                     <div className="max-w-6xl mx-auto px-6">
                         <h2 className="text-3xl font-semibold mb-6 text-gray-800 text-center">What Our Students Say</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -74,7 +74,7 @@ function HomePage() {
                             ))}
                         </div>
                     </div>
-                </section>
+                </section> */}
 
                 {/* Call to Action Section */}
                 <section className="bg-blue-800 text-white py-12">
@@ -83,7 +83,7 @@ function HomePage() {
                         <p className="text-xl mb-8">
                             Enroll in our courses and start learning new skills right away.
                         </p>
-                        <a href="/sign-up" className="bg-white text-blue-800 py-3 px-6 rounded-lg text-lg font-semibold">Get Started</a>
+                        <a href="/signUp" className="bg-white text-blue-800 py-3 px-6 rounded-lg text-lg font-semibold">Get Started</a>
                     </div>
                 </section>
             </div>

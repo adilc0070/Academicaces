@@ -4,6 +4,7 @@ import UserRoute from './Routes/UserRoute';
 import AdminRoute from './Routes/AdminRoute';
 import { Toaster } from 'sonner'
 import InstructorRoutes from './Routes/InstructorRoutes';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
 function App() {

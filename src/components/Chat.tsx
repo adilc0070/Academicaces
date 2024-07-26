@@ -1,9 +1,9 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import { initSocket } from '../utils/socket';
-import { findID, findInstructors } from '../services/student/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { findInstructorId, findStudents } from '../services/instructor/api';
+import { findID, findInstructors } from '../services/student/api';
 
 interface User {
     _id: string;
@@ -30,6 +30,7 @@ interface ChatBoxProps {
     user: User | null;
     userId: string;
     socket: any;
+    isInstructor: boolean;
 }
 
 const getUserId = async (email: string): Promise<string> => {
@@ -42,6 +43,19 @@ const getUserId = async (email: string): Promise<string> => {
     } catch (error) {
         console.error("Error fetching user ID:", error);
         return '';
+    }
+};
+
+const fetchChatUsers = async (id: string): Promise<User[]> => {
+    try {
+        if (window.location.pathname.includes('instructor')) {
+            return await findStudents(id);
+        } else {
+            return await findInstructors(id);
+        }
+    } catch (error) {
+        console.error("Error fetching chat users:", error);
+        return [];
     }
 };
 
@@ -84,9 +98,11 @@ const UserList = ({ users, onlineUsers, onSelectUser }: UserListProps) => {
     );
 };
 
-const ChatBox = ({ user, userId, socket }: ChatBoxProps) => {
+const ChatBox = ({ user, userId, socket, isInstructor }: ChatBoxProps) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
+    const [isVideoCallActive, setIsVideoCallActive] = useState(false);
+    const [videoCallLink, setVideoCallLink] = useState('');
 
     useEffect(() => {
         if (user) {
@@ -100,12 +116,24 @@ const ChatBox = ({ user, userId, socket }: ChatBoxProps) => {
                 }
             };
             fetchMessages();
+
             socket.on("newMessage", (newMessage: Message) => {
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
+            });
+            socket.on("videoCallStarted", (link: string) => {
+                setIsVideoCallActive(true);
+                setVideoCallLink(link);
+            });
+
+            socket.on("videoCallEnded", () => {
+                setIsVideoCallActive(false);
+                setVideoCallLink('');
             });
 
             return () => {
                 socket.off("newMessage");
+                socket.off("videoCallStarted");
+                socket.off("videoCallEnded");
             };
         }
     }, [user, userId, socket]);
@@ -126,6 +154,85 @@ const ChatBox = ({ user, userId, socket }: ChatBoxProps) => {
         setMessage('');
     };
 
+    const startVideoCall = () => {
+        if (!user) return;
+
+        const roomName = `ChatWith${user.name || user.userName}`;
+        const domain = "meet.jit.si";
+        const options = {
+            roomName,
+            width: '100%',
+            height: 600,
+            parentNode: document.querySelector('#video-call-container'),
+            interfaceConfigOverwrite: {
+                filmStripOnly: false,
+                SHOW_JITSI_WATERMARK: false,
+            },
+            configOverwrite: {
+                disableSimulcast: false,
+            },
+            userInfo: {
+                displayName: user.name || user.userName,
+                email: user.email,
+                avatarURL: user.profilePicture || `https://ui-avatars.com/api/?name=${user.name || user.userName}&background=random`,
+            },
+        };
+
+        socket.emit("startVideoCall", { roomName });
+        const api = new (window as any).JitsiMeetExternalAPI(domain, options);
+        setIsVideoCallActive(true);
+        setVideoCallLink(`https://meet.jit.si/${roomName}`);
+
+        // Send video call link as a message
+        const videoCallMessage: Message = {
+            text: `Join the video call: https://meet.jit.si/${roomName}`,
+            sender: userId,
+            receiver: user._id,
+            timestamp: new Date().toLocaleTimeString(),
+            isSender: true,
+        };
+        socket.emit("sendMessage", videoCallMessage);
+        setMessages((prevMessages) => [...prevMessages, videoCallMessage]);
+    };
+
+    const joinVideoCall = () => {
+        if (!videoCallLink) return;
+
+        const api = new (window as any).JitsiMeetExternalAPI("meet.jit.si", {
+            roomName: videoCallLink.split('/').pop(),
+            width: '100%',
+            height: 600,
+            parentNode: document.querySelector('#video-call-container'),
+            interfaceConfigOverwrite: {
+                filmStripOnly: false,
+                SHOW_JITSI_WATERMARK: false,
+            },
+            configOverwrite: {
+                disableSimulcast: false,
+            },
+            userInfo: {
+                displayName: user?.name || user?.userName,
+                email: user?.email,
+                avatarURL: user?.profilePicture || `https://ui-avatars.com/api/?name=${user?.name || user?.userName}&background=random`,
+            },
+        });
+    };
+
+    const renderMessage = (msg: Message) => {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const parts = msg.text.split(urlRegex);
+
+        return parts.map((part, index) =>
+            urlRegex.test(part) ? (
+                <a key={index} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    {part}
+                </a>
+            ) : (
+                part
+            )
+        );
+    };
+
     return (
         <div className="w-3/4 p-4 flex flex-col h-screen bg-white">
             {user ? (
@@ -143,20 +250,24 @@ const ChatBox = ({ user, userId, socket }: ChatBoxProps) => {
                             </div>
                         </div>
                         <div className="flex space-x-4">
-                            <button className="text-gray-500 hover:text-gray-800">
-                                <i className="fas fa-phone-alt"></i>
-                            </button>
-                            <button className="text-gray-500 hover:text-gray-800">
-                                <i className="fas fa-video"></i>
-                            </button>
+                            {isInstructor && !isVideoCallActive && (
+                                <button className="text-gray-500 hover:text-gray-800" onClick={startVideoCall}>
+                                    <i className="fas fa-video"></i>
+                                </button>
+                            )}
+                            {!isInstructor && isVideoCallActive && (
+                                <button className="text-gray-500 hover:text-gray-800" onClick={joinVideoCall}>
+                                    Join Now
+                                </button>
+                            )}
                         </div>
                     </div>
                     <div className="flex-grow p-4 overflow-y-auto">
                         <div className="space-y-4">
                             {messages.map((msg, index) => (
                                 <div key={index} className={`flex ${msg.isSender ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`p-3 rounded-lg max-w-xs ${msg.isSender ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
-                                        <p>{msg.text}</p>
+                                    <div className={`p-3 rounded-lg max-w-xs ${msg.isSender ? 'bg-blue-950 text-white' : 'bg-gray-200'}`}>
+                                        <p>{renderMessage(msg)}</p>
                                         <span className="text-xs text-gray-400">{msg.timestamp}</span>
                                     </div>
                                 </div>
@@ -180,25 +291,13 @@ const ChatBox = ({ user, userId, socket }: ChatBoxProps) => {
                             </button>
                         </div>
                     </div>
+                    <div id="video-call-container"></div>
                 </>
             ) : (
                 <p className="text-xl text-gray-500">Select a user to start chatting</p>
             )}
         </div>
     );
-};
-
-const fetchChatUsers = async (id: string): Promise<User[]> => {
-    try {
-        if (window.location.pathname.includes('instructor')) {
-            return await findStudents(id);
-        } else {
-            return await findInstructors(id);
-        }
-    } catch (error) {
-        console.error("Error fetching chat users:", error);
-        return [];
-    }
 };
 
 export const ChatInterface = () => {
@@ -209,11 +308,13 @@ export const ChatInterface = () => {
     const [socket, setSocket] = useState<any>(null);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [isInstructor, setIsInstructor] = useState<boolean>(false);
 
     useEffect(() => {
         const email = window.location.pathname.includes('instructor') ? instructorEmail : studentEmail;
         getUserId(email).then((result) => {
             setUserId(result);
+            setIsInstructor(window.location.pathname.includes('instructor'));
         });
     }, [studentEmail, instructorEmail]);
 
@@ -238,7 +339,7 @@ export const ChatInterface = () => {
     return (
         <div className="flex h-screen bg-gray-100">
             <UserList users={users} onlineUsers={onlineUsers} onSelectUser={setSelectedUser} />
-            {socket && <ChatBox user={selectedUser} userId={userId} socket={socket} />}
+            {socket && <ChatBox user={selectedUser} userId={userId} socket={socket} isInstructor={isInstructor} />}
         </div>
     );
 };

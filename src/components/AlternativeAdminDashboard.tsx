@@ -1,4 +1,3 @@
-import React from 'react';
 import UserGrowthChart from './UserGrowthChart';
 import RevenueGrowthChart from './RevenueGrowthChart';
 // Import other chart components similarly...

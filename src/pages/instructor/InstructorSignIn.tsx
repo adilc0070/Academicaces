@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { instructorSignInApi } from '../../services/instructor/api';
 import { useDispatch } from 'react-redux';
 import { setInstructorDetails } from '../../store/slice/instructorSlice';
+// import { GoogleLogin } from '@react-oauth/google';
+
 
 const InstructorSignIn: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -13,8 +15,8 @@ const InstructorSignIn: React.FC = () => {
     const [emailError, setEmailError] = useState<string>('');
     const [passwordError, setPasswordError] = useState<string>('');
     const [success, setSuccess] = useState<string>('');
-    const dispatch=useDispatch()
-    const navigate =useNavigate()
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|yahoo|icloud)\.com$/;
@@ -67,11 +69,11 @@ const InstructorSignIn: React.FC = () => {
             // API call to sign in the user
             await instructorSignInApi({ data: { email, password } }).then((result) => {
                 console.log(result);
-                if(result.statusCode===200){
+                if (result.statusCode === 200) {
                     toast.success('Signed in successfully.');
                     localStorage.setItem('instructorToken', result);
                     dispatch(setInstructorDetails(result.instructor));
-                }else{
+                } else {
                     toast.error('Failed to sign in. Please check your email and password and try again.');
                 }
             });
@@ -80,6 +82,16 @@ const InstructorSignIn: React.FC = () => {
             setEmailError('Failed to sign in. Please check your email and password and try again.');
         }
     };
+    // const handleGoogleSuccess = async (response) => {
+    //     console.log('Google sign-in successful', response);
+    //     // Handle successful sign-in, e.g., authenticate with your backend
+    // };
+
+    // const handleGoogleFailure = (error) => {
+    //     console.error('Google sign-in failed', error);
+    //     // Handle sign-in failure
+    // };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -91,6 +103,22 @@ const InstructorSignIn: React.FC = () => {
                     {(emailError || passwordError) && <p className="text-red-500 text-sm mt-1">{(emailError || passwordError)}</p>}
                     <div className="mt-6 align-middle">
                         <form onSubmit={handleSubmit}>
+                            {/* <div className="mt-6">
+                                <GoogleLogin
+                                    clientId="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                                    onSuccess={handleGoogleSuccess}
+                                    onFailure={handleGoogleFailure}
+                                    render={({ onClick }) => (
+                                        <button
+                                            onClick={onClick}
+                                            className="bg-white w-full text-gray-700 border-2 border-gray-300 rounded px-4 py-2 mt-4 hover:bg-gray-100 flex items-center justify-center"
+                                        >
+                                            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" className="w-4 h-4 mr-2" />
+                                            Sign in with Google
+                                        </button>
+                                    )}
+                                />
+                            </div> */}
                             <div className="mb-4">
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                                 <input
@@ -121,7 +149,7 @@ const InstructorSignIn: React.FC = () => {
                                         {showPassword ? <BsEyeSlash /> : <BsEye />}
                                     </button>
                                 </div>
-                   
+
 
                                 <p className="text-sm text-gray-600 mt-2" onClick={() => navigate('/instructor/forgotPassword')}>Forgot your password?</p>
 
