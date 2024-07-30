@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import InstructorLayout from '../../components/InstructorsLayout';
 import DashBoardNavBar from '../../components/DashBoardNavBar';
 import Dashboard from './Dashboard';
 import Profile from './Profile';
-import CourseList from './CourseList'; 
+import CourseList from './courseList'; 
 import { ChatInterface } from '../../components/Chat';
 
 

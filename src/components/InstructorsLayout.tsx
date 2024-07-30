@@ -16,7 +16,7 @@ const InstructorLayout = ({ children }:{children:React.ReactNode}): React.ReactE
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-blue-800 text-white p-6 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0`}>
-        <div className="text-2xl font-bold mb-8">Dashboard</div>
+        <div className="text-2xl font-bold mb-8">{(window.location.pathname).split('/')[2].toLocaleUpperCase() }</div>
         <nav>
           <ul>
             {[ 'Add-Course',"Add-Assignment",  "Message", 'Profile'].map((item, index) => (

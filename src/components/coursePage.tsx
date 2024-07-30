@@ -420,9 +420,17 @@ const CoursePage = ({ course }) => {
                         <button
                             className={`py-2 px-4 ${activeTab === 'assignments' ? 'bg-sky-600 text-white' : 'bg-gray-200 text-gray-700'} rounded transition`}
                             onClick={() => setActiveTab('assignments')}
+                            disabled={!isEnrolledStatus}
+                        >
+                            Assignments {isEnrolledStatus ? '' : '(Enroll to access)'}
+                        </button>
+
+                        {/* <button
+                            className={`py-2 px-4 ${activeTab === 'assignments' ? 'bg-sky-600 text-white' : 'bg-gray-200 text-gray-700'} rounded transition`}
+                            onClick={() => setActiveTab('assignments')}
                         >
                             Assignments
-                        </button>
+                        </button> */}
                     </div>
                 </div>
                 {renderTabContent()}
