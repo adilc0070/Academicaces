@@ -1,4 +1,3 @@
-import React from 'react'
 import TableInput from '../../components/TableInput'
 import AdminLayout from '../../components/AdminLayout'
 

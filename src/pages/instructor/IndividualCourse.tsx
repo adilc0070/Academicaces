@@ -1,5 +1,5 @@
 import InstructorLayout from "../../components/InstructorsLayout"
-import CoursePage from "../../components/coursePage"
+// import CoursePage from "../../components/coursePage"
 
 function IndividualCourse() {
   return (

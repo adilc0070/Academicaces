@@ -1,104 +1,137 @@
-import { api } from "../../utils/api"
+import { api } from "../../utils/api";
 
-type data = {
-    userName: string
-    email: string
-    bio: string
-    password: string
-}
+// Define type for instructor sign-up and sign-in data
+type InstructorAuthData = {
+    userName: string;
+    email: string;
+    bio: string;
+    password: string;
+};
 
+// Define type for OTP data
+type OtpData = {
+    otp: string;
+    email: string;
+};
 
-export const instructorSignUpApi = async (data: data) => {
-    const response = await api.post("/auth/instructor/signUp", data)
-    return response.data
-}
+// Define type for Course data (basic structure, can be expanded as needed)
+export type CourseData = {
+    _id?: string;
+    thumbnail?: File | string;
+    video?: File | string;
+    title: string;
+    subtitle: string;
+    category: string;
+    topic: string;
+    price: number;
+    instructor: string;
+};
 
-export const instructorSignInApi = async (data: data) => {
-    const response = await api.post("/auth/instructor/signIn", data)
-    return response.data
-}
+// Define type for curriculum sections and lectures
+type Section = {
+    id: string;
+    name: string;
+    isFree: boolean;
+    order?: number;
+    lectures: {
+        id: string;
+        name: string;
+        notes?: string;
+        description?: string;
+        file?: File | string;
+        video?: File| string;
+    }[];
+};
 
-export const instructorOtpSend = async (data: { otp: string, email: string }) => {
-    const response = await api.post("/auth/instructor/verifyOtp", data)
-    return response.data
-}
+type CurriculumData = Section[];
 
-export const instructorForgotPassword = async (data: data) => {
-    const response = await api.post("/auth/instructor/forgotPassword", data)
-    return response.data
-}
+export const instructorSignUpApi = async (data: InstructorAuthData) => {
+    const response = await api.post("/auth/instructor/signUp", data);
+    return response.data;
+};
+
+export const instructorSignInApi = async (data: {email: string, password: string}) => {
+    const response = await api.post("/auth/instructor/signIn", data);
+    return response.data;
+};
+
+export const instructorOtpSend = async (data: OtpData) => {
+    const response = await api.post("/auth/instructor/verifyOtp", data);
+    return response.data;
+};
+
+export const instructorForgotPassword = async (data: { email: string }) => {
+    const response = await api.post("/auth/instructor/forgotPassword", data);
+    return response.data;
+};
 
 export const listEnrollers = async () => {
-    const response = await api.get("/instructor/listEnrollers")
-    return response.data
-}
+    const response = await api.get("/instructor/listEnrollers");
+    return response.data;
+};
 
-export const listCourses = async (data) => {
-    const response = await api.post("/instructor/listCourses", { data: data })
-    return response.data
-}
-export const addCourseApi = async (data) => {
+export const listCourses = async (data: { instructorId: string }) => {
+    const response = await api.post("/instructor/listCourses", { data });
+    return response.data;
+};
 
+export const addCourseApi = async (data: CourseData) => {
     const formData = new FormData();
-    for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-            formData.append(key, data[key]);
+    Object.keys(data).forEach((key) => {
+        const value = data[key as keyof CourseData];
+        if (value instanceof File) {
+            formData.append(key, value);
+        } else if (value !== undefined) {
+            formData.append(key, value.toString());
         }
-    }
+    });
     const response = await api.post('/instructor/addCourse', formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
     });
-
     return response.data;
-}
+};
 
-export const curriculumApi = async (id: string, data) => {
 
+export const curriculumApi = async (id: string, data: CurriculumData) => {
     const formData = new FormData();
-
     data.forEach((section, index) => {
         formData.append(`sections[${index}][id]`, section.id);
         formData.append(`sections[${index}][name]`, section.name);
-        formData.append(`sections[${index}][isFree]`, section.isFree);
+        formData.append(`sections[${index}][isFree]`, section.isFree.toString());
+        formData.append(`sections[${index}][order]`, section.order?.toString() || '');
+
         section.lectures.forEach((lecture, lectureIndex) => {
             const lecturePrefix = `sections[${index}][lectures][${lectureIndex}]`;
-
             formData.append(`${lecturePrefix}[id]`, lecture.id);
             formData.append(`${lecturePrefix}[name]`, lecture.name);
-            formData.append(`${lecturePrefix}[notes]`, lecture.notes);
-            formData.append(`${lecturePrefix}[description]`, lecture.description);
-
+            formData.append(`${lecturePrefix}[notes]`, lecture.notes || '');
+            formData.append(`${lecturePrefix}[description]`, lecture.description || '');
 
             if (lecture.file) {
-
                 formData.append(`${lecturePrefix}[file]`, lecture.file);
-                formData.append(`${lecturePrefix}[fileName]`, `${lecturePrefix}[file]`);
             }
-
             if (lecture.video) {
                 formData.append(`${lecturePrefix}[video]`, lecture.video);
-                formData.append(`${lecturePrefix}[videoName]`, `${lecturePrefix}[video]`);
             }
         });
     });
-
 
     const response = await api.post(`/instructor/${id}/curriculum`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
-    })
+    });
     return response.data;
 };
 
-export const editCourseApi = async (id, data) => {
-
+export const editCourseApi = async (id: string, data: CourseData) => {
     const formData = new FormData();
-    for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-            formData.append(key, data[key]);
+    for (const key of Object.keys(data)) {
+        const value = data[key as keyof CourseData];
+        if (value !== undefined) {
+            formData.append(key, value instanceof File ? value : value.toString());
         }
     }
     const response = await api.put(`/instructor/${id}/editCourse`, formData, {
@@ -106,87 +139,83 @@ export const editCourseApi = async (id, data) => {
             'Content-Type': 'multipart/form-data'
         }
     });
-
     return response.data;
-}
-export const updateCourseApi = async (id, data) => {
+};
 
+
+export const updateCourseApi = async (id: string, data: CurriculumData) => {
     const formData = new FormData();
     data.forEach((section, index) => {
         formData.append(`sections[${index}][id]`, section.id);
         formData.append(`sections[${index}][name]`, section.name);
-        formData.append(`sections[${index}][isFree]`, section.isFree);
-        formData.append(`sections[${index}][order]`, section.order);
+        formData.append(`sections[${index}][isFree]`, section.isFree.toString());
+        formData.append(`sections[${index}][order]`, section.order?.toString() || '');
+
         section.lectures.forEach((lecture, lectureIndex) => {
             const lecturePrefix = `sections[${index}][lectures][${lectureIndex}]`;
-
             formData.append(`${lecturePrefix}[id]`, lecture.id);
             formData.append(`${lecturePrefix}[name]`, lecture.name);
-            formData.append(`${lecturePrefix}[notes]`, lecture.notes);
-            formData.append(`${lecturePrefix}[description]`, lecture.description);
-
-
+            formData.append(`${lecturePrefix}[notes]`, lecture.notes || '');
+            formData.append(`${lecturePrefix}[description]`, lecture.description || '');
 
             if (lecture.file) {
-
                 formData.append(`${lecturePrefix}[file]`, lecture.file);
-                formData.append(`${lecturePrefix}[fileName]`, `${lecturePrefix}[file]`);
             }
-
             if (lecture.video) {
                 formData.append(`${lecturePrefix}[video]`, lecture.video);
-                formData.append(`${lecturePrefix}[videoName]`, `${lecturePrefix}[video]`);
             }
         });
-    })
+    });
+
     const response = await api.put(`/instructor/${id}/updateCourse`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
     });
-
     return response.data;
-}
+};
 
 export const deleteCourseApi = async (id: string, status: boolean) => {
-    const response = await api.patch(`/instructor/${id}/changeStatus`, { status })
-    return response.data
-}
+    const response = await api.patch(`/instructor/${id}/changeStatus`, { status });
+    return response.data;
+};
 
+export const forgotPasswordApi = async (data: { email: string }) => {
+    const response = await api.post("/auth/instructor/forgetPassword", data);
+    return response.data;
+};
 
-export const forgotPasswordApi = async (data) => {
-    const response = await api.post("/auth/instructor/forgetPassword", data)
-    return response.data
+export const resetPasswordApi = async (data: { email:string ,otp:string, newPassword:string }) => {
+    const response = await api.post("/auth/instructor/resetPassword", data);
+    return response.data;
+};
 
-}
-export const resetPasswordApi = async (data: {}) => {
-    const response = await api.post("/auth/instructor/resetPassword", data)
-    return response.data
+export const listBlockedCourses = async (instructorId: string) => {
+    const response = await api.get(`/instructor/${instructorId}/blockedCourses`);
+    return response.data;
+};
 
-}
-export const listBlockedCourses = async (data) => {
-    const response = await api.get(`/instructor/${data}/blockedCourses`)
-    return response.data
-}
-export const listVerifiedCourses = async (data) => {
-    const response = await api.get(`/instructor/${data}/verifiedCourses`)
-    return response.data
-}
+export const listVerifiedCourses = async (instructorId: string) => {
+    const response = await api.get(`/instructor/${instructorId}/verifiedCourses`);
+    return response.data;
+};
+
 export const findInstructorId = async (email: string) => {
     const response = await api.get(`/instructor/getId?email=${email}`);
-    return response.data
-}
+    return response.data;
+};
 
 export const findStudents = async (id: string) => {
     const response = await api.get(`/instructor/${id}/listChats`);
-    return response.data
-}
-export const getDetails = async (id: string) => {
-    const response = await api.get(`/instructor/${id}/details`)
-    return response.data
-}
+    return response.data;
+};
 
-export const addAssigment = async (id, data) => {
+export const getDetails = async (id: string) => {
+    const response = await api.get(`/instructor/${id}/details`);
+    return response.data;
+};
+
+export const addAssignment = async (id: string, data: FormData) => {
     try {
         const response = await api.post(`/instructor/${id}/createAssignment`, data, {
             headers: {
@@ -200,7 +229,7 @@ export const addAssigment = async (id, data) => {
     }
 };
 
-export const listAssignments = async (id:string) => {
+export const listAssignments = async (id: string) => {
     const response = await api.get(`/instructor/${id}/listAssignment`);
-    return response.data
-}
+    return response.data;
+};

@@ -38,7 +38,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ emailOTP }) => {
 
             if (window.location.pathname.includes('instructor')) {
                 try {
-                    const result = await instructorOtpSend({ data: { otp: otpString, email: emailOTP } });
+                    const result = await instructorOtpSend({ otp: otpString, email: emailOTP });
                     toast.success(result?.message);
                     dispatch(setInstructorDetails(result?.user));
                     navigate('/instructor/dashboard');
@@ -48,7 +48,7 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ emailOTP }) => {
                 }
             } else {
                 try {
-                    const result = await otpSend({ data: { otp: otpString, email: emailOTP } });
+                    const result = await otpSend({ data:{otp: otpString, email: emailOTP} });
                     toast.success(result?.user?.message);
                     dispatch(setStudentDetails(result.user.userData));
                     navigate('/home');
@@ -99,9 +99,9 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({ emailOTP }) => {
                         ))}
                     </div>
                     {formik.errors.otp0 && formik.touched.otp0 ||
-                    formik.errors.otp1 && formik.touched.otp1 ||
-                    formik.errors.otp2 && formik.touched.otp2 ||
-                    formik.errors.otp3 && formik.touched.otp3 ? (
+                        formik.errors.otp1 && formik.touched.otp1 ||
+                        formik.errors.otp2 && formik.touched.otp2 ||
+                        formik.errors.otp3 && formik.touched.otp3 ? (
                         <div className="text-red-500 text-sm mt-2">{formik.errors.otp0 || formik.errors.otp1 || formik.errors.otp2 || formik.errors.otp3}</div>
                     ) : null}
                     <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 mt-4" type="submit">

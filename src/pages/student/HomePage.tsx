@@ -26,6 +26,8 @@ function HomePage() {
         },
         // Add more testimonials as needed
     ];
+    console.log(testimonials);
+    
 
     return (
         <StudentLayout>

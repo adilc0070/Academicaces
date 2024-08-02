@@ -1,44 +1,71 @@
 import { api } from "../../utils/api";
-type data = {
+
+type SignInData = {
     email: string,
     password: string,
     rememberMe: boolean
 }
 
-export const signInApi = async ({ data }: { data: data }) => {
+type SignUpData = {
+    userName: string,
+    email: string,
+    password: string
+}
 
+type PostReviewData = {
+    id: string,
+    rating: number,
+    feedback: string,
+    courseId: string
+}
+
+type CourseQueryData = {
+    category: string,
+    sort: number,
+    page: number,
+    limit: number,
+    search: string
+}
+
+type EnrollData = {
+    courseId: string,
+    studentId?: string,
+    hash?: string,
+    email?: string
+}
+
+export const signInApi = async ({ data }: { data: SignInData }) => {
     const response = await api.post("auth/user/signIn", data);
     return response.data;
 }
 
-export const signUpApi = async ({ data }: { data: { userName: string, email: string, password: string } }) => {
+export const signUpApi = async ({ data }: { data: SignUpData }) => {
     const response = await api.post("auth/user/signUp", data);
     return response.data;
 }
-export const otpSend = async ({ data }: { data: data }) => {
-    const response = await api.post(`auth/user/verifyOtp`, data)
-    return response.data;
-}
-export const forgotPassword = async ({ data }: { data: data }) => {
-    const response = await api.post(`auth/user/forgotPassword/`, data)
+
+export const otpSend = async ({ data }: { data: {otp:string,email:string}}) => {
+    const response = await api.post(`auth/user/verifyOtp`, data);
     return response.data;
 }
 
-export const resetPassword = async ({ data }: { data: data }) => {
-    const response = await api.post(`auth/user/resetPassword/`, data)
+export const forgotPassword = async ({ data }: { data: SignInData }) => {
+    const response = await api.post(`auth/user/forgotPassword/`, data);
     return response.data;
 }
 
-export const resendOtp = async ({ data }: { data: data }) => {
-    const response = await api.post(`auth/user/resendOtp/`, data)
+export const resetPassword = async ({ data }: { data: SignInData }) => {
+    const response = await api.post(`auth/user/resetPassword/`, data);
     return response.data;
 }
 
+export const resendOtp = async ({ data }: { data: SignInData }) => {
+    const response = await api.post(`auth/user/resendOtp/`, data);
+    return response.data;
+}
 
-export const listCourses = async (data: { category: string, sort: string, page: number, limit: number, search: string }) => {
-
+export const listCourses = async (data: CourseQueryData) => {
     try {
-
         const response = await api.get(`/student/listCourse?category=${data.category}&sort=${data.sort}&page=${data.page}&limit=${data.limit}&search=${data.search}`);
         return response.data;
     } catch (error) {
@@ -47,58 +74,64 @@ export const listCourses = async (data: { category: string, sort: string, page: 
     }
 };
 
-export const enroll = async (data) => {
-
+export const enroll = async (data: EnrollData) => {
     const response = await api.post("/student/enroll", { data });
     console.log('response', response);
-    return response.data
+    return response.data;
 }
-// export const 
-
-
-export const buyCourse = async (data) => {
-
-    const response = await api.post('/student/enrollCourse', data)
-    return response
+type EnrollCourseData = {
+    courseId: string,
+    price: number,
+    image: string
 }
 
-export const mycourses = async (data) => {
-    const response = await api.get(`/student/myCourses/${data?.student}`);
+export const buyCourse = async (data: EnrollCourseData) => {
+    const response = await api.post('/student/enrollCourse', data);
+    return response.data;
+}
+
+export const mycourses = async (data: { student: string }) => {
+    const response = await api.get(`/student/myCourses/${data.student}`);
     console.log(response.data);
     return response.data;
 }
-export const getCourse = async (data) => {
+
+export const getCourse = async (data: { courseId: string }) => {
     const response = await api.get(`/student/${data.courseId}/viewCourse`);
     return response.data;
 }
 
 export const findID = async (email: string) => {
     const response = await api.get(`/student/getId?email=${email}`);
-    return response.data
-}
-export const findInstructors = async (id: string) => {
-    const response = await api.get(`/student/${id}/listChats`);
-    return response.data
-}
-export const isEnrolled = async (id: string, courseId: string) => {
-    const response = await api.get(`/student/${id}/course/${courseId}/isEnrolled`);
-    return response.data
+    return response.data;
 }
 
-export const postReview = async ({ data }: { data: { id: string, rating: number, feedback: string, courseId: string } }) => {
-    const response = await api.post(`/student/${data.id}/${data.courseId}/postReview`, data)
-    return response
+export const findInstructors = async (id: string) => {
+    const response = await api.get(`/student/${id}/listChats`);
+    return response.data;
 }
+
+export const isEnrolled = async (id: string, courseId: string) => {
+    const response = await api.get(`/student/${id}/course/${courseId}/isEnrolled`);
+    return response.data;
+}
+
+export const postReview = async ({ data }: { data: PostReviewData }) => {
+    const response = await api.post(`/student/${data.id}/${data.courseId}/postReview`, data);
+    return response;
+}
+
 export const listReviews = async (courseId: string) => {
-    const response = await api.get(`/student/${courseId}/listReviews`)
-    return response
+    const response = await api.get(`/student/${courseId}/listReviews`);
+    return response;
 }
-export const postReply = async ({ reviewId, comment, studentId }) => {
+
+export const postReply = async ({ reviewId, comment, studentId }: { reviewId: string, comment: string, studentId: string }) => {
     const response = await api.post(`/student/reviews/${reviewId}/reply`, { comment, studentId });
     return response;
 };
 
 export const getAssignment = async (id: string) => {
     const response = await api.get(`/student/${id}/getAssignment`);
-    return response.data
+    return response.data;
 }

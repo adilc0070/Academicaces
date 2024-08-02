@@ -4,29 +4,57 @@ import { BiPencil, BiPlusCircle, BiTrash } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-const CourseCurriculum = ({ id }) => {
-    const [sections, setSections] = useState([
-        { id: 1, name: 'Section 1', isFree: false, lectures: [{ id: 1, name: 'Lesson name', video: '', notes: '', file: '', description: '' }] }
+type Section = {
+    id: number;
+    name: string;
+    isFree: boolean;
+    lectures: Lecture[];
+};
+
+type Lecture = {
+    id: number;
+    name: string;
+    video: File | null;  // Changed to File | null for consistency
+    notes: string;
+    file: File | null;   // Changed to File | null for consistency
+    description: string;
+};
+
+type ModalState = {
+    sectionId: number | null;
+    lectureId: number | null;
+};
+
+type SectionEditModalState = {
+    isOpen: boolean;
+    sectionId: number | null;
+    sectionName: string;
+    isFree: boolean;
+};
+
+const CourseCurriculum = ({ id }: { id: string }) => {
+    const [sections, setSections] = useState<Section[]>([
+        { id: 1, name: 'Section 1', isFree: false, lectures: [{ id: 1, name: 'Lesson name', video: null, notes: '', file: null, description: '' }] }
     ]);
 
-    const [modal, setModal] = useState({ sectionId: null, lectureId: null });
-    const [formData, setFormData] = useState({ name: '', video: '', notes: '', file: '', description: '' });
-    const [errors, setErrors] = useState({});
-    const [sectionEditModal, setSectionEditModal] = useState({ isOpen: false, sectionId: null, sectionName: '', isFree: false });
-    const [loading, setLoading] = useState(false);
+    const [modal, setModal] = useState<ModalState>({ sectionId: null, lectureId: null });
+    const [formData, setFormData] = useState<{ name: string; video: File | null; notes: string; file: File | null; description: string }>({ name: '', video: null, notes: '', file: null, description: '' });
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [sectionEditModal, setSectionEditModal] = useState<SectionEditModalState>({ isOpen: false, sectionId: null, sectionName: '', isFree: false });
+    const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
 
-    const generateUniqueId = (arr) => arr.length ? Math.max(...arr.map(item => item.id)) + 1 : 1;
+    const generateUniqueId = (arr: { id: number }[]) => arr.length ? Math.max(...arr.map(item => item.id)) + 1 : 1;
 
     const addSection = () => {
-        const newSection = { id: generateUniqueId(sections), name: `Section ${sections.length + 1}`, isFree: false, lectures: [] };
+        const newSection: Section = { id: generateUniqueId(sections), name: `Section ${sections.length + 1}`, isFree: false, lectures: [] };
         setSections([...sections, newSection]);
     };
 
-    const addLecture = (sectionId) => {
+    const addLecture = (sectionId: number) => {
         const updatedSections = sections.map(section => {
             if (section.id === sectionId) {
-                const newLecture = { id: generateUniqueId(section.lectures), name: 'Lesson name', video: '', notes: '', file: '', description: '' };
+                const newLecture: Lecture = { id: generateUniqueId(section.lectures), name: 'Lesson name', video: null, notes: '', file: null, description: '' };
                 return { ...section, lectures: [...section.lectures, newLecture] };
             }
             return section;
@@ -34,11 +62,11 @@ const CourseCurriculum = ({ id }) => {
         setSections(updatedSections);
     };
 
-    const deleteSection = (sectionId) => {
+    const deleteSection = (sectionId: number) => {
         setSections(sections.filter(section => section.id !== sectionId));
     };
 
-    const deleteLecture = (sectionId, lectureId) => {
+    const deleteLecture = (sectionId: number, lectureId: number) => {
         setSections(sections.map(section => {
             if (section.id === sectionId) {
                 return { ...section, lectures: section.lectures.filter(lecture => lecture.id !== lectureId) };
@@ -47,7 +75,7 @@ const CourseCurriculum = ({ id }) => {
         }));
     };
 
-    const openModal = (sectionId, lectureId) => {
+    const openModal = (sectionId: number, lectureId: number) => {
         const section = sections.find(section => section.id === sectionId);
         if (!section) {
             console.error(`Section with id ${sectionId} not found`);
@@ -66,18 +94,18 @@ const CourseCurriculum = ({ id }) => {
         setModal({ sectionId: null, lectureId: null });
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, files } = e.target;
-        setFormData({ ...formData, [name]: files[0] });
+        setFormData(prev => ({ ...prev, [name]: files ? files[0] : null }));
     };
 
     const validateForm = () => {
-        let tempErrors = {};
+        let tempErrors: { [key: string]: string } = { };
         if (!formData.name) tempErrors.name = "Lecture name is required";
         if (!formData.description) tempErrors.description = "Description is required";
         if (!formData.notes) tempErrors.notes = "Lecture notes are required";
@@ -99,29 +127,26 @@ const CourseCurriculum = ({ id }) => {
         closeModal();
     };
 
-    const getFileName = (file) => file ? file.name : 'No file selected';
+    const getFileName = (file: File | null) => file ? file.name : 'No file selected';
 
     const submitForm = async () => {
         setLoading(true);
         try {
-            await curriculumApi(id, sections).then((response) => {
-                console.log(response);
-                
-                if(response.statusCode === 200){
-                    toast.success(response.message);
-                    navigate('/instructor/profile');
-                }else{
-                    toast.error(response.error);
-                }
-            })
-            console.log('Form submitted successfully');
+            const response = await curriculumApi(id, sections as []);
+            console.log(response);
+            if (response.statusCode === 200) {
+                toast.success(response.message);
+                navigate('/instructor/profile');
+            } else {
+                toast.error(response.error);
+            }
         } catch (error) {
             console.error('Error submitting form', error);
         }
         setLoading(false);
     };
 
-    const openSectionEditModal = (sectionId, sectionName) => {
+    const openSectionEditModal = (sectionId: number, sectionName: string) => {
         const section = sections.find(section => section.id === sectionId);
         if (!section) {
             console.error(`Section with id ${sectionId} not found`);
@@ -130,14 +155,12 @@ const CourseCurriculum = ({ id }) => {
         setSectionEditModal({ isOpen: true, sectionId, sectionName, isFree: section.isFree });
     };
 
-    const handleSectionNameChange = (e) => {
-        setSectionEditModal({ ...sectionEditModal, sectionName: e.target.value });
+    const handleSectionNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSectionEditModal(prev => ({ ...prev, sectionName: e.target.value }));
     };
 
-    const handleSectionPremiumChange = (e) => {
-        console.log(e.target.checked);
-        
-        setSectionEditModal({ ...sectionEditModal, isFree: e.target.checked });
+    const handleSectionPremiumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSectionEditModal(prev => ({ ...prev, isFree: e.target.checked }));
     };
 
     const saveSectionName = () => {
@@ -221,7 +244,14 @@ const CourseCurriculum = ({ id }) => {
     );
 };
 
-const EditModal = ({ formData, handleInputChange, handleFileChange, saveModalData, closeModal, errors }) => (
+const EditModal = ({ formData, handleInputChange, handleFileChange, saveModalData, closeModal, errors }: {
+    formData: {name: string; video: File | null; notes: string; file: File | null; description: string};
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    saveModalData: () => void;
+    closeModal: () => void;
+    errors: { [key: string]: string };
+}) => (
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white p-6 rounded-lg shadow-lg">
             <h3 className="text-lg font-bold mb-4">Edit Content</h3>
@@ -264,7 +294,13 @@ const EditModal = ({ formData, handleInputChange, handleFileChange, saveModalDat
     </div>
 );
 
-const SectionEditModal = ({ sectionEditModal, handleSectionNameChange, handleSectionPremiumChange, saveSectionName, setSectionEditModal }) => (
+const SectionEditModal = ({ sectionEditModal, handleSectionNameChange, handleSectionPremiumChange, saveSectionName, setSectionEditModal }: {
+    sectionEditModal: SectionEditModalState;
+    handleSectionNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleSectionPremiumChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    saveSectionName: () => void;
+    setSectionEditModal: React.Dispatch<React.SetStateAction<SectionEditModalState>>;
+}) => (
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white p-6 rounded-lg shadow-lg">
             <h3 className="text-lg font-bold mb-4">Edit Chapter Name</h3>

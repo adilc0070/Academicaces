@@ -4,17 +4,60 @@ import { Blocked, Pending, Verified } from './Logo';
 import { deleteCourseApi } from '../services/instructor/api';
 import { toast } from 'sonner';
 
+// Define the type for the course object
+// src/types/index.ts
 
-function ShowCard({ title, description, imageUrl, course }) {
+export interface Course {
+    _id: string;
+    title: string;
+    subtitle: string;
+    thumbnail: string;
+    triler: string; // Adjust this if it should be 'trailer'
+    category: {
+        name: string;
+    };
+    instructor: {
+        name: string;
+    };
+    price: number;
+    createdAt: string;
+    verified: boolean;
+    isBlock: boolean;
+    lessons: number; // If you need this field, ensure it's in the data or adjust as needed
+    chapters: Array<{
+        _id: string;
+        name: string;
+        order: number;
+        lessonsID: Array<{
+            _id: string;
+            name: string;
+            description: string;
+            video: Array<string>;
+            files: Array<string>;
+        }>;
+    }>;
+}
+
+
+// Define the prop types for ShowCard
+interface ShowCardProps {
+    title: string;
+    description: string;
+    imageUrl: string;
+    videos?: string;  // Include videos if needed
+    course: Course;
+}
+
+function ShowCard({ title, description, imageUrl, course }: ShowCardProps) {
     const [modalOpen, setModalOpen] = useState(false);
-    const [activeChapterIndex, setActiveChapterIndex] = useState(null);
-    const [activeLessonIndex, setActiveLessonIndex] = useState(null);
+    const [activeChapterIndex, setActiveChapterIndex] = useState<number | null>(null);
+    const [activeLessonIndex, setActiveLessonIndex] = useState<number | null>(null);
     const navigate = useNavigate();
-    // console.log('course', course);
 
     useEffect(() => {
-        const handleOutsideClick = (event) => {
-            if (modalOpen && !event.target.closest('.modal-content')) {
+        const handleOutsideClick = (event: MouseEvent) => {
+            const target = event.target as Element; // Type assertion
+            if (modalOpen && !target.closest('.modal-content')) {
                 setModalOpen(false);
             }
         };
@@ -38,11 +81,11 @@ function ShowCard({ title, description, imageUrl, course }) {
         })
     };
 
-    const toggleChapterAccordion = (index) => {
+    const toggleChapterAccordion = (index: number) => {
         setActiveChapterIndex(activeChapterIndex === index ? null : index);
     };
 
-    const toggleLessonAccordion = (index) => {
+    const toggleLessonAccordion = (index: number) => {
         setActiveLessonIndex(activeLessonIndex === index ? null : index);
     };
 
@@ -160,7 +203,7 @@ function ShowCard({ title, description, imageUrl, course }) {
                                                                                 {lesson.files && (
                                                                                     <li className="text-gray-800">
                                                                                         <iframe
-                                                                                            src={lesson.files}
+                                                                                            src={lesson.files[0]}
                                                                                             className="w-full h-48 rounded border  object-cover border-gray-300 shadow-sm"
                                                                                             rel="noopener noreferrer"
                                                                                         />
@@ -177,7 +220,6 @@ function ShowCard({ title, description, imageUrl, course }) {
                                                     )}
                                                 </div>
                                             )}
-
                                         </div>
                                     ))}
                                 </div>

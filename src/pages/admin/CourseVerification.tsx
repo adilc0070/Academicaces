@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../../components/AdminLayout'
 import CardTable from '../../components/CardTable';
-import { listAllCoursesApi, verifieCourseApi, } from '../../services/admin/api';
+import { listAllCoursesApi, verifyCourseApi, } from '../../services/admin/api';
 import { toast } from 'sonner';
 
 function CourseVerification() {
@@ -12,7 +12,7 @@ function CourseVerification() {
     useEffect(() => {
         listAllCoursesApi().then((result) => {
             setCourses(result.courses);
-            setTotalPages(Math.ceil(result.total / 10));
+            setTotalPages(Math.ceil(10 / 10));
         });
     }, [currentPage]);
 
@@ -21,9 +21,9 @@ function CourseVerification() {
     };
 
     const block = async (id: string, status: boolean) => {
-        await verifieCourseApi(id, status).then((result) => {
+        await verifyCourseApi(id, status).then((result) => {
             toast.success(result.message);
-            setCourses((prevCourse): any =>
+            setCourses((prevCourse) =>
                 prevCourse.map((course: {_id: string}) =>
                     course._id === id ? { ...course, verified: !status } : course
                 )

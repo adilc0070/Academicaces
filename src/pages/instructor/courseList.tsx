@@ -4,28 +4,41 @@ import { listBlockedCourses, listCourses, listVerifiedCourses } from '../../serv
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { CircularProgress } from '@mui/material';
+import { Course } from '../../components/ShowCard';
 
 function CourseList() {
     const instructor = useSelector((state: RootState) => state.instructor.email);
-    const [enrolledCourses, setEnrolledCourses] = useState([]);
-    const [blockedCourses, setBlockedCourses] = useState([]);
-    const [verifiedCourses, setVerifiedCourses] = useState([]);
+    const [enrolledCourses, setEnrolledCourses] = useState<Course[]>([]);
+    const [blockedCourses, setBlockedCourses] = useState<Course[]>([]);
+    const [verifiedCourses, setVerifiedCourses] = useState<Course[]>([]);
     const [activeSection, setActiveSection] = useState('verified');
     const [loading, setLoading] = useState(false);
 
-    const fetchCourses = async (section) => {
+    const fetchCourses = async (section: string) => {
         setLoading(true);
         try {
+            let coursesData;
             if (section === 'enrolled') {
-                const enrolledData = await listCourses(instructor);
-                setEnrolledCourses(enrolledData.courses);
+                const enrolledData = await listCourses({ instructorId: instructor });
+                coursesData = enrolledData.courses;
             } else if (section === 'blocked') {
                 const blockedData = await listBlockedCourses(instructor);
-                setBlockedCourses(blockedData.courses);
+                coursesData = blockedData.courses;
             } else if (section === 'verified') {
                 const verifiedData = await listVerifiedCourses(instructor);
-                setVerifiedCourses(verifiedData.courses);
+                coursesData = verifiedData.courses;
             }
+
+            // Transform data to match Course type
+            const courses: Course[] = coursesData.map((course) => ({
+                ...course,
+                // Ensure required properties exist
+                lessons: course.lessons || 0, // Default to 0 if not provided
+            }));
+
+            if (section === 'enrolled') setEnrolledCourses(courses);
+            else if (section === 'blocked') setBlockedCourses(courses);
+            else if (section === 'verified') setVerifiedCourses(courses);
         } catch (error) {
             console.error("Error fetching courses: ", error);
         } finally {
@@ -33,15 +46,16 @@ function CourseList() {
         }
     };
 
-    const handleSectionChange = (section) => {
+    const handleSectionChange = (section: string) => {
         setActiveSection(section);
         fetchCourses(section);
     };
+
     useEffect(() => {
         fetchCourses('verified');
-    }, [])
+    }, []);
 
-    const renderCoursesSection = (title, courses) => (
+    const renderCoursesSection = (title: string, courses: Course[]) => (
         <div className="px-4 py-6 sm:px-0">
             <div className="rounded-lg bg-white shadow">
                 <div className="px-4 py-5 sm:p-6">
@@ -52,14 +66,14 @@ function CourseList() {
                         </div>
                     ) : (
                         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-                            {courses.length > 0 ? courses.map((course, index) => (
+                            {courses.length > 0 ? courses.map((course) => (
                                 <ShowCard
-                                    key={index}
+                                    key={course._id} // Use _id as key to ensure uniqueness
                                     title={course.title}
                                     description={course.subtitle}
                                     imageUrl={course.thumbnail}
                                     videos={course.triler}
-                                    course={course}  // Pass the entire course object
+                                    course={course}
                                 />
                             )) : (
                                 <p>No courses found.</p>

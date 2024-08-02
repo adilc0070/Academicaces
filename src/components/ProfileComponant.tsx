@@ -1,29 +1,40 @@
-import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
-import { RootState } from "../store/store"
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
-function ProfileComponant( ) {
+// Define a type for the profile data
+interface ProfileData {
+    image?: string;
+    userName?: string;
+}
+
+// Update the component to use the profile data type
+function ProfileComponant() {
     console.log('here');
-    
-    const [profileData, setProfileData] = useState({})
-    const instructor = useSelector((state: RootState) => state.instructor)
-    const student = useSelector((state: RootState) => state.student)
+
+    const [profileData, setProfileData] = useState<ProfileData>({});
+    const instructor = useSelector((state: RootState) => state.instructor);
+    const student = useSelector((state: RootState) => state.student);
+
     useEffect(() => {
-        if (window.location.pathname.includes('instructor')) {
-            setProfileData(instructor)
-            console.log("instructor", profileData);
-            
-        }else{
-            setProfileData(student)
+        const isInstructor = window.location.pathname.includes('instructor');
+        if (isInstructor) {
+            setProfileData(instructor);
+            console.log("instructor", instructor);
+        } else {
+            setProfileData(student);
         }
-    },[])
+    }, [instructor, student]); // Add dependencies here
+
     return (
         <div className="bg-white p-4 rounded-lg shadow">
             <div className="mb-4 border p-3 font-medium border-gray-300">Profile</div>
             <div className="max-w-lg mx-auto my-10 bg-white rounded-lg shadow-md p-5">
-                {
-                    <img className="w-32 h-32 rounded-full mx-auto" src={profileData?.image ? profileData.image : `https://ui-avatars.com/api/?name=${profileData?.userName}&background=random`} alt="Profile picture" />
-                }
+                <img
+                    className="w-32 h-32 rounded-full mx-auto"
+                    src={profileData?.image ? profileData.image : `https://ui-avatars.com/api/?name=${profileData?.userName}&background=random`}
+                    alt="Profile picture"
+                />
                 <h2 className="text-center text-2xl font-semibold mt-3">{profileData?.userName}</h2>
                 <p className="text-center text-gray-600 mt-1">Software Engineer</p>
                 <div className="flex justify-center mt-5">
@@ -37,7 +48,7 @@ function ProfileComponant( ) {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default ProfileComponant
+export default ProfileComponant;

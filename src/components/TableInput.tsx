@@ -1,35 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { BiLock, BiLockOpen, BiEdit, BiTrash } from 'react-icons/bi';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-import { addCategoryApi, listCatogoriesApi, updateCategoryApi, toggleCategoryBlockApi, deleteCategoryApi } from '../services/admin/api';
+import { addCategoryApi, listCategoriesApi, updateCategoryApi, toggleCategoryBlockApi, deleteCategoryApi } from '../services/admin/api';
 import { toast } from 'sonner';
 
-function TableInput({ title }: { title: string }) {
-    const [data, setData] = useState([]);
-    const [page, setPage] = useState(1);
-    const [total, setTotal] = useState(0);
-    const [inputVisible, setInputVisible] = useState(false);
-    const [value, setValue] = useState('');
-    const [error, setError] = useState('');
-    const [editingIndex, setEditingIndex] = useState(null);
-    const [editingValue, setEditingValue] = useState('');
+interface Category {
+    _id: string;
+    name: string;
+    noCoures: number; // assuming it’s a number
+    isBlock: boolean;
+}
+
+interface TableInputProps {
+    title: string;
+}
+
+function TableInput({ title }: TableInputProps) {
+    const [data, setData] = useState<Category[]>([]);
+    const [page, setPage] = useState<number>(1);
+    const [total, setTotal] = useState<number>(0);
+    const [inputVisible, setInputVisible] = useState<boolean>(false);
+    const [value, setValue] = useState<string>('');
+    const [error, setError] = useState<string>('');
+    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+    const [editingValue, setEditingValue] = useState<string>('');
+
+    // Use useCallback to memoize fetchCategories function
+    const fetchCategories = useCallback(async () => {
+        try {
+            const result = await listCategoriesApi(page);
+            setData(result.catogaries);
+            setTotal(result.total);
+        } catch (error) {
+            console.error('Failed to fetch categories', error);
+        }
+    }, [page]);
 
     useEffect(() => {
         fetchCategories();
-    }, [page,data]);
-
-    const fetchCategories = async () => {
-        const result = await listCatogoriesApi(page);
-        setData(result.catogaries);
-        setTotal(result.total);
-    };
+    }, [fetchCategories]);
 
     const handleButtonClick = () => {
         setInputVisible(!inputVisible);
     };
 
-    const validateInput = (inputValue: string, currentIndex = null) => {
+    const validateInput = (inputValue: string, currentIndex: number | null = null): boolean => {
         if (inputValue.trim() === '' || inputValue.length < 1) {
             setError('Input cannot be empty or just spaces');
             return false;
@@ -42,7 +58,7 @@ function TableInput({ title }: { title: string }) {
         return true;
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
         setValue(value);
         validateInput(value);
@@ -52,12 +68,15 @@ function TableInput({ title }: { title: string }) {
         e.preventDefault();
 
         if (validateInput(value)) {
-            await addCategoryApi({ value: value.trim() }).then((result) => {
-                console.log(result);
+            try {
+                const result = await addCategoryApi({ value: value.trim() });
+                console.log('::::', result);
                 toast.success('Category added');
-                
-                setData([result.catogary, ...data]);
-            });
+                setData([result.catogary as never, ...data]);
+            } catch (error) {
+                toast.error('Failed to add category');
+                console.error(error);
+            }
 
             setValue('');
             setInputVisible(false);
@@ -66,12 +85,12 @@ function TableInput({ title }: { title: string }) {
         }
     };
 
-    const handleEditChange = (e) => {
+    const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEditingValue(e.target.value);
         validateInput(e.target.value, editingIndex);
     };
 
-    const handleEditSubmit = async (index) => {
+    const handleEditSubmit = async (index: number) => {
         if (validateInput(editingValue, index)) {
             confirmAlert({
                 title: 'Confirm to edit',
@@ -80,15 +99,16 @@ function TableInput({ title }: { title: string }) {
                     {
                         label: 'Yes',
                         onClick: async () => {
-                            await updateCategoryApi(data[index]._id, { name: editingValue.trim() }).then((response) => {
+                            try {
+                                const response = await updateCategoryApi(data[index]._id, { name: editingValue.trim() });
                                 const updatedData = [...data];
                                 updatedData[index] = response;
                                 setData(updatedData);
                                 toast.success('Category updated');
-                            }).catch((error) => {
+                            } catch (error) {
                                 toast.error('Failed to update category');
                                 console.error(error);
-                            });
+                            }
                             setEditingIndex(null);
                             setEditingValue('');
                         }
@@ -104,7 +124,7 @@ function TableInput({ title }: { title: string }) {
         }
     };
 
-    const handleBlockToggle = async (index) => {
+    const handleBlockToggle = async (index: number) => {
         const category = data[index];
         confirmAlert({
             title: 'Confirm to block/unblock',
@@ -113,15 +133,16 @@ function TableInput({ title }: { title: string }) {
                 {
                     label: 'Yes',
                     onClick: async () => {
-                        await toggleCategoryBlockApi(category._id, !category.isBlock).then((response) => {
+                        try {
+                            const response = await toggleCategoryBlockApi(category._id, !category.isBlock);
                             const updatedData = [...data];
                             updatedData[index] = response;
                             setData(updatedData);
                             toast.success(`Category ${category.isBlock ? 'unblocked' : 'blocked'}`);
-                        }).catch((error) => {
+                        } catch (error) {
                             toast.error(`Failed to ${category.isBlock ? 'unblock' : 'block'} category`);
                             console.error(error);
-                        });
+                        }
                     }
                 },
                 {
@@ -132,7 +153,7 @@ function TableInput({ title }: { title: string }) {
         });
     };
 
-    const handleDelete = async (index) => {
+    const handleDelete = async (index: number) => {
         const category = data[index];
         confirmAlert({
             title: 'Confirm to delete',
@@ -141,14 +162,15 @@ function TableInput({ title }: { title: string }) {
                 {
                     label: 'Yes',
                     onClick: async () => {
-                        await deleteCategoryApi(category._id).then(() => {
+                        try {
+                            await deleteCategoryApi(category._id);
                             const updatedData = data.filter((_, i) => i !== index);
                             setData(updatedData);
                             toast.success('Category deleted');
-                        }).catch((error) => {
+                        } catch (error) {
                             toast.error('Failed to delete category');
                             console.error(error);
-                        });
+                        }
                     }
                 },
                 {
@@ -159,12 +181,11 @@ function TableInput({ title }: { title: string }) {
         });
     };
 
-    const handlePageChange = (newPage) => {
+    const handlePageChange = (newPage: number) => {
         console.log('Page change triggered, new page:', newPage); // Debugging
         setPage(newPage);
     };
 
-    
     return (
         <div className="bg-white p-4 rounded-lg shadow">
             <div className="overflow-x-auto">
@@ -172,7 +193,7 @@ function TableInput({ title }: { title: string }) {
 
                 <div className="mb-4 flex justify-end">
                     {inputVisible && (
-                        <div className="flex items-center">
+                        <form onSubmit={handleSubmit} className="flex items-center">
                             <input
                                 type="text"
                                 className="border p-2 rounded-lg mr-2"
@@ -182,12 +203,12 @@ function TableInput({ title }: { title: string }) {
                                 name="category"
                             />
                             <button
+                                type="submit"
                                 className="bg-green-500 text-white p-2 rounded-lg"
-                                onClick={handleSubmit}
                             >
                                 Add
                             </button>
-                        </div>
+                        </form>
                     )}
                     <button
                         className="bg-blue-500 text-white p-2 rounded-lg"
@@ -217,13 +238,13 @@ function TableInput({ title }: { title: string }) {
                     <tbody className="bg-white divide-y divide-gray-200">
                         {data.length === 0 ? (
                             <tr>
-                                <td className="px-6 py-4 whitespace-nowrap" colSpan="4">
+                                <td className="px-6 py-4 whitespace-nowrap" colSpan={4}>
                                     No data
                                 </td>
                             </tr>
                         ) : (
                             data.map((item, index) => (
-                                <tr key={index}>
+                                <tr key={item._id}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {editingIndex === index ? (
                                             <input
@@ -309,7 +330,7 @@ function TableInput({ title }: { title: string }) {
                     >
                         Previous
                     </button>
-                    <span className="p-2 ">Page <strong>{`${page}`}</strong> {` of ${Math.ceil(total / 8)}`}</span>
+                    <span className="p-2">Page <strong>{`${page}`}</strong> {` of ${Math.ceil(total / 8)}`}</span>
                     <button
                         className="bg-gray-500 text-white p-2 rounded-lg"
                         onClick={() => handlePageChange(page + 1)}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import AdminLayout from '../../components/AdminLayout'
-import { blockStudentApi, listInstructorsApi} from '../../services/admin/api';
+import { listInstructorsApi} from '../../services/admin/api';
 import CardTable from '../../components/CardTable';
 
 function InstructorsList() {
@@ -10,15 +10,17 @@ function InstructorsList() {
             setInstructors(result.data)
         })
     }, [])
-    let block=async (id,status)=>{
-        console.log("id",id,"status",status);
-        await blockStudentApi(id,status)
+    // let block=async (id,status)=>{
+    //     console.log("id",id,"status",status);
+    //     await blockStudentApi(id,status)
         
-    }
-   
+    // }
+      const block=()=>{
+        
+      }
   return (
     <AdminLayout>
-      <CardTable data={instructors} title={'Instructors'} block={block}/>
+      <CardTable data={instructors} title={'Instructors'} block={block} currentPage={1} totalPages={1} onPageChange={() => {}}/>
     </AdminLayout>
   )
 }

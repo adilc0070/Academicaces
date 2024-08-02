@@ -1,64 +1,108 @@
-import { useEffect, useState } from "react";
-import { listCatogoriesApi } from "../services/admin/api";
-import { editCourseApi } from "../services/instructor/api";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
-import { toast } from "sonner";
-import CurriculumEdit from "./CurriculemEdit";
-import { useNavigate } from "react-router-dom";
-const CourseEdit = ({ course }) => {
-    const instructor = useSelector((state: RootState) => state.instructor);
-    const [categories, setCategories] = useState([]);
-    const [thumbnail, setThumbnail] = useState(course?.thumbnail || null);
-    const [videoPreview, setVideoPreview] = useState(course?.triler || null);
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { listCategoriesApi } from '../services/admin/api';
+import { editCourseApi } from '../services/instructor/api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import { toast } from 'sonner';
+import CurriculumEdit, { Chapter } from './CurriculemEdit';
+import { useNavigate } from 'react-router-dom';
 
-    const [formData, setFormData] = useState({
+// Define types for course and category
+interface Course {
+    _id: string;
+    thumbnail: string;
+    triler: string;
+    title: string;
+    subtitle: string;
+    category: { _id: string };
+    topic: string;
+    price: number;
+    chapters:Chapter[];
+}
+
+interface Category {
+    _id: string;
+    name: string;
+}
+
+interface CourseEditProps {
+    course: Course;
+}
+
+// Define a type for form data
+interface FormData {
+    thumbnail: string; // URL to the thumbnail image
+    video: string; // URL to the video
+    title: string;
+    subtitle: string;
+    category: string;
+    topic: string;
+    price: number;
+    instructor: string;
+}
+
+const CourseEdit: React.FC<CourseEditProps> = ({ course }) => {
+    const instructor = useSelector((state: RootState) => state.instructor);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [thumbnail, setThumbnail] = useState<string | null>(course?.thumbnail || null);
+    const [videoPreview, setVideoPreview] = useState<string | null>(course?.triler || null);
+
+    const [formData, setFormData] = useState<FormData>({
         thumbnail: course?.thumbnail || "",
         video: course?.triler || "",
         title: course?.title || "",
         subtitle: course?.subtitle || "",
-        category: course?.category._id || {},
+        category: course?.category._id || "",
         topic: course?.topic || "",
         price: course?.price || 0,
         instructor: instructor.email
     });
-    const [formErrors, setFormErrors] = useState({});
+
+    const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+
     useEffect(() => {
-        listCatogoriesApi().then((result) => {
-            console.log(result.catogaries);
+        listCategoriesApi().then((result) => {
             setCategories(result.catogaries);
         });
     }, []);
 
-    const setFileToBase = (file, callback) => {
+    const setFileToBase = (file: File, callback: (base64: string | ArrayBuffer | null) => void) => {
         const reader = new FileReader();
-        reader.readAsDataURL(file);
+
         reader.onloadend = () => {
             callback(reader.result);
         };
+
+        reader.readAsDataURL(file);
     };
 
-    const handleThumbnailChange = (e) => {
-        const file = e.target.files[0];
+    const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
         if (file) {
-            setFileToBase(file, setThumbnail);
-            setFormData({ ...formData, thumbnail: file });
+            setFileToBase(file, (result) => {
+                if (typeof result === 'string') {
+                    setThumbnail(result);
+                    setFormData({ ...formData, thumbnail: file.name });
+                }
+            });
         }
-        console.log("thumbnail file", file);
     };
 
-    const handleVideoChange = (e) => {
-        const file = e.target.files[0];
+    const handleVideoChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
         if (file) {
-            setFileToBase(file, setVideoPreview);
-            setFormData({ ...formData, video: file });
+            setFileToBase(file, (result) => {
+                if (typeof result === 'string') {
+                    setVideoPreview(result);
+                    setFormData({ ...formData, video: file.name });
+                }
+            });
         }
-        console.log("video file", file);
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         if (formErrors[name]) {
@@ -66,8 +110,8 @@ const CourseEdit = ({ course }) => {
         }
     };
 
-    const validateForm = () => {
-        const errors = {};
+    const validateForm = (): boolean => {
+        const errors: { [key: string]: string } = {};
         if (!formData.title.trim() || formData.title.length < 3) {
             errors.title = "Title is required and should be at least 3 characters long";
         }
@@ -80,29 +124,31 @@ const CourseEdit = ({ course }) => {
         if (!formData.topic.trim() || formData.topic.length < 3) {
             errors.topic = "Course topic is required and should be at least 3 characters long";
         }
-        if (!formData.price) {
-            errors.price = "Price is required";
+        if (formData.price <= 0) {
+            errors.price = "Price must be greater than 0";
         }
         if (!formData.video) {
-            errors.video = "trailer is required";
+            errors.video = "Trailer is required";
         }
         if (!formData.thumbnail) {
-            errors.thumbnail = "thumbnail is required";
+            errors.thumbnail = "Thumbnail is required";
         }
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (validateForm()) {
             setLoading(true);
-            editCourseApi(course._id, formData).then((result) => {
+            // Assuming `editCourseApi` expects `FormData` type
+            editCourseApi(course._id, formData).then(() => {
                 toast.success('Course updated');
                 setLoading(false);
-                navigate('/instructor/courses')
-            })
-            console.log("Form data:", formData);
+                navigate('/instructor/courses');
+            }).catch(() => {
+                setLoading(false);
+            });
         }
     };
 
@@ -223,17 +269,20 @@ const CourseEdit = ({ course }) => {
                     <div className="mt-6">
                         <button
                             type="submit"
-                            className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${loading? "cursor-not-allowed" : ""}`}
+                            className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${loading ? "cursor-not-allowed" : ""}`}
+                            disabled={loading}
                         >
                             {loading ? "Saving..." : "Save"}
                         </button>
                     </div>
                 </form>
             </div>
-            
+
             {/* Curriculum Editing Section */}
             <div className="bg-white shadow rounded-lg p-8 mt-8">
                 <h2 className="text-2xl font-bold mb-6">Curriculum</h2>
+                console.log("course", course);
+                
                 <CurriculumEdit course={course} />
             </div>
         </>

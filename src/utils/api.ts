@@ -9,10 +9,17 @@ export const api = axios.create({
 
 
 interface FetchDataResult {
-    userDetails: { userDetails: { _id: string }, myCourses: [{ _id: string }] };
-    myCourses: [];
-    blockedCourses: [];
-    verifiedCourses: [];
+    userDetails: {
+        _id: string;
+        name: string;
+        email: string;
+        profilePicture?: string;
+        bio?: string;
+        verified?: boolean;
+    };
+    myCourses: { _id: string }[];
+    blockedCourses: { _id: string }[];
+    verifiedCourses: { _id: string }[];
 }
 
 export const fetchData = async (instructor: string): Promise<FetchDataResult> => {

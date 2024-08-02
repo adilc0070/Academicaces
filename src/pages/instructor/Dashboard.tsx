@@ -6,7 +6,7 @@ import { fetchData } from "../../utils/api";
 
 const Dashboard = () => {
     const [data, setData] = useState({
-        userDetails: {}, // initially an empty object
+        userDetails: {_id: '', name: '', email: '', profilePicture: '', bio: '', verified: false}, // initially an empty object
         myCourses: [], // initially an empty array
         blockedCourses: [], // initially an empty array
         verifiedCourses: [], // initially an empty array
@@ -18,7 +18,7 @@ const Dashboard = () => {
         const getData = async () => {
             try {
                 const result = await fetchData(instructor);
-                setData(result);
+                setData(result as never);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -52,7 +52,7 @@ const Dashboard = () => {
                     <div className="bg-gray-100 p-4 rounded-lg mt-4">
                         <div className="flex items-center">
                             <img
-                                src={data.userDetails.profilePicture || `https://ui-avatars.com/api/?name=${data.userDetails.name}&background=random`}
+                                src={data.userDetails?.profilePicture || `https://ui-avatars.com/api/?name=${data.userDetails.name}&background=random`}
                                 alt="Profile"
                                 className="w-12 h-12 rounded-full mr-4"
                             />

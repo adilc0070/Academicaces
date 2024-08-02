@@ -21,7 +21,7 @@ function StudentList() {
 
     const block = async (id, status) => {
         console.log("id", id, "status", status);
-        await blockStudentApi(id, status).then((result) => {
+        await blockStudentApi(id, status).then(() => {
             // Update the students state to reflect the changes
             setStudents((prevStudents) =>
                 prevStudents.map((student) =>

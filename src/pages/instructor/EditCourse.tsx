@@ -1,7 +1,6 @@
-import React from 'react';
 import { useLocation } from 'react-router-dom';
-import InstructorLayout from '../../components/InstructorsLayout'; 
-import CourseEdit from '../../components/CourseEdit'; 
+import InstructorLayout from '../../components/InstructorsLayout';
+import CourseEdit from '../../components/CourseEdit';
 function EditCourse() {
     const location = useLocation();
     const course = location.state?.course;
@@ -15,7 +14,7 @@ function EditCourse() {
     return (
         <InstructorLayout>
             <CourseEdit course={course} />
-            
+
         </InstructorLayout>
     );
 }

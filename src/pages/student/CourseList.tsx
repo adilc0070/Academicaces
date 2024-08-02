@@ -2,13 +2,13 @@ import { useEffect, useState, useCallback } from 'react';
 import { throttle } from 'lodash';
 import StudentLayout from '../../components/StudentLayOut';
 import CoursesList from '../../components/CoursesList';
-import { listCatogoriesApi } from '../../services/admin/api';
+import {  listCategoriesApi } from '../../services/admin/api';
 import { listCourses } from '../../services/student/api';
 
 function CourseList() {
     const [courses, setCourses] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [formdata, setFormData] = useState({
+    const [formdata, setFormData] = useState<{ category: string; sort: number; search: string; page: number; limit: number; }>({
         category: '',
         sort: 1,
         search: '',
@@ -42,7 +42,7 @@ function CourseList() {
 
     // Fetch categories on initial render
     useEffect(() => {
-        listCatogoriesApi().then((result) => {
+        listCategoriesApi().then((result) => {
             setCategories(result.catogaries);
         });
     }, []);

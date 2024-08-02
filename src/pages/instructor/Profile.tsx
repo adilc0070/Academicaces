@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
-import { fetchData, } from "../../utils/api";
+import { fetchData } from "../../utils/api";
 
 interface UserDetails {
   _id: string;
@@ -12,19 +12,15 @@ interface UserDetails {
   verified?: boolean;
 }
 
-interface PasswordData {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
+interface FetchDataResult {
+  userDetails: UserDetails;
+  myCourses: Array<{ _id: string }>; // Adjust the type here if necessary
+  blockedCourses: Array<{ _id: string }>; // Adjust the type here if necessary
+  verifiedCourses: Array<{ _id: string }>; // Adjust the type here if necessary
 }
 
 const Profile = () => {
-  const [data, setData] = useState<{
-    userDetails: UserDetails;
-    myCourses: [];
-    blockedCourses: [];
-    verifiedCourses: [];
-  }>({
+  const [data, setData] = useState<FetchDataResult>({
     userDetails: {} as UserDetails,
     myCourses: [],
     blockedCourses: [],
@@ -33,18 +29,15 @@ const Profile = () => {
 
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<UserDetails>(data.userDetails);
-  const [passwordData, setPasswordData] = useState<PasswordData>({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
 
   const instructor = useSelector((state: RootState) => state.instructor.email);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const result = await fetchData(instructor);
+        const result: FetchDataResult = await fetchData(instructor);
+        console.log("result", result);
+        
         setData(result);
         setFormData(result.userDetails);
       } catch (error) {
@@ -54,10 +47,6 @@ const Profile = () => {
 
     getData();
   }, [instructor]);
-
-  const handleEditClick = () => {
-    setEditMode(true);
-  };
 
   const handleCancelClick = () => {
     setEditMode(false);
@@ -72,41 +61,13 @@ const Profile = () => {
     }));
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setPasswordData((prevPasswordData) => ({
-      ...prevPasswordData,
-      [name]: value,
-    }));
-  };
-
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await updateUserDetails(instructor, formData);
-      setEditMode(false);
-      setData((prevData) => ({
-        ...prevData,
-        userDetails: formData,
-      }));
-    } catch (error) {
-      console.error("Error updating user details:", error);
-    }
-  };
-
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // Implement the logic to handle password change here
-    console.log("Password Data:", passwordData);
-  };
-
   return (
     <div className="px-4 py-6 sm:px-0">
       <div className="rounded-lg bg-white shadow-lg">
         <div className="px-6 py-8 sm:p-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">User Details</h2>
           {editMode ? (
-            <form onSubmit={handleFormSubmit}>
+            <form>
               <div className="bg-gray-100 p-6 rounded-lg">
                 <div className="flex items-center">
                   <img
@@ -151,7 +112,7 @@ const Profile = () => {
                       <textarea
                         id="bio"
                         name="bio"
-                        value={formData.bio}
+                        value={formData.bio || ""}
                         onChange={handleInputChange}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       />
@@ -202,69 +163,8 @@ const Profile = () => {
                   )}
                 </div>
               </div>
-              {/* <div className="mt-4">
-                <button
-                  onClick={handleEditClick}
-                  className="bg-blue-500 text-white font-bold py-2 px-4 rounded mr-2"
-                >
-                  Edit Profile
-                </button>
-              </div> */}
             </div>
           )}
-          {/* <div className="bg-gray-100 p-6 rounded-lg mt-6">
-
-            <h2 className="text-3xl font-bold text-gray-900 mt-6">Reset Password</h2>
-            <form onSubmit={handlePasswordSubmit} className="bg-gray-100 p-6 rounded-lg">
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2" htmlFor="currentPassword">
-                  Current Password
-                </label>
-                <input
-                  type="password"
-                  id="currentPassword"
-                  name="currentPassword"
-                  value={passwordData.currentPassword}
-                  onChange={handlePasswordChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2" htmlFor="newPassword">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  id="newPassword"
-                  name="newPassword"
-                  value={passwordData.newPassword}
-                  onChange={handlePasswordChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2" htmlFor="confirmPassword">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={passwordData.confirmPassword}
-                  onChange={handlePasswordChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div className="mt-4">
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white font-bold py-2 px-4 rounded mr-2"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div> */}
         </div>
       </div>
     </div>

@@ -4,12 +4,14 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { findInstructorId, findStudents } from '../services/instructor/api';
 import { findID, findInstructors } from '../services/student/api';
+import { Socket } from 'socket.io-client';
 
 interface User {
     _id: string;
     name?: string;
     userName?: string;
     profilePicture?: string;
+    email?: string;
 }
 
 interface Message {
@@ -29,9 +31,11 @@ interface UserListProps {
 interface ChatBoxProps {
     user: User | null;
     userId: string;
-    socket: any;
+    socket: Socket;
     isInstructor: boolean;
 }
+
+
 
 const getUserId = async (email: string): Promise<string> => {
     try {
@@ -77,12 +81,12 @@ const UserList = ({ users, onlineUsers, onSelectUser }: UserListProps) => {
                         onClick={() => onSelectUser(user)}
                     >
                         <img
-                            src={user.profilePicture ? user.profilePicture : `https://ui-avatars.com/api/?name=${user.name ? user.name : user.userName}&background=random`}
-                            alt={user.name ? user.name : user.userName}
+                            src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.name || user.userName}&background=random`}
+                            alt={user.name || user.userName}
                             className="w-10 h-10 rounded-full mr-3"
                         />
                         <div>
-                            <span className="font-bold">{user.name ? user.name : user.userName}</span>
+                            <span className="font-bold">{user.name || user.userName}</span>
                             <p className="text-sm text-gray-400">Hey, How are you?</p>
                         </div>
                         <div className="ml-auto flex items-center space-x-2">
@@ -163,7 +167,7 @@ const ChatBox = ({ user, userId, socket, isInstructor }: ChatBoxProps) => {
             roomName,
             width: '100%',
             height: 600,
-            parentNode: document.querySelector('#video-call-container'),
+            parentNode: document.querySelector('#video-call-container') as HTMLElement,
             interfaceConfigOverwrite: {
                 filmStripOnly: false,
                 SHOW_JITSI_WATERMARK: false,
@@ -173,16 +177,18 @@ const ChatBox = ({ user, userId, socket, isInstructor }: ChatBoxProps) => {
             },
             userInfo: {
                 displayName: user.name || user.userName,
-                email: user.email,
+                email: user.email || '',
                 avatarURL: user.profilePicture || `https://ui-avatars.com/api/?name=${user.name || user.userName}&background=random`,
             },
         };
 
         socket.emit("startVideoCall", { roomName });
-        const api = new (window as any).JitsiMeetExternalAPI(domain, options);
+        const JitsiMeetExternalAPI = (window as any).JitsiMeetExternalAPI;
+        const api = new JitsiMeetExternalAPI(domain, options);
         setIsVideoCallActive(true);
         setVideoCallLink(`https://meet.jit.si/${roomName}`);
-
+        console.log(api);
+        
         // Send video call link as a message
         const videoCallMessage: Message = {
             text: `Join the video call: https://meet.jit.si/${roomName}`,
@@ -198,11 +204,13 @@ const ChatBox = ({ user, userId, socket, isInstructor }: ChatBoxProps) => {
     const joinVideoCall = () => {
         if (!videoCallLink) return;
 
-        const api = new (window as any).JitsiMeetExternalAPI("meet.jit.si", {
-            roomName: videoCallLink.split('/').pop(),
+        const roomName = videoCallLink.split('/').pop();
+        const JitsiMeetExternalAPI = (window as any).JitsiMeetExternalAPI;
+        const api = new JitsiMeetExternalAPI("meet.jit.si", {
+            roomName,
             width: '100%',
             height: 600,
-            parentNode: document.querySelector('#video-call-container'),
+            parentNode: document.querySelector('#video-call-container') as HTMLElement,
             interfaceConfigOverwrite: {
                 filmStripOnly: false,
                 SHOW_JITSI_WATERMARK: false,
@@ -211,11 +219,13 @@ const ChatBox = ({ user, userId, socket, isInstructor }: ChatBoxProps) => {
                 disableSimulcast: false,
             },
             userInfo: {
-                displayName: user?.name || user?.userName,
-                email: user?.email,
+                displayName: user?.name || user?.userName || '',
+                email: user?.email || '',
                 avatarURL: user?.profilePicture || `https://ui-avatars.com/api/?name=${user?.name || user?.userName}&background=random`,
             },
         });
+        console.log(api);
+        
     };
 
     const renderMessage = (msg: Message) => {
@@ -240,12 +250,12 @@ const ChatBox = ({ user, userId, socket, isInstructor }: ChatBoxProps) => {
                     <div className="flex items-center justify-between p-4 border-b border-gray-200">
                         <div className="flex items-center">
                             <img
-                                src={user.profilePicture ? user.profilePicture : `https://ui-avatars.com/api/?name=${user.name ? user.name : user.userName}&background=random`}
-                                alt={user.name ? user.name : user.userName}
+                                src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.name || user.userName}&background=random`}
+                                alt={user.name || user.userName}
                                 className="w-10 h-10 rounded-full mr-3"
                             />
                             <div>
-                                <h2 className="text-xl font-bold">{user.name ? user.name : user.userName}</h2>
+                                <h2 className="text-xl font-bold">{user.name || user.userName}</h2>
                                 <p className="text-sm text-gray-500">Stay at home, Stay safe</p>
                             </div>
                         </div>
@@ -305,7 +315,7 @@ export const ChatInterface = () => {
     const [users, setUsers] = useState<User[]>([]);
     const studentEmail = useSelector((state: RootState) => state.student.email);
     const instructorEmail = useSelector((state: RootState) => state.instructor.email);
-    const [socket, setSocket] = useState<any>(null);
+    const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isInstructor, setIsInstructor] = useState<boolean>(false);

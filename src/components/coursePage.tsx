@@ -52,7 +52,7 @@ const CoursePage = ({ course }) => {
     const enroll = async (data) => {
         const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
         try {
-            const response = await buyCourse({ data: { courseId: data._id, price: data.price, image: data.thumbnail } });
+            const response = await buyCourse({ courseId: data._id, price: data.price, image: data.thumbnail } );
             const { id: sessionId } = response.data.session;
             const { error } = await stripe.redirectToCheckout({ sessionId });
             if (error) {
@@ -168,6 +168,8 @@ const CoursePage = ({ course }) => {
         const link = document.createElement('a');
         link.href = fileUrl;
         const filename = fileUrl.split('/').pop();
+        console.log(filename);
+        
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

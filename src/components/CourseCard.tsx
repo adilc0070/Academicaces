@@ -21,7 +21,7 @@ const CourseCard = ({ _id, category, title, price, chapters, instructor, rating 
   const enroll = async () => {
     const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
     try {
-      const response = await buyCourse({ data: { courseId: _id, price, image: thumbnail } })
+      const response = await buyCourse({ courseId: _id, price, image: thumbnail });
       const { id: sessionId } = response.data.session;
       const { error } = await stripe.redirectToCheckout({ sessionId });
       if (error) {
@@ -41,7 +41,8 @@ const CourseCard = ({ _id, category, title, price, chapters, instructor, rating 
         <h3 onClick={() => navigate(`/course/${_id}`)} className="mt-2 text-lg font-semibold">{title}</h3>
         <div className="flex items-center justify-between mt-2">
           <div className="text-gray-700">
-            <span className="line-through">₹{price + parseInt(price * 30 / 100)}</span> <span className="font-bold">₹{price}</span>
+          <span className="line-through">₹{Math.round(price / 0.7)}</span> <span className="font-bold">₹{price}</span>
+
           </div>
           <div className="text-yellow-500">
             {Array.from({ length: rating }).map((_, index) => (

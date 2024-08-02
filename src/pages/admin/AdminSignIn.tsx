@@ -11,7 +11,7 @@ const AdminSignIn: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
-    let dispatch = useDispatch()
+    const dispatch = useDispatch()
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -46,37 +46,36 @@ const AdminSignIn: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const datas: FormData = new FormData(e.currentTarget)
-        const em: string | null = datas.get('email')
-        const p: string | null = datas.get('password')
-        if(!em || !p){
+        const em = datas.get('email')
+        const p  = datas.get('password')
+        if (!em || !p) {
             toast.error('Please fill out all fields')
             return
         }
-        if(!validateEmail(em)){
+        if (!validateEmail(em as string)) {
             toast.error('Please enter a valid email address with Gmail, Yahoo, or iCloud domain')
             return
         }
 
-        if (!p.trim()) {
+        if (typeof p === 'string' && !p.trim()) {
             toast.error('Password cannot be empty')
             return
         }
 
-        let a = await adminSignInApi({ data: { email: em, password: p } }).then((result) => {
-            console.log('result',result.admin.admin);
-            
-            if(result.statusCode===200){
-                console.log(result.admin.admin);
-                
+        await adminSignInApi({ email: em as string, password: p as string }).then((result) => {
+            // console.log('result', result?.admin.admin);
+
+            if (result?.statusCode === 200) {
+                // console.log(result.admin.admin);
+
                 toast.success("Login successful")
                 dispatch(setAdminDetails(result.admin.admin))
-                
-            }else if(result.statusCode===400){
+
+            } else if (result.statusCode === 400) {
                 toast.error("Invalid credentials")
             }
         }).catch((err) => {
-            toast.error('admin not found');
-            console.log(err);
+            toast.error('admin not found : ', err);
         })
     };
 

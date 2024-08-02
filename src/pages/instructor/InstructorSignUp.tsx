@@ -118,7 +118,7 @@ const InstructorSignUp: React.FC = () => {
         try {
             setLoading(true);
             // API call to sign up the user
-            await instructorSignUpApi({ data: { userName: name, email: email, bio: bio, password: password } }).then((result) => {
+            await instructorSignUpApi({ userName: name, email: email, bio: bio, password: password }).then((result) => {
                 console.log(result.user);
 
                 if (result.status) {

@@ -1,27 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
+import { useEffect, useState } from 'react';
+import { useFormik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 
+// Define types for assignment and form values
+interface Assignment {
+  id: number;
+  name: string;
+  course: string;
+  totalMarks: number;
+  totalSubmit: number;
+  remark: string;
+}
+
+interface FormValues {
+  file: File | null;
+}
+
 const UserAssignment = () => {
-  const [selectedAssignment, setSelectedAssignment] = useState(null);
-  const [assignments, setAssignments] = useState([]);
-  const formik = useFormik({
+  const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  setAssignments
+  const formik = useFormik<FormValues>({
     initialValues: {
       file: null,
     },
     validationSchema: Yup.object({
       file: Yup.mixed().required('File is required'),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
       console.log(values);
       // handle file upload
+      resetForm();
     },
-  })
+  });
+
   useEffect(() => {
-    
+    // Fetch assignments or any other side effects
   }, []);
 
-  const assignment = [
+  const assignmentList: Assignment[] = [
     {
       id: 1,
       name: "Write a the 5",
@@ -32,6 +49,8 @@ const UserAssignment = () => {
     },
     // add more assignments here
   ];
+  console.log(assignmentList);
+  
 
   return (
     <div className="container mx-auto px-4">
@@ -81,11 +100,11 @@ const UserAssignment = () => {
                   <input
                     type="file"
                     name="file"
-                    onChange={(event) => formik.setFieldValue("file", event.currentTarget.files[0])}
+                    onChange={(event) => formik.setFieldValue("file", event.currentTarget.files ? event.currentTarget.files[0] : null)}
                     className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
                   {formik.touched.file && formik.errors.file ? (
-                    <div className="text-red-500 text-xs">{formik.errors.file}</div>
+                    <div className="text-red-500 text-xs">{formik.errors.file as string}</div> // Cast the error to string
                   ) : null}
                 </div>
                 <div className="mt-4">

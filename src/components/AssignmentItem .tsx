@@ -1,6 +1,6 @@
 import{ useState } from 'react';
 
-const AssignmentItem = ({ assignment }) => {
+const AssignmentItem = ({ assignment }:{assignment: { title: string; description: string; remarks: string; }}) => {
   const [remarks, setRemarks] = useState(assignment.remarks);
 
   const handleSaveRemarks = () => {
