@@ -40,17 +40,17 @@ function LandingPage() {
               {
                 heading: 'Engaging eLearning Content',
                 description: 'Crafting compelling eLearning content that captivates learners and fosters skill development.',
-                imageName: 'src/assets/giovanni-gagliardi-fvT3t9iOaJI-unsplash.jpg',
+                imageName: '/assets/giovanni-gagliardi-fvT3t9iOaJI-unsplash.jpg',
               },
               {
                 heading: 'Interactive Learning Experiences',
                 description: 'Explore the power of interactive learning experiences that drive student engagement and knowledge retention.',
-                imageName: 'src/assets/mimi-thian-vdXMSiX-n6M-unsplash.jpg',
+                imageName: '/assets/mimi-thian-vdXMSiX-n6M-unsplash.jpg',
               },
               {
                 heading: 'Flexible Digital Learning',
                 description: 'Discover the benefits of flexible digital learning that adapts to diverse learning styles and preferences.',
-                imageName: 'src/assets/woman-attending-online-class_23-2148854923.jpg',
+                imageName: '/assets/woman-attending-online-class_23-2148854923.jpg',
               },
             ]} />
           </Suspense>

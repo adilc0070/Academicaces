@@ -17,14 +17,13 @@ const InstructorAssignment = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [courses, setCourses] = useState<CourseData[]>([]);
     const instructor = useSelector((state: RootState) => state.instructor.email);
-    const [assignments, setAssignments] = useState<[{ _id: number, name: string, courseId: { _id: number, title: string }, createdAt: string, totalMarks: number, totalSubmit: number, remark: string }]>();
+    const [assignments, setAssignments] = useState<{ _id: number, name: string, courseId: { _id: number, title: string }, createdAt: string, totalMarks: number, totalSubmit: number, remark: string }[]>([]);
 
     useEffect(() => {
         listCourses({ instructorId: instructor }).then((res) => {
             setCourses(res.courses);
         });
         listAssignments(instructor).then((res) => {
-            console.log("result from assignments", res);
             setAssignments(res.assignments);
         });
     }, [instructor]);

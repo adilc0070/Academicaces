@@ -5,7 +5,7 @@ const AssignmentItem = ({ assignment }:{assignment: { title: string; description
 
   const handleSaveRemarks = () => {
   
-    console.log('Remarks saved:', remarks);
+    e.log('Remarks saved:', remarks);
   };
 
   return (

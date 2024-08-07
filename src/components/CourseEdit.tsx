@@ -281,8 +281,6 @@ const CourseEdit: React.FC<CourseEditProps> = ({ course }) => {
             {/* Curriculum Editing Section */}
             <div className="bg-white shadow rounded-lg p-8 mt-8">
                 <h2 className="text-2xl font-bold mb-6">Curriculum</h2>
-                console.log("course", course);
-                
                 <CurriculumEdit course={course} />
             </div>
         </>

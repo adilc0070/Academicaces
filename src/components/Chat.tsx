@@ -187,8 +187,6 @@ const ChatBox = ({ user, userId, socket, isInstructor }: ChatBoxProps) => {
         const api = new JitsiMeetExternalAPI(domain, options);
         setIsVideoCallActive(true);
         setVideoCallLink(`https://meet.jit.si/${roomName}`);
-        console.log(api);
-        
         // Send video call link as a message
         const videoCallMessage: Message = {
             text: `Join the video call: https://meet.jit.si/${roomName}`,
@@ -224,7 +222,6 @@ const ChatBox = ({ user, userId, socket, isInstructor }: ChatBoxProps) => {
                 avatarURL: user?.profilePicture || `https://ui-avatars.com/api/?name=${user?.name || user?.userName}&background=random`,
             },
         });
-        console.log(api);
         
     };
 

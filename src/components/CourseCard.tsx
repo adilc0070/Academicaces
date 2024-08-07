@@ -14,6 +14,8 @@ const CourseCard = ({ _id, category, title, price, chapters, instructor, rating 
   const student = useSelector((state: RootState) => state.student.email)
   useEffect(() => {
     isEnrolled(student, _id).then((response) => {
+      console.log('response from isEnrolled frontend', response);
+      
       setIsEnrolledStatus(response);
     })
   })

@@ -8,26 +8,25 @@ import { useSelector } from 'react-redux';
 function useQuery() {
     return new URLSearchParams(useLocation().search);
 }
-const buy = async (course: string | null, Id: string | null,student:string) => {
-    await enroll({ courseId: course, hash: Id, email:student }).then((result) => {
-        console.log("result in success page", result);
+const buy = async (course: string | null, Id: string | null, student: string) => {
+    await enroll({ courseId: course, hash: Id, email: student }).then((result) => {
+        console.log(' result from enroll api', result);
     })
 }
 
 const SuccessPage = () => {
-    const student=useSelector((state:RootState)=>state.student.email)
+    const student = useSelector((state: RootState) => state.student.email)
     const query = useQuery();
 
     useEffect(() => {
         const course = query.get('course');
         const Id = query.get('courseId');
-        console.log("course", course, "courseId", Id);
-        buy(course, Id,student);
-        
+        buy(course, Id, student);
+
         setTimeout(() => {
             // window.location.href = '/';
         }, 3000);
-        
+
     }, [query, student]);
 
 

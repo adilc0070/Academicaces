@@ -112,7 +112,6 @@ const ForgotPassword: React.FC = () => {
 
         try {
             await resetPasswordApi({ email, otp, newPassword }).then((result) => {
-                console.log("result", result);
                 if (result.statusCode === 200) {
                     toast.success('Password reset successfully.');
                     dispatch(setInstructorDetails(result?.result))

@@ -76,7 +76,6 @@ export const listCourses = async (data: CourseQueryData) => {
 
 export const enroll = async (data: EnrollData) => {
     const response = await api.post("/student/enroll", { data });
-    console.log('response', response);
     return response.data;
 }
 type EnrollCourseData = {
@@ -92,12 +91,12 @@ export const buyCourse = async (data: EnrollCourseData) => {
 
 export const mycourses = async (data: { student: string }) => {
     const response = await api.get(`/student/myCourses/${data.student}`);
-    console.log(response.data);
     return response.data;
 }
 
 export const getCourse = async (data: { courseId: string }) => {
     const response = await api.get(`/student/${data.courseId}/viewCourse`);
+    
     return response.data;
 }
 

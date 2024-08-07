@@ -2,7 +2,7 @@ import axios from "axios";
 import { getDetails, listBlockedCourses, listVerifiedCourses } from "../services/instructor/api";
 
 export const api = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL,
+    baseURL: import.meta.env.VITE_BASE_URL_,
 });
 
 

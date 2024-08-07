@@ -19,13 +19,13 @@ function CourseList() {
         try {
             let coursesData;
             if (section === 'enrolled') {
-                const enrolledData = await listCourses({ instructorId: instructor });
+                const enrolledData = await listCourses({ instructorId: instructor })                
                 coursesData = enrolledData.courses;
             } else if (section === 'blocked') {
-                const blockedData = await listBlockedCourses(instructor);
+                const blockedData = await listBlockedCourses(instructor)
                 coursesData = blockedData.courses;
             } else if (section === 'verified') {
-                const verifiedData = await listVerifiedCourses(instructor);
+                const verifiedData = await listVerifiedCourses(instructor)
                 coursesData = verifiedData.courses;
             }
 

@@ -26,8 +26,9 @@ export function StudentIsLoggedIn() {
 
     const userId = useSelector((state: RootState) => state.student.email)
     const userTocken = localStorage.getItem('studentToken')
+
     return (
-        userId && userTocken ? <Outlet /> : <Navigate to='/signIn' />
+        Boolean(userId) && Boolean(userTocken) ? <Outlet /> : <Navigate to='/signIn' />
     )
 }
 
@@ -36,8 +37,9 @@ export function StudentIsLoggedOut() {
 
     const userId = useSelector((state: RootState) => state.student.email)
     const userTocken = localStorage.getItem('studentToken')
+
     return (
-        userId && userTocken ? <Navigate to='/home' /> : <Outlet />
+        Boolean(userId) && Boolean(userTocken) ? <Navigate to='/home' /> : <Outlet />
     )
 }
 
@@ -45,9 +47,10 @@ export function StudentIsLoggedOut() {
 export function InstructorIsLoggedIn() {
 
     const instructorId = useSelector((state: RootState) => state.instructor.email)
+    const userTocken = localStorage.getItem('instructorToken')
 
     return (
-        instructorId ? <Outlet /> : <Navigate to='/instructor/signIn' />
+        (Boolean(instructorId) && Boolean(userTocken)) ? <Outlet /> : <Navigate to='/instructor/signIn' />
     )
 }
 
@@ -55,10 +58,11 @@ export function InstructorIsLoggedIn() {
 export function InstructorIsLoggedOut() {
 
     const instructorId = useSelector((state: RootState) => state.instructor.email)
+    const userTocken = localStorage.getItem('instructorToken')
 
     return (
 
-        instructorId ? <Navigate to='/instructor/dashboard' /> : <Outlet />
+        (Boolean(instructorId) && Boolean(userTocken)) ? <Navigate to='/instructor/profile' /> : <Outlet />
 
     )
 }

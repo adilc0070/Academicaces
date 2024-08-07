@@ -133,7 +133,6 @@ const CourseCurriculum = ({ id }: { id: string }) => {
         setLoading(true);
         try {
             const response = await curriculumApi(id, sections as []);
-            console.log(response);
             if (response.statusCode === 200) {
                 toast.success(response.message);
                 navigate('/instructor/profile');

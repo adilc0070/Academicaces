@@ -70,7 +70,6 @@ function TableInput({ title }: TableInputProps) {
         if (validateInput(value)) {
             try {
                 const result = await addCategoryApi({ value: value.trim() });
-                console.log('::::', result);
                 toast.success('Category added');
                 setData([result.catogary as never, ...data]);
             } catch (error) {
@@ -182,7 +181,6 @@ function TableInput({ title }: TableInputProps) {
     };
 
     const handlePageChange = (newPage: number) => {
-        console.log('Page change triggered, new page:', newPage); // Debugging
         setPage(newPage);
     };
 

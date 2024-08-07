@@ -13,7 +13,7 @@ function MyCourse() {
 
     useEffect(() => {
         mycourses({ student }).then((result) => {
-            setCourses(result.myCourse)
+            setCourses(result.myCourse.filter(course => course))
         })
     }, [])
 
@@ -31,10 +31,10 @@ function MyCourse() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {courses.length > 0 ? courses.map((course, index) => (
-                        <>
+
                         <CourseCardT1 key={index} {...course} />
-                        {/* <FreelancerCard/> */}
-                        </>
+
+
                     )) : (
                         <p>No courses found.</p>
                     )}

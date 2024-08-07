@@ -68,7 +68,6 @@ const InstructorSignIn: React.FC = () => {
         try {
             // API call to sign in the user
             await instructorSignInApi({ email, password }).then((result) => {
-                console.log(result);
                 if (result.statusCode === 200) {
                     toast.success('Signed in successfully.');
                     localStorage.setItem('instructorToken', result);

@@ -25,7 +25,6 @@ const CoursePage = ({ course }) => {
         if (courseId) {
             listReviews(courseId).then((result) => {
                 setReviews(result.data.review);
-                console.log('Reviews:', result);
             });
         }
     }, [courseId, activeTab]);
@@ -72,7 +71,7 @@ const CoursePage = ({ course }) => {
 
     const handleSubmit = async () => {
         const response = await postReview({ data: { id: student, rating, feedback, courseId } });
-        console.log(response);
+        response
     };
     const [reply, setReply] = useState('');
     const [replyingTo, setReplyingTo] = useState(null);
@@ -83,12 +82,10 @@ const CoursePage = ({ course }) => {
 
     const handleReplySubmit = async (reviewId) => {
         const response = await postReply({ reviewId, comment: reply, studentId: student });
-        console.log('Reply submitted:', response);
+        response
         setReply('');
         setReplyingTo(null);
         listReviews(courseId).then((result) => {
-            console.log('Reviews:', result);
-
             setReviews(result.data.review);
         });
     };
@@ -167,8 +164,7 @@ const CoursePage = ({ course }) => {
     const handleDownload = (fileUrl) => {
         const link = document.createElement('a');
         link.href = fileUrl;
-        const filename = fileUrl.split('/').pop();
-        console.log(filename);
+
         
         document.body.appendChild(link);
         link.click();

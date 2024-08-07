@@ -10,8 +10,6 @@ interface ProfileData {
 
 // Update the component to use the profile data type
 function ProfileComponant() {
-    console.log('here');
-
     const [profileData, setProfileData] = useState<ProfileData>({});
     const instructor = useSelector((state: RootState) => state.instructor);
     const student = useSelector((state: RootState) => state.student);
@@ -20,7 +18,6 @@ function ProfileComponant() {
         const isInstructor = window.location.pathname.includes('instructor');
         if (isInstructor) {
             setProfileData(instructor);
-            console.log("instructor", instructor);
         } else {
             setProfileData(student);
         }

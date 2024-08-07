@@ -54,7 +54,6 @@ type Errors = {
 };
 
 const CurriculumEdit = ({ course }: { course: Course }) => {
-    console.log('Course:', course);
     
     const [sections, setSections] = useState<Section[]>(course.chapters.map(chapter => ({
         id: chapter._id,

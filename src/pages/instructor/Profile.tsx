@@ -36,8 +36,6 @@ const Profile = () => {
     const getData = async () => {
       try {
         const result: FetchDataResult = await fetchData(instructor);
-        console.log("result", result);
-        
         setData(result);
         setFormData(result.userDetails);
       } catch (error) {
