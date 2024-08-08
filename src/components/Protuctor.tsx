@@ -5,9 +5,10 @@ import { Navigate, Outlet } from "react-router-dom"
 export function AdminIsLoggedIn() {
 
     const adminId = useSelector((state: RootState) => state.admin.email)
+    const adminToken = localStorage.getItem('adminToken')
 
     return (
-        adminId ? <Outlet /> : <Navigate to='/admin/signIn' />
+        Boolean(adminId) && Boolean(adminToken) ? <Outlet /> : <Navigate to='/admin/signIn' />
     )
 }
 
@@ -15,9 +16,9 @@ export function AdminIsLoggedIn() {
 export function AdminIsLoggedOut() {
 
     const adminId = useSelector((state: RootState) => state.admin.email)
-
+    const adminToken = localStorage.getItem('adminToken')
     return (
-        adminId ? <Navigate to='/admin/dashboard' /> : <Outlet />
+        Boolean(adminId) && Boolean(adminToken)  ? <Navigate to='/admin/dashboard' /> : <Outlet />
     )
 }
 
@@ -25,10 +26,10 @@ export function AdminIsLoggedOut() {
 export function StudentIsLoggedIn() {
 
     const userId = useSelector((state: RootState) => state.student.email)
-    const userTocken = localStorage.getItem('studentToken')
+    const userToken = localStorage.getItem('studentToken')
 
     return (
-        Boolean(userId) && Boolean(userTocken) ? <Outlet /> : <Navigate to='/signIn' />
+        Boolean(userId) && Boolean(userToken) ? <Outlet /> : <Navigate to='/signIn' />
     )
 }
 
@@ -36,10 +37,10 @@ export function StudentIsLoggedIn() {
 export function StudentIsLoggedOut() {
 
     const userId = useSelector((state: RootState) => state.student.email)
-    const userTocken = localStorage.getItem('studentToken')
+    const userToken = localStorage.getItem('studentToken')
 
     return (
-        Boolean(userId) && Boolean(userTocken) ? <Navigate to='/home' /> : <Outlet />
+        Boolean(userId) && Boolean(userToken) ? <Navigate to='/home' /> : <Outlet />
     )
 }
 
@@ -47,10 +48,10 @@ export function StudentIsLoggedOut() {
 export function InstructorIsLoggedIn() {
 
     const instructorId = useSelector((state: RootState) => state.instructor.email)
-    const userTocken = localStorage.getItem('instructorToken')
+    const instructorToken = localStorage.getItem('instructorToken')
 
     return (
-        (Boolean(instructorId) && Boolean(userTocken)) ? <Outlet /> : <Navigate to='/instructor/signIn' />
+        (Boolean(instructorId) && Boolean(instructorToken)) ? <Outlet /> : <Navigate to='/instructor/signIn' />
     )
 }
 
@@ -58,11 +59,11 @@ export function InstructorIsLoggedIn() {
 export function InstructorIsLoggedOut() {
 
     const instructorId = useSelector((state: RootState) => state.instructor.email)
-    const userTocken = localStorage.getItem('instructorToken')
+    const instructorToken = localStorage.getItem('instructorToken')
 
     return (
 
-        (Boolean(instructorId) && Boolean(userTocken)) ? <Navigate to='/instructor/profile' /> : <Outlet />
+        (Boolean(instructorId) && Boolean(instructorToken)) ? <Navigate to='/instructor/profile' /> : <Outlet />
 
     )
 }

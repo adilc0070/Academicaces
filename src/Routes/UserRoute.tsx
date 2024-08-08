@@ -25,7 +25,6 @@ function UserRoute() {
         const timer = setTimeout(() => {
             setLoading(false);
         }, 2000);
-
         return () => clearTimeout(timer);
     }, [location]);
 
@@ -33,22 +32,22 @@ function UserRoute() {
         <>
             {loading && <Loader />}
             <Routes>
-                <Route path='' element={<StudentIsLoggedOut />} >
-                    <Route path="/signIn" element={<SignIn />} />
-                    <Route path="/signUp" element={<SignUp />} />
+                <Route element={<StudentIsLoggedOut />}>
+                    <Route path="signIn" element={<SignIn />} />
+                    <Route path="signUp" element={<SignUp />} />
                 </Route>
-                <Route path='/*' element={<PageNotFound />} />
-                <Route path="/" element={<StudentIsLoggedIn />} >
-                    <Route path='/home' element={<HomePage />} />
-                    <Route path='/courses' element={<CourseList />} />
-                    <Route path='/assignments' element={<Assignments />} />
-                    <Route path='/my-courses' element={<MyCourse />} />
-                    <Route path='/purchases' element={<PurchaseHistory />} />
-                    <Route path='/course/:courseId/' element={<Course />} />
-                    <Route path='/meet' element={<Meet />} />
-                    <Route path='/success' element={<SuccessPage />} />
-                    <Route path='/cancel' element={<CancelPage />} />
-                    <Route path='/message' element={<Chat />} />
+                <Route path="*" element={<PageNotFound />} />
+                <Route element={<StudentIsLoggedIn />}>
+                    <Route path="home" element={<HomePage />} />
+                    <Route path="courses" element={<CourseList />} />
+                    <Route path="assignments" element={<Assignments />} />
+                    <Route path="my-courses" element={<MyCourse />} />
+                    <Route path="purchases" element={<PurchaseHistory />} />
+                    <Route path="course/:courseId" element={<Course />} />
+                    <Route path="meet" element={<Meet />} />
+                    <Route path="success" element={<SuccessPage />} />
+                    <Route path="cancel" element={<CancelPage />} />
+                    <Route path="message" element={<Chat />} />
                 </Route>
             </Routes>
         </>

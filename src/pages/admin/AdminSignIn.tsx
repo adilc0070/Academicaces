@@ -65,7 +65,7 @@ const AdminSignIn: React.FC = () => {
         await adminSignInApi({ email: em as string, password: p as string }).then((result) => {
 
             if (result?.statusCode === 200) {
-
+                localStorage.setItem('adminToken', result.admin.token)
                 toast.success("Login successful")
                 dispatch(setAdminDetails(result.admin.admin))
 

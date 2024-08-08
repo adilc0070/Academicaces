@@ -8,7 +8,7 @@ function InstructorInterFace() {
         {/* Left Section */}
         <div className="flex-1 flex justify-center items-center rounded-lg mr-4">
           <div className="relative w-full h-[250px] sm:w-[450px] md:w-[550px] border-2 border-blue-600 rounded-lg overflow-hidden shadow-lg">
-            <img src="/src/assets/Become an instructor.png" className="w-full h-full object-cover" alt="Become an instructor" />
+            <img src="/assets/photo1.png" className="w-full h-full object-cover" alt="Become an instructor" />
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
               <div className="flex flex-col items-center text-center text-white p-4">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Become an Instructor</h1>
