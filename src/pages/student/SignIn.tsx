@@ -9,6 +9,8 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
 const SignIn: React.FC = () => {
+    console.log('SignIn page is rendered');
+    
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();

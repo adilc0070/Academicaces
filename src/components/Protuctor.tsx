@@ -27,7 +27,8 @@ export function StudentIsLoggedIn() {
 
     const userId = useSelector((state: RootState) => state.student.email)
     const userToken = localStorage.getItem('studentToken')
-
+    console.log('user logined alla ');
+    
     return (
         Boolean(userId) && Boolean(userToken) ? <Outlet /> : <Navigate to='/signIn' />
     )
@@ -38,6 +39,8 @@ export function StudentIsLoggedOut() {
 
     const userId = useSelector((state: RootState) => state.student.email)
     const userToken = localStorage.getItem('studentToken')
+    console.log('user logined aan ');
+    
 
     return (
         Boolean(userId) && Boolean(userToken) ? <Navigate to='/home' /> : <Outlet />
