@@ -8,20 +8,25 @@ import InstructorsList from '../pages/admin/InstructorList';
 // import Error400admin from '../pages/admin/Error400';
 import CourseVerification from '../pages/admin/CourseVerification';
 
+
+
 function AdminRoute() {
     return (
         <Routes>
-            <Route element={<AdminIsLoggedOut />}>
-                <Route path="signIn" element={<AdminSignIn />} />
+            <Route path="" element={<AdminIsLoggedOut />} >
+                <Route path="/signIn" element={<AdminSignIn />} />
             </Route>
-            <Route element={<AdminIsLoggedIn />}>
-                <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="students" element={<StudentList />} />
-                <Route path="instructors" element={<InstructorsList />} />
-                <Route path="courses" element={<CourseVerification />} />
-                <Route path="categories" element={<CategoryManagement />} />
-                {/* <Route path="*" element={<Error400admin />} /> */}
+
+            <Route path='/' element={<AdminIsLoggedIn />} >
+                <Route path='/dashboard' element={<AdminDashboard />} />
+                <Route path='/students' element={<StudentList />} />
+                <Route path='/instructors' element={<InstructorsList />} />
+                <Route path='/courses' element={<CourseVerification />} />
+                <Route path='/categories' element={<CategoryManagement />} />
+                
+                {/* <Route path='/*' element={<Error400admin />} /> */}
             </Route>
+
         </Routes>
     );
 }
