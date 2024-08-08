@@ -5,7 +5,7 @@ import InstructorSignIn from '../pages/instructor/InstructorSignIn';
 import InstructorSignUp from '../pages/instructor/InstructorSignUp';
 import HomePage from '../pages/instructor/homePage';
 import AddCourse from '../pages/instructor/AddCourse';
-import Error404 from '../pages/instructor/Error404';
+// import Error404 from '../pages/instructor/Error404';
 import EditCourse from '../pages/instructor/EditCourse';
 import IndividualCourse from '../pages/instructor/IndividualCourse';
 import ForgotPassword from '../pages/instructor/ForgotPassword';
@@ -30,7 +30,7 @@ function InstructorRoutes() {
         <>
             {loading && <Loader />}
             <Routes>
-                <Route path="*" element={<Error404 />} />
+                {/* <Route path="*" element={<Error404 />} /> */}
                 <Route element={<InstructorIsLoggedOut />}>
                     <Route path="signIn" element={<InstructorSignIn />} />
                     <Route path="forgotPassword" element={<ForgotPassword />} />
