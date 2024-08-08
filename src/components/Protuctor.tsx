@@ -30,7 +30,7 @@ export function StudentIsLoggedIn() {
     console.log('user logined alla ');
     
     return (
-        Boolean(userId) && Boolean(userToken) ? <Outlet /> : <Navigate to='/signIn' />
+        Boolean(userId) && Boolean(userToken) ?  <Navigate to='/signIn' />:<Outlet />
     )
 }
 
@@ -43,7 +43,7 @@ export function StudentIsLoggedOut() {
     
 
     return (
-        Boolean(userId) && Boolean(userToken) ? <Navigate to='/home' /> : <Outlet />
+        Boolean(userId) && Boolean(userToken) ?  <Outlet />:<Navigate to='/home' />
     )
 }
 
