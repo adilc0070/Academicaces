@@ -4,7 +4,7 @@ import { Navigate, Outlet } from "react-router-dom"
 
 export function AdminIsLoggedIn() {
 
-    const adminId = useSelector((state: RootState) => state.admin.email)
+    const adminId = useSelector((state: RootState) => state?.admin?.email)
     const adminToken = localStorage.getItem('adminToken')
 
     return (
@@ -15,7 +15,7 @@ export function AdminIsLoggedIn() {
 
 export function AdminIsLoggedOut() {
 
-    const adminId = useSelector((state: RootState) => state.admin.email)
+    const adminId = useSelector((state: RootState) => state?.admin?.email)
     const adminToken = localStorage.getItem('adminToken')
     return (
         Boolean(adminId) && Boolean(adminToken)  ? <Navigate to='/admin/dashboard' /> : <Outlet />
@@ -25,9 +25,9 @@ export function AdminIsLoggedOut() {
 
 export function StudentIsLoggedIn() {
 
-    const userId = useSelector((state: RootState) => state.student.email)
+    const userId = useSelector((state: RootState) => state?.student?.email)
     const userToken = localStorage.getItem('studentToken')
-    console.log('user logined alla ');
+    console.log('user logined aaan ');
     
     return (
         Boolean(userId) && Boolean(userToken) ? <Outlet /> : <Navigate to='/signIn' />
@@ -37,9 +37,9 @@ export function StudentIsLoggedIn() {
 
 export function StudentIsLoggedOut() {
 
-    const userId = useSelector((state: RootState) => state.student.email)
+    const userId = useSelector((state: RootState) => state?.student?.email)
     const userToken = localStorage.getItem('studentToken')
-    console.log('user logined aan ');
+    console.log('user logined alla ');
     
 
     return (
@@ -50,7 +50,7 @@ export function StudentIsLoggedOut() {
 
 export function InstructorIsLoggedIn() {
 
-    const instructorId = useSelector((state: RootState) => state.instructor.email)
+    const instructorId = useSelector((state: RootState) => state?.instructor?.email)
     const instructorToken = localStorage.getItem('instructorToken')
 
     return (
@@ -61,7 +61,7 @@ export function InstructorIsLoggedIn() {
 
 export function InstructorIsLoggedOut() {
 
-    const instructorId = useSelector((state: RootState) => state.instructor.email)
+    const instructorId = useSelector((state: RootState) => state?.instructor?.email)
     const instructorToken = localStorage.getItem('instructorToken')
 
     return (
