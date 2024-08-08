@@ -2,7 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import SignIn from '../pages/student/SignIn';
 import SignUp from '../pages/student/SignUp';
-import { StudentIsLoggedIn, StudentIsLoggedOut } from '../components/Protuctor';
+// import { StudentIsLoggedIn, StudentIsLoggedOut } from '../components/Protuctor';
 import HomePage from '../pages/student/HomePage';
 // import PageNotFound from '../pages/student/PageNotFound';
 import CourseList from '../pages/student/CourseList';
@@ -35,11 +35,11 @@ function UserRoute() {
         <>
             {loading && <Loader />}
             <Routes>
-                <Route path='' element={<StudentIsLoggedOut />} >
+                {/* <Route path='' element={<StudentIsLoggedOut />} > */}
                     <Route path="/signIn" element={<SignIn />} />
                     <Route path="/signUp" element={<SignUp />} />
-                </Route>
-                <Route path="/" element={<StudentIsLoggedIn />} >
+                {/* </Route> */}
+                {/* <Route path="/" element={<StudentIsLoggedIn />} > */}
                     <Route path='/home' element={<HomePage />} />
                     <Route path='/courses' element={<CourseList />} />
                     <Route path='/assignments' element={<Assignments />} />
@@ -50,7 +50,7 @@ function UserRoute() {
                     <Route path='/success' element={<SuccessPage />} />
                     <Route path='/cancel' element={<CancelPage />} />
                     <Route path='/message' element={<Chat />} />
-                </Route>
+                {/* </Route> */}
                 {/* <Route path='/*' element={<PageNotFound />} /> */}
             </Routes>
         </>
