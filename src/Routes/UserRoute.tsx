@@ -17,6 +17,8 @@ import Loader from '../components/Loader';
 import Assignments from '../pages/student/Assignments';
 
 function UserRoute() {
+    console.log('user route');
+    
     const [loading, setLoading] = useState(true);
     const location = useLocation();
 
