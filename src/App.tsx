@@ -12,7 +12,8 @@ function App() {
     <>
       <Toaster richColors position='top-right' closeButton />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+
+        <Route path="" element={<LandingPage />} />
         <Route path="/*" element={<UserRoute />} />
         <Route path="/admin/*" element={<AdminRoute />} />
         <Route path='/instructor/*' element={<InstructorRoutes />} />

@@ -38,11 +38,10 @@ function InstructorRoutes() {
                     <Route path='/signUp' element={<InstructorSignUp />} />
                 </Route>
 
-                {/* <Route path='/*' element={<Error404 />} /> */}
                 <Route path='/' element={<InstructorIsLoggedIn />}>
                     <Route path='/dashboard' element={<HomePage />} />
                     <Route path='/add-course' element={<AddCourse />} />
-                    <Route path='/add-assignment' element={< AddAssignments/>} />
+                    <Route path='/add-assignment' element={< AddAssignments />} />
                     <Route path='/edit-course' element={<EditCourse />} />
                     <Route path='/individualCourse' element={<IndividualCourse />} />
                     <Route path='/message' element={<Chat />} />
@@ -51,6 +50,7 @@ function InstructorRoutes() {
 
                     </Route>
                 </Route>
+                {/* <Route path='*' element={<Error404 />} /> */}
             </Routes>
         </>
     )
