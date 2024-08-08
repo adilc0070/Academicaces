@@ -23,19 +23,19 @@ export function AdminIsLoggedOut() {
 }
 
 
-export function StudentIsLoggedIn() {
+export function StudentIsLoggedIn({children}) {
 
     const userId = useSelector((state: RootState) => state?.student?.email)
     const userToken = localStorage.getItem('studentToken')
     console.log('user logined aaan ');
     
     return (
-        Boolean(userId) && Boolean(userToken) ? <Outlet /> : <Navigate to='/signIn' />
+        Boolean(userId) && Boolean(userToken) ? <>{children}</> : <Navigate to='/signIn' />
     )
 }
 
 
-export function StudentIsLoggedOut() {
+export function StudentIsLoggedOut({children}) {
 
     const userId = useSelector((state: RootState) => state?.student?.email)
     const userToken = localStorage.getItem('studentToken')
@@ -43,7 +43,7 @@ export function StudentIsLoggedOut() {
     
 
     return (
-        Boolean(userId) && Boolean(userToken) ? <Navigate to='/home' /> : <Outlet />
+        Boolean(userId) && Boolean(userToken) ? <Navigate to='/home' /> : <>{children}</>
     )
 }
 

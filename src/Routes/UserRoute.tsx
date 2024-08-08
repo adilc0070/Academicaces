@@ -2,7 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import SignIn from '../pages/student/SignIn';
 import SignUp from '../pages/student/SignUp';
-// import { StudentIsLoggedIn, StudentIsLoggedOut } from '../components/Protuctor';
+import { StudentIsLoggedIn, StudentIsLoggedOut } from '../components/Protuctor';
 import HomePage from '../pages/student/HomePage';
 // import PageNotFound from '../pages/student/PageNotFound';
 import CourseList from '../pages/student/CourseList';
@@ -15,10 +15,11 @@ import Chat from '../pages/student/Chat';
 import PurchaseHistory from '../pages/student/PurchaseHistory';
 import Loader from '../components/Loader';
 import Assignments from '../pages/student/Assignments';
+import LandingPage from '../pages/LandingPage';
 
 function UserRoute() {
     console.log('user route');
-    
+
     const [loading, setLoading] = useState(true);
     const location = useLocation();
 
@@ -35,22 +36,44 @@ function UserRoute() {
         <>
             {loading && <Loader />}
             <Routes>
-                {/* <Route path='' element={<StudentIsLoggedOut />} > */}
-                    <Route path="/signIn" element={<SignIn />} />
-                    <Route path="/signUp" element={<SignUp />} />
-                {/* </Route> */}
-                {/* <Route path="/" element={<StudentIsLoggedIn />} > */}
-                    <Route path='/home' element={<HomePage />} />
-                    <Route path='/courses' element={<CourseList />} />
-                    <Route path='/assignments' element={<Assignments />} />
-                    <Route path='/my-courses' element={<MyCourse />} />
-                    <Route path='/purchases' element={<PurchaseHistory />} />
-                    <Route path='/course/:courseId/' element={<Course />} />
-                    <Route path='/meet' element={<Meet />} />
-                    <Route path='/success' element={<SuccessPage />} />
-                    <Route path='/cancel' element={<CancelPage />} />
-                    <Route path='/message' element={<Chat />} />
-                {/* </Route> */}
+                <Route path="" element={<LandingPage />} />
+                <Route path='/signIn' element={<StudentIsLoggedOut>
+                    <SignIn />
+                </StudentIsLoggedOut>} />
+                <Route path='/signUp' element={<StudentIsLoggedOut>
+                    <SignUp />
+                </StudentIsLoggedOut>} />
+
+                <Route path='/home' element={<StudentIsLoggedIn>
+                    <HomePage />
+                </StudentIsLoggedIn>} />
+                <Route path='/courses' element={<StudentIsLoggedIn>
+                    <CourseList />
+                </StudentIsLoggedIn>} />
+                <Route path='/assignments' element={<StudentIsLoggedIn>
+                    <Assignments />
+                </StudentIsLoggedIn>} />
+                <Route path='/my-courses' element={<StudentIsLoggedIn>
+                    <MyCourse />
+                </StudentIsLoggedIn>} />
+                <Route path='/purchases' element={<StudentIsLoggedIn>
+                    <PurchaseHistory />
+                </StudentIsLoggedIn>} />
+                <Route path='/course/:courseId' element={<StudentIsLoggedIn>
+                    <Course />
+                </StudentIsLoggedIn>} />
+                <Route path='/meet' element={<StudentIsLoggedIn>
+                    <Meet />
+                </StudentIsLoggedIn>} />
+                <Route path='/success' element={<StudentIsLoggedIn>
+                    <SuccessPage />
+                </StudentIsLoggedIn>} />
+                <Route path='/cancel' element={<StudentIsLoggedIn>
+                    <CancelPage />
+                </StudentIsLoggedIn>} />
+                <Route path='/message' element={<StudentIsLoggedIn>
+                    <Chat />
+                </StudentIsLoggedIn>} />
                 {/* <Route path='/*' element={<PageNotFound />} /> */}
             </Routes>
         </>
