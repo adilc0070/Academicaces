@@ -1,24 +1,24 @@
 import { useSelector } from "react-redux"
 import { RootState } from "../store/store"
-import { Navigate, Outlet } from "react-router-dom"
+import { Navigate} from "react-router-dom"
 
-export function AdminIsLoggedIn() {
+export function AdminIsLoggedIn({children}) {
 
     const adminId = useSelector((state: RootState) => state?.admin?.email)
     const adminToken = localStorage.getItem('adminToken')
 
     return (
-        Boolean(adminId) && Boolean(adminToken) ? <Outlet /> : <Navigate to='/admin/signIn' />
+        Boolean(adminId) && Boolean(adminToken) ? <>{children}</> : <Navigate to='/admin/signIn' />
     )
 }
 
 
-export function AdminIsLoggedOut() {
+export function AdminIsLoggedOut({children}) {
 
     const adminId = useSelector((state: RootState) => state?.admin?.email)
     const adminToken = localStorage.getItem('adminToken')
     return (
-        Boolean(adminId) && Boolean(adminToken)  ? <Navigate to='/admin/dashboard' /> : <Outlet />
+        Boolean(adminId) && Boolean(adminToken)  ? <Navigate to='/admin/dashboard' /> : <>{children}</> 
     )
 }
 
@@ -48,25 +48,25 @@ export function StudentIsLoggedOut({children}) {
 }
 
 
-export function InstructorIsLoggedIn() {
+export function InstructorIsLoggedIn({children}) {
 
     const instructorId = useSelector((state: RootState) => state?.instructor?.email)
     const instructorToken = localStorage.getItem('instructorToken')
 
     return (
-        (Boolean(instructorId) && Boolean(instructorToken)) ? <Outlet /> : <Navigate to='/instructor/signIn' />
+        (Boolean(instructorId) && Boolean(instructorToken)) ? <>{children}</> : <Navigate to='/instructor/signIn' />
     )
 }
 
 
-export function InstructorIsLoggedOut() {
+export function InstructorIsLoggedOut({children}) {
 
     const instructorId = useSelector((state: RootState) => state?.instructor?.email)
     const instructorToken = localStorage.getItem('instructorToken')
 
     return (
 
-        (Boolean(instructorId) && Boolean(instructorToken)) ? <Navigate to='/instructor/profile' /> : <Outlet />
+        (Boolean(instructorId) && Boolean(instructorToken)) ? <Navigate to='/instructor/profile' /> : <>{children}</> 
 
     )
 }

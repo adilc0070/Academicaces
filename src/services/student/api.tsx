@@ -65,6 +65,7 @@ export const resendOtp = async ({ data }: { data: SignInData }) => {
 }
 
 export const listCourses = async (data: CourseQueryData) => {
+    console.log(data)
     try {
         const response = await api.get(`/student/listCourse?category=${data.category}&sort=${data.sort}&page=${data.page}&limit=${data.limit}&search=${data.search}`);
         return response.data;

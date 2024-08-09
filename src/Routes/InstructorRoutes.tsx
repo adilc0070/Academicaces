@@ -4,7 +4,7 @@ import InstructorSignIn from '../pages/instructor/InstructorSignIn'
 import InstructorSignUp from '../pages/instructor/InstructorSignUp'
 import HomePage from '../pages/instructor/homePage'
 import AddCourse from '../pages/instructor/AddCourse'
-// import Error404 from '../pages/instructor/Error404'
+import Error404 from '../pages/instructor/Error404'
 import EditCourse from '../pages/instructor/EditCourse'
 import IndividualCourse from '../pages/instructor/IndividualCourse'
 import ForgotPassword from '../pages/instructor/ForgotPassword'
@@ -32,25 +32,64 @@ function InstructorRoutes() {
             {loading && <Loader />}
             <Routes>
 
-                <Route path='' element={<InstructorIsLoggedOut />}>
-                    <Route path='/signIn' element={<InstructorSignIn />} />
-                    <Route path='/forgotPassword' element={<ForgotPassword />} />
-                    <Route path='/signUp' element={<InstructorSignUp />} />
-                </Route>
 
-                <Route path='/' element={<InstructorIsLoggedIn />}>
-                    <Route path='/dashboard' element={<HomePage />} />
-                    <Route path='/add-course' element={<AddCourse />} />
-                    <Route path='/add-assignment' element={< AddAssignments />} />
-                    <Route path='/edit-course' element={<EditCourse />} />
-                    <Route path='/individualCourse' element={<IndividualCourse />} />
-                    <Route path='/message' element={<Chat />} />
-                    <Route path='/profile' element={<Settings />}>
-                        <Route path='/profile/individualCourse' element={<IndividualCourse />} />
+                <Route path='/signIn' element={
+                    <InstructorIsLoggedOut >
+                        <InstructorSignIn />
+                    </InstructorIsLoggedOut>
+                } />
+                <Route path='/forgotPassword' element={
+                    <InstructorIsLoggedOut >
+                        <ForgotPassword />
+                    </InstructorIsLoggedOut>
+                } />
+                <Route path='/signUp' element={
+                    <InstructorIsLoggedOut >
+                        <InstructorSignUp />
+                    </InstructorIsLoggedOut>
+                } />
 
-                    </Route>
-                </Route>
-                {/* <Route path='*' element={<Error404 />} /> */}
+                <Route path='/dashboard' element={
+                    <InstructorIsLoggedIn >
+                        <HomePage />
+                    </InstructorIsLoggedIn>
+                } />
+                <Route path='/add-course' element={
+                    <InstructorIsLoggedIn >
+                        <AddCourse />
+                    </InstructorIsLoggedIn>
+                } />
+                <Route path='/add-assignment' element={
+                    <InstructorIsLoggedIn >
+                        < AddAssignments />
+                    </InstructorIsLoggedIn>
+                } />
+                <Route path='/edit-course' element={
+                    <InstructorIsLoggedIn >
+                        <EditCourse />
+                    </InstructorIsLoggedIn>
+                } />
+                <Route path='/individualCourse' element={
+                    <InstructorIsLoggedIn >
+                        <IndividualCourse />
+                    </InstructorIsLoggedIn>
+                } />
+                <Route path='/message' element={
+                    <InstructorIsLoggedIn >
+                        <Chat />
+                    </InstructorIsLoggedIn>
+                } />
+                <Route path='/profile' element={
+                    <InstructorIsLoggedIn >
+                        <Settings />
+                    </InstructorIsLoggedIn>
+                } />
+
+                <Route path='*' element={
+                    <InstructorIsLoggedIn >
+                        <Error404 />
+                    </InstructorIsLoggedIn>
+                } />
             </Routes>
         </>
     )

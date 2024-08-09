@@ -18,7 +18,7 @@ const CourseCard = ({ _id, category, title, price, chapters, instructor, rating 
       
       setIsEnrolledStatus(response);
     })
-  })
+  },[])
 
   const enroll = async () => {
     const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
