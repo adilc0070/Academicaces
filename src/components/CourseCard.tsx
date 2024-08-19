@@ -21,10 +21,12 @@ const CourseCard = ({ _id, category, title, price, chapters, instructor, rating 
   },[])
 
   const enroll = async () => {
-    const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+    const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);    
     try {
       const response = await buyCourse({ courseId: _id, price, image: thumbnail });
-      const { id: sessionId } = response.data.session;
+      console.log('response from buyCourse api', response);
+      
+      const { id: sessionId } = response.session;
       const { error } = await stripe.redirectToCheckout({ sessionId });
       if (error) {
         console.error('Stripe Checkout Error:', error);

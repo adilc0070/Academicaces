@@ -36,7 +36,7 @@ const NavBar = () => {
         </div>
         <div className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${isMenuOpen ? 'block' : 'hidden'}`} id="navbar-sticky">
           <ul className="flex flex-col p-4 md:p-0 mt-4 text-white font-medium border border-gray-100 rounded-lg md:space-x-8 md:flex-row md:mt-0 md:border-0 bg-gradient-to-r from-blue-800 to-blue-800 md:bg-transparent">
-            {['Home', 'Features', 'Courses', 'Instructor'].map((item) => (
+            {['Home', 'Courses', 'Instructor'].map((item) => (
               <li key={item}>
                 <Link to={`/${item.toLowerCase()}`} className="block hover:bg-blue-700 hover:rounded-lg py-2 px-3 transition-all duration-300 md:hover:bg-transparent md:hover:text-sky-300 md:p-0">
                   {item}

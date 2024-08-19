@@ -52,7 +52,7 @@ const CoursePage = ({ course }) => {
         const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
         try {
             const response = await buyCourse({ courseId: data._id, price: data.price, image: data.thumbnail } );
-            const { id: sessionId } = response.data.session;
+            const { id: sessionId } = response.session;
             const { error } = await stripe.redirectToCheckout({ sessionId });
             if (error) {
                 console.error('Stripe Checkout Error:', error);
@@ -377,9 +377,8 @@ const CoursePage = ({ course }) => {
                 <div className="p-6 rounded-lg shadow-md mb-6">
                     <div className="flex items-center space-x-2 mb-4">
                         <span className="px-3 py-1 bg-sky-200 text-sky-800 rounded-lg font-semibold">{course?.category.name}</span>
-                        <span className="px-3 py-1 bg-red-200 text-red-800 rounded-lg font-semibold">{course?.level}</span>
                     </div>
-                    <h2 className="text-3xl font-semibold mb-4">{course?.name}</h2>
+                    <h2 className="text-3xl font-semibold mb-4">{course?.title}</h2>
                     <div className="flex items-center text-gray-700 mb-4">
                         <span className="flex items-center">
                             <span className="mr-1">{course?.rating}</span>
