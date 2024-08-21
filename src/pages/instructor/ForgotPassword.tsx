@@ -97,6 +97,19 @@ const ForgotPassword: React.FC = () => {
             setEmailError('Please enter a valid email address with Gmail, Yahoo, or iCloud domain.');
             return;
         }
+        if (!otp) {
+            setOtpError('Please enter the OTP received.');
+            return;
+        }
+        if (!validatePassword(newPassword)) {
+            setPasswordError('Password must be at least 8 characters long and include a number and a special character.');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setPasswordError('Passwords do not match.');
+            return;
+        }
+
         try {
             await resetPasswordApi({ email, otp, newPassword }).then((result) => {
                 if (result.statusCode === 200) {
@@ -154,10 +167,10 @@ const ForgotPassword: React.FC = () => {
                                     value={otp}
                                     onChange={handleOtpChange}
                                 />
-                                {view&&<button
+                                {view && <button
                                     type="button"
                                     className="mt-1 block w-full text-center text-blue-600 hover:underline focus:outline-none"
-                                onClick={handleSendOtp}
+                                    onClick={handleSendOtp}
                                 >
                                     Resend OTP
                                 </button>}
